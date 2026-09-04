@@ -1,0 +1,28 @@
+                        precision    recall  f1-score   support
+
+                cam_on     1.0000    1.0000    1.0000         8
+              chao_hoi     0.6000    1.0000    0.7500         3
+     chi_tiet_san_pham     1.0000    1.0000    1.0000         4
+    chinh_sach_doi_tra     1.0000    1.0000    1.0000         4
+        goi_y_san_pham     1.0000    0.7500    0.8571         8
+            hoi_don_vi     1.0000    1.0000    1.0000         6
+               hoi_gia     1.0000    1.0000    1.0000         4
+        hoi_khoi_luong     1.0000    1.0000    1.0000         4
+         hoi_nguon_goc     1.0000    1.0000    1.0000         5
+          hoi_phi_ship     1.0000    1.0000    1.0000         6
+       hoi_thuong_hieu     1.0000    1.0000    1.0000         2
+          huy_don_hang     1.0000    1.0000    1.0000         2
+            khong_hieu     1.0000    1.0000    1.0000         4
+            khuyen_mai     1.0000    1.0000    1.0000         2
+      kiem_tra_ton_kho     1.0000    1.0000    1.0000         4
+phuong_thuc_thanh_toan     1.0000    1.0000    1.0000         3
+      so_sanh_san_pham     1.0000    1.0000    1.0000         5
+              tam_biet     1.0000    1.0000    1.0000         4
+   thoi_gian_giao_hang     1.0000    1.0000    1.0000         4
+     tim_kiem_san_pham     1.0000    0.8571    0.9231         7
+ tim_san_pham_theo_gia     0.6667    1.0000    0.8000         2
+      tra_cuu_don_hang     1.0000    1.0000    1.0000         3
+
+              accuracy                         0.9681        94
+             macro avg     0.9667    0.9821    0.9696        94
+          weighted avg     0.9801    0.9681    0.9699        94

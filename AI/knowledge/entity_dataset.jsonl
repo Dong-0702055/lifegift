@@ -1,0 +1,51 @@
+{"text": "cà phê Robusta", "entities": [{"type": "PRODUCT", "value": "cà phê Robusta", "normalized_value": "CF-001"}]}
+{"text": "robusta", "entities": [{"type": "PRODUCT", "value": "robusta", "normalized_value": "CF-001"}]}
+{"text": "cafe robusta", "entities": [{"type": "PRODUCT", "value": "cafe robusta", "normalized_value": "CF-001"}]}
+{"text": "cà phê Arabica Cầu Đất", "entities": [{"type": "PRODUCT", "value": "cà phê Arabica Cầu Đất", "normalized_value": "CF-002"}]}
+{"text": "arabica", "entities": [{"type": "PRODUCT", "value": "arabica", "normalized_value": "CF-002"}]}
+{"text": "cafe arabica", "entities": [{"type": "PRODUCT", "value": "cafe arabica", "normalized_value": "CF-002"}]}
+{"text": "trà Shan Tuyết", "entities": [{"type": "PRODUCT", "value": "trà Shan Tuyết", "normalized_value": "TR-001"}]}
+{"text": "shan tuyết", "entities": [{"type": "PRODUCT", "value": "shan tuyết", "normalized_value": "TR-001"}]}
+{"text": "trà shan tuyết cổ thụ", "entities": [{"type": "PRODUCT", "value": "trà shan tuyết cổ thụ", "normalized_value": "TR-001"}]}
+{"text": "trà Ô Long", "entities": [{"type": "PRODUCT", "value": "trà Ô Long", "normalized_value": "TR-002"}]}
+{"text": "ô long", "entities": [{"type": "PRODUCT", "value": "ô long", "normalized_value": "TR-002"}]}
+{"text": "tra o long", "entities": [{"type": "PRODUCT", "value": "tra o long", "normalized_value": "TR-002"}]}
+{"text": "hạt điều rang muối", "entities": [{"type": "PRODUCT", "value": "hạt điều rang muối", "normalized_value": "HN-001"}]}
+{"text": "hạt điều", "entities": [{"type": "PRODUCT", "value": "hạt điều", "normalized_value": "HN-001"}]}
+{"text": "điều rang muối", "entities": [{"type": "PRODUCT", "value": "điều rang muối", "normalized_value": "HN-001"}]}
+{"text": "hạt mắc ca", "entities": [{"type": "PRODUCT", "value": "hạt mắc ca", "normalized_value": "HN-002"}]}
+{"text": "mắc ca", "entities": [{"type": "PRODUCT", "value": "mắc ca", "normalized_value": "HN-002"}]}
+{"text": "macadamia", "entities": [{"type": "PRODUCT", "value": "macadamia", "normalized_value": "HN-002"}]}
+{"text": "mật ong hoa rừng", "entities": [{"type": "PRODUCT", "value": "mật ong hoa rừng", "normalized_value": "DS-001"}]}
+{"text": "mật ong", "entities": [{"type": "PRODUCT", "value": "mật ong", "normalized_value": "DS-001"}]}
+{"text": "mật ong tây bắc", "entities": [{"type": "PRODUCT", "value": "mật ong tây bắc", "normalized_value": "DS-001"}]}
+{"text": "măng khô Tây Bắc", "entities": [{"type": "PRODUCT", "value": "măng khô Tây Bắc", "normalized_value": "DS-002"}]}
+{"text": "măng khô", "entities": [{"type": "PRODUCT", "value": "măng khô", "normalized_value": "DS-002"}]}
+{"text": "măng tây bắc", "entities": [{"type": "PRODUCT", "value": "măng tây bắc", "normalized_value": "DS-002"}]}
+{"text": "hộp quà Tết", "entities": [{"type": "PRODUCT", "value": "hộp quà Tết", "normalized_value": "QT-001"}]}
+{"text": "hộp quà tết", "entities": [{"type": "PRODUCT", "value": "hộp quà tết", "normalized_value": "QT-001"}]}
+{"text": "quà tết", "entities": [{"type": "PRODUCT", "value": "quà tết", "normalized_value": "QT-001"}]}
+{"text": "quà doanh nghiệp", "entities": [{"type": "PRODUCT", "value": "quà doanh nghiệp", "normalized_value": "QT-002"}]}
+{"text": "quà doanh nghiệp", "entities": [{"type": "PRODUCT", "value": "quà doanh nghiệp", "normalized_value": "QT-002"}]}
+{"text": "bộ quà doanh nghiệp", "entities": [{"type": "PRODUCT", "value": "bộ quà doanh nghiệp", "normalized_value": "QT-002"}]}
+{"text": "hộp quà Tết cao cấp", "entities": [{"type": "PRODUCT", "value": "hộp quà Tết cao cấp", "normalized_value": "LG-SP001"}]}
+{"text": "hộp quà lifegift", "entities": [{"type": "PRODUCT", "value": "hộp quà lifegift", "normalized_value": "LG-SP001"}]}
+{"text": "quà tết lifegift", "entities": [{"type": "PRODUCT", "value": "quà tết lifegift", "normalized_value": "LG-SP001"}]}
+{"text": "cà phê", "entities": [{"type": "CATEGORY", "value": "cà phê", "normalized_value": "cà phê"}]}
+{"text": "trà", "entities": [{"type": "CATEGORY", "value": "trà", "normalized_value": "trà"}]}
+{"text": "hạt", "entities": [{"type": "CATEGORY", "value": "hạt", "normalized_value": "hạt"}]}
+{"text": "đặc sản", "entities": [{"type": "CATEGORY", "value": "đặc sản", "normalized_value": "đặc sản"}]}
+{"text": "quà tặng", "entities": [{"type": "CATEGORY", "value": "quà tặng", "normalized_value": "quà tặng"}]}
+{"text": "200k", "entities": [{"type": "MONEY", "value": "200k", "normalized_value": 200000, "currency": "VND"}]}
+{"text": "200 nghìn", "entities": [{"type": "MONEY", "value": "200 nghìn", "normalized_value": 200000, "currency": "VND"}]}
+{"text": "200 ngàn", "entities": [{"type": "MONEY", "value": "200 ngàn", "normalized_value": 200000, "currency": "VND"}]}
+{"text": "200.000", "entities": [{"type": "MONEY", "value": "200.000", "normalized_value": 200000, "currency": "VND"}]}
+{"text": "200000đ", "entities": [{"type": "MONEY", "value": "200000đ", "normalized_value": 200000, "currency": "VND"}]}
+{"text": "500k", "entities": [{"type": "MONEY", "value": "500k", "normalized_value": 500000, "currency": "VND"}]}
+{"text": "1 triệu", "entities": [{"type": "MONEY", "value": "1 triệu", "normalized_value": 1000000, "currency": "VND"}]}
+{"text": "1tr", "entities": [{"type": "MONEY", "value": "1tr", "normalized_value": 1000000, "currency": "VND"}]}
+{"text": "1.000.000", "entities": [{"type": "MONEY", "value": "1.000.000", "normalized_value": 1000000, "currency": "VND"}]}
+{"text": "200g", "entities": [{"type": "WEIGHT", "value": "200g", "normalized_value": 200, "unit": "g"}]}
+{"text": "500g", "entities": [{"type": "WEIGHT", "value": "500g", "normalized_value": 500, "unit": "g"}]}
+{"text": "1kg", "entities": [{"type": "WEIGHT", "value": "1kg", "normalized_value": 1000, "unit": "g"}]}
+{"text": "500ml", "entities": [{"type": "VOLUME", "value": "500ml", "normalized_value": 500, "unit": "ml"}]}

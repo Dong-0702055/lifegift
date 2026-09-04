@@ -1,0 +1,23 @@
+# Environments & Cache
+**/.venv/
+**/venv/
+**/__pycache__/
+*.pyc
+
+# AI Datasets & Models
+**/phobert_dataset/
+**/best_model/
+**/checkpoints/
+*.bin
+*.pt
+*.pth
+*.h5
+*.onnx
+*.safetensors
+*.ckpt
+
+# Node modules & Logs (Backend)
+**/node_modules/
+**/dist/
+**/build/
+.env

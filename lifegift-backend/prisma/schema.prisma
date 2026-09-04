@@ -1,0 +1,698 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model addresses {
+  id             BigInt   @id @default(autoincrement())
+  user_id        BigInt
+  receiver_name  String   @db.VarChar(150)
+  receiver_phone String   @db.VarChar(20)
+  province       String   @db.VarChar(100)
+  district       String?  @db.VarChar(100)
+  ward           String?  @db.VarChar(100)
+  address_detail String   @db.VarChar(255)
+  is_default     Boolean  @default(false)
+  created_at     DateTime @default(now()) @db.DateTime(0)
+  updated_at     DateTime @default(now()) @db.DateTime(0)
+  users          users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_addresses_user")
+
+  @@index([user_id], map: "fk_addresses_user")
+}
+
+model affiliate_links {
+  id           BigInt                 @id @default(autoincrement())
+  affiliate_id BigInt
+  product_id   BigInt?
+  code         String                 @unique(map: "code") @db.VarChar(100)
+  click_count  Int                    @default(0)
+  status       affiliate_links_status @default(ACTIVE)
+  created_at   DateTime               @default(now()) @db.DateTime(0)
+  affiliates   affiliates             @relation(fields: [affiliate_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_affiliate_links_affiliate")
+  products     products?              @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_affiliate_links_product")
+
+  @@index([affiliate_id], map: "fk_affiliate_links_affiliate")
+  @@index([product_id], map: "fk_affiliate_links_product")
+}
+
+model affiliates {
+  id                                  BigInt            @id @default(autoincrement())
+  user_id                             BigInt            @unique(map: "user_id")
+  affiliate_code                      String            @unique(map: "affiliate_code") @db.VarChar(80)
+  commission_rate                     Decimal           @default(5.00) @db.Decimal(5, 2)
+  status                              affiliates_status @default(PENDING)
+  approved_by                         BigInt?
+  approved_at                         DateTime?         @db.DateTime(0)
+  created_at                          DateTime          @default(now()) @db.DateTime(0)
+  updated_at                          DateTime          @default(now()) @db.DateTime(0)
+  affiliate_links                     affiliate_links[]
+  users_affiliates_approved_byTousers users?            @relation("affiliates_approved_byTousers", fields: [approved_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_affiliates_approved_by")
+  users_affiliates_user_idTousers     users             @relation("affiliates_user_idTousers", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_affiliates_user")
+  commissions                         commissions[]
+
+  @@index([approved_by], map: "fk_affiliates_approved_by")
+}
+
+model blog_categories {
+  id          BigInt                 @id @default(autoincrement())
+  name        String                 @db.VarChar(150)
+  slug        String                 @unique(map: "slug") @db.VarChar(180)
+  description String?                @db.VarChar(500)
+  status      blog_categories_status @default(ACTIVE)
+  blog_posts  blog_posts[]
+}
+
+model blog_posts {
+  id              BigInt            @id @default(autoincrement())
+  category_id     BigInt
+  author_id       BigInt
+  title           String            @db.VarChar(255)
+  slug            String            @unique(map: "slug") @db.VarChar(300)
+  thumbnail       String?           @db.VarChar(500)
+  summary         String?           @db.VarChar(1000)
+  content         String?           @db.LongText
+  status          blog_posts_status @default(DRAFT)
+  published_at    DateTime?         @db.DateTime(0)
+  created_at      DateTime          @default(now()) @db.DateTime(0)
+  updated_at      DateTime          @default(now()) @db.DateTime(0)
+  users           users             @relation(fields: [author_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_blog_posts_author")
+  blog_categories blog_categories   @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_blog_posts_category")
+
+  @@index([author_id], map: "fk_blog_posts_author")
+  @@index([category_id], map: "idx_blog_posts_category")
+}
+
+model brands {
+  id            BigInt          @id @default(autoincrement())
+  name          String          @unique(map: "name") @db.VarChar(150)
+  slug          String          @unique(map: "slug") @db.VarChar(180)
+  description   String?         @db.Text
+  logo_url      String?         @db.VarChar(500)
+  status        brands_status   @default(ACTIVE)
+  created_at    DateTime        @default(now()) @db.DateTime(0)
+  updated_at    DateTime        @default(now()) @db.DateTime(0)
+  brand_aliases brand_aliases[]
+  products      products[]
+}
+
+model cart_items {
+  id         BigInt   @id @default(autoincrement())
+  cart_id    BigInt
+  product_id BigInt
+  quantity   Int      @default(1)
+  created_at DateTime @default(now()) @db.DateTime(0)
+  updated_at DateTime @default(now()) @db.DateTime(0)
+  carts      carts    @relation(fields: [cart_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_cart_items_cart")
+  products   products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_cart_items_product")
+
+  @@unique([cart_id, product_id], map: "uk_cart_product")
+  @@index([product_id], map: "idx_cart_items_product")
+}
+
+model carts {
+  id         BigInt       @id @default(autoincrement())
+  user_id    BigInt       @unique(map: "user_id")
+  created_at DateTime     @default(now()) @db.DateTime(0)
+  updated_at DateTime     @default(now()) @db.DateTime(0)
+  cart_items cart_items[]
+  users      users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_carts_user")
+}
+
+model categories {
+  id               BigInt             @id @default(autoincrement())
+  parent_id        BigInt?
+  name             String             @db.VarChar(150)
+  slug             String             @unique(map: "slug") @db.VarChar(180)
+  description      String?            @db.Text
+  image_url        String?            @db.VarChar(500)
+  status           categories_status  @default(ACTIVE)
+  created_at       DateTime           @default(now()) @db.DateTime(0)
+  updated_at       DateTime           @default(now()) @db.DateTime(0)
+  categories       categories?        @relation("categoriesTocategories", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_categories_parent")
+  other_categories categories[]       @relation("categoriesTocategories")
+  category_aliases category_aliases[]
+  products         products[]
+
+  @@index([parent_id], map: "fk_categories_parent")
+}
+
+model commissions {
+  id                BigInt             @id @default(autoincrement())
+  affiliate_id      BigInt
+  order_id          BigInt
+  order_amount      Decimal            @db.Decimal(15, 2)
+  commission_rate   Decimal            @db.Decimal(5, 2)
+  commission_amount Decimal            @db.Decimal(15, 2)
+  status            commissions_status @default(PENDING)
+  created_at        DateTime           @default(now()) @db.DateTime(0)
+  paid_at           DateTime?          @db.DateTime(0)
+  affiliates        affiliates         @relation(fields: [affiliate_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_commissions_affiliate")
+  orders            orders             @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_commissions_order")
+
+  @@index([affiliate_id], map: "fk_commissions_affiliate")
+  @@index([order_id], map: "fk_commissions_order")
+}
+
+model coupon_usages {
+  id              BigInt   @id @default(autoincrement())
+  coupon_id       BigInt
+  user_id         BigInt
+  order_id        BigInt
+  discount_amount Decimal  @db.Decimal(15, 2)
+  used_at         DateTime @default(now()) @db.DateTime(0)
+  coupons         coupons  @relation(fields: [coupon_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_coupon_usages_coupon")
+  orders          orders   @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_coupon_usages_order")
+  users           users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_coupon_usages_user")
+
+  @@index([coupon_id], map: "fk_coupon_usages_coupon")
+  @@index([order_id], map: "fk_coupon_usages_order")
+  @@index([user_id], map: "fk_coupon_usages_user")
+}
+
+model coupons {
+  id              BigInt                @id @default(autoincrement())
+  code            String                @unique(map: "code") @db.VarChar(80)
+  name            String                @db.VarChar(150)
+  discount_type   coupons_discount_type
+  discount_value  Decimal               @db.Decimal(15, 2)
+  min_order_value Decimal               @default(0.00) @db.Decimal(15, 2)
+  max_discount    Decimal?              @db.Decimal(15, 2)
+  usage_limit     Int?
+  used_count      Int                   @default(0)
+  start_at        DateTime              @db.DateTime(0)
+  end_at          DateTime              @db.DateTime(0)
+  status          coupons_status        @default(ACTIVE)
+  created_at      DateTime              @default(now()) @db.DateTime(0)
+  updated_at      DateTime              @default(now()) @db.DateTime(0)
+  coupon_usages   coupon_usages[]
+}
+
+model goods_receipts {
+  id                BigInt          @id @default(autoincrement())
+  receipt_code      String          @unique(map: "receipt_code") @db.VarChar(80)
+  purchase_order_id BigInt
+  warehouse_id      BigInt
+  received_by       BigInt
+  total_amount      Decimal         @default(0.00) @db.Decimal(15, 2)
+  note              String?         @db.VarChar(500)
+  received_at       DateTime        @default(now()) @db.DateTime(0)
+  purchase_orders   purchase_orders @relation(fields: [purchase_order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_goods_receipts_purchase_order")
+  users             users           @relation(fields: [received_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_goods_receipts_user")
+  warehouses        warehouses      @relation(fields: [warehouse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_goods_receipts_warehouse")
+
+  @@index([purchase_order_id], map: "fk_goods_receipts_purchase_order")
+  @@index([received_by], map: "fk_goods_receipts_user")
+  @@index([warehouse_id], map: "fk_goods_receipts_warehouse")
+}
+
+model inventories {
+  id                     BigInt                   @id @default(autoincrement())
+  warehouse_id           BigInt
+  product_id             BigInt
+  quantity               Int                      @default(0)
+  reserved_quantity      Int                      @default(0)
+  available_quantity     Int                      @default(0)
+  min_stock              Int                      @default(0)
+  updated_at             DateTime                 @default(now()) @db.DateTime(0)
+  products               products                 @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_inventories_product")
+  warehouses             warehouses               @relation(fields: [warehouse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_inventories_warehouse")
+  inventory_transactions inventory_transactions[]
+
+  @@unique([warehouse_id, product_id], map: "uk_inventory_warehouse_product")
+  @@index([product_id], map: "idx_inventory_product")
+}
+
+model inventory_transactions {
+  id               BigInt                                  @id @default(autoincrement())
+  inventory_id     BigInt
+  transaction_type inventory_transactions_transaction_type
+  quantity         Int
+  reference_type   String?                                 @db.VarChar(50)
+  reference_id     BigInt?
+  note             String?                                 @db.VarChar(500)
+  created_by       BigInt?
+  created_at       DateTime                                @default(now()) @db.DateTime(0)
+  inventories      inventories                             @relation(fields: [inventory_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_inventory_transactions_inventory")
+  users            users?                                  @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_inventory_transactions_user")
+
+  @@index([inventory_id], map: "fk_inventory_transactions_inventory")
+  @@index([created_by], map: "fk_inventory_transactions_user")
+}
+
+model order_items {
+  id           BigInt   @id @default(autoincrement())
+  order_id     BigInt
+  product_id   BigInt
+  product_name String   @db.VarChar(255)
+  sku          String   @db.VarChar(80)
+  unit_price   Decimal  @db.Decimal(15, 2)
+  quantity     Int
+  subtotal     Decimal  @db.Decimal(15, 2)
+  orders       orders   @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_order_items_order")
+  products     products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_order_items_product")
+
+  @@index([order_id], map: "fk_order_items_order")
+  @@index([product_id], map: "idx_order_items_product")
+}
+
+model order_status_history {
+  id         BigInt                      @id @default(autoincrement())
+  order_id   BigInt
+  status     order_status_history_status
+  note       String?                     @db.VarChar(500)
+  changed_by BigInt?
+  created_at DateTime                    @default(now()) @db.DateTime(0)
+  orders     orders                      @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_order_status_history_order")
+  users      users?                      @relation(fields: [changed_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_order_status_history_user")
+
+  @@index([order_id], map: "fk_order_status_history_order")
+  @@index([changed_by], map: "fk_order_status_history_user")
+}
+
+model orders {
+  id                   BigInt                 @id @default(autoincrement())
+  order_code           String                 @unique(map: "order_code") @db.VarChar(80)
+  user_id              BigInt
+  receiver_name        String                 @db.VarChar(150)
+  receiver_phone       String                 @db.VarChar(20)
+  shipping_province    String                 @db.VarChar(100)
+  shipping_district    String?                @db.VarChar(100)
+  shipping_ward        String?                @db.VarChar(100)
+  shipping_address     String                 @db.VarChar(255)
+  subtotal             Decimal                @default(0.00) @db.Decimal(15, 2)
+  shipping_fee         Decimal                @default(0.00) @db.Decimal(15, 2)
+  discount_amount      Decimal                @default(0.00) @db.Decimal(15, 2)
+  total_amount         Decimal                @default(0.00) @db.Decimal(15, 2)
+  order_status         orders_order_status    @default(PENDING)
+  note                 String?                @db.VarChar(500)
+  created_at           DateTime               @default(now()) @db.DateTime(0)
+  updated_at           DateTime               @default(now()) @db.DateTime(0)
+  warehouse_id         BigInt
+  commissions          commissions[]
+  coupon_usages        coupon_usages[]
+  order_items          order_items[]
+  order_status_history order_status_history[]
+  users                users                  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_orders_user")
+  warehouses           warehouses             @relation(fields: [warehouse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_orders_warehouse")
+  payments             payments[]
+  reviews              reviews[]
+
+  @@index([warehouse_id], map: "fk_orders_warehouse")
+  @@index([created_at], map: "idx_orders_created_at")
+  @@index([order_status], map: "idx_orders_status")
+  @@index([user_id], map: "idx_orders_user")
+}
+
+model payments {
+  id               BigInt                  @id @default(autoincrement())
+  order_id         BigInt?
+  payment_method   payments_payment_method
+  transaction_code String?                 @db.VarChar(150)
+  amount           Decimal                 @db.Decimal(15, 2)
+  status           payments_status         @default(PENDING)
+  paid_at          DateTime?               @db.DateTime(0)
+  created_at       DateTime                @default(now()) @db.DateTime(0)
+  orders           orders?                 @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_payments_order")
+
+  @@index([order_id], map: "fk_payments_order")
+}
+
+model product_images {
+  id         BigInt   @id @default(autoincrement())
+  product_id BigInt
+  image_url  String   @db.VarChar(500)
+  is_primary Boolean  @default(false)
+  sort_order Int      @default(0)
+  created_at DateTime @default(now()) @db.DateTime(0)
+  products   products @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_product_images_product")
+
+  @@index([product_id], map: "fk_product_images_product")
+}
+
+model products {
+  id                   BigInt                 @id @default(autoincrement())
+  category_id          BigInt
+  brand_id             BigInt?
+  sku                  String                 @unique(map: "sku") @db.VarChar(80)
+  name                 String                 @db.VarChar(255)
+  slug                 String                 @unique(map: "slug") @db.VarChar(280)
+  description          String?                @db.Text
+  short_description    String?                @db.VarChar(500)
+  price                Decimal                @default(0.00) @db.Decimal(15, 2)
+  sale_price           Decimal?               @db.Decimal(15, 2)
+  unit                 String                 @default("Sản phẩm") @db.VarChar(50)
+  weight               Decimal?               @db.Decimal(10, 2)
+  origin               String?                @db.VarChar(150)
+  pricing_type         products_pricing_type  @default(FIXED_PRICE)
+  stock_status         products_stock_status  @default(IN_STOCK)
+  status               products_status        @default(ACTIVE)
+  is_featured          Boolean                @default(false)
+  created_at           DateTime               @default(now()) @db.DateTime(0)
+  updated_at           DateTime               @default(now()) @db.DateTime(0)
+  affiliate_links      affiliate_links[]
+  cart_items           cart_items[]
+  inventories          inventories[]
+  order_items          order_items[]
+  product_aliases      product_aliases[]
+  product_images       product_images[]
+  brands               brands?                @relation(fields: [brand_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_products_brand")
+  categories           categories             @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_products_category")
+  purchase_order_items purchase_order_items[]
+  reviews              reviews[]
+
+  @@index([brand_id], map: "idx_products_brand")
+  @@index([category_id], map: "idx_products_category")
+  @@index([is_featured], map: "idx_products_featured")
+  @@index([status], map: "idx_products_status")
+}
+
+model purchase_order_items {
+  id                BigInt          @id @default(autoincrement())
+  purchase_order_id BigInt
+  product_id        BigInt
+  quantity          Int
+  unit_cost         Decimal         @db.Decimal(15, 2)
+  subtotal          Decimal         @db.Decimal(15, 2)
+  purchase_orders   purchase_orders @relation(fields: [purchase_order_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_purchase_order_items_order")
+  products          products        @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_purchase_order_items_product")
+
+  @@index([purchase_order_id], map: "fk_purchase_order_items_order")
+  @@index([product_id], map: "fk_purchase_order_items_product")
+}
+
+model purchase_orders {
+  id                   BigInt                 @id @default(autoincrement())
+  purchase_code        String                 @unique(map: "purchase_code") @db.VarChar(80)
+  supplier_id          BigInt
+  warehouse_id         BigInt
+  total_amount         Decimal                @default(0.00) @db.Decimal(15, 2)
+  status               purchase_orders_status @default(DRAFT)
+  ordered_at           DateTime?              @db.DateTime(0)
+  expected_at          DateTime?              @db.DateTime(0)
+  created_at           DateTime               @default(now()) @db.DateTime(0)
+  updated_at           DateTime               @default(now()) @db.DateTime(0)
+  goods_receipts       goods_receipts[]
+  purchase_order_items purchase_order_items[]
+  suppliers            suppliers              @relation(fields: [supplier_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_purchase_orders_supplier")
+  warehouses           warehouses             @relation(fields: [warehouse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_purchase_orders_warehouse")
+
+  @@index([supplier_id], map: "fk_purchase_orders_supplier")
+  @@index([warehouse_id], map: "fk_purchase_orders_warehouse")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model reviews {
+  id         BigInt         @id @default(autoincrement())
+  user_id    BigInt
+  product_id BigInt
+  order_id   BigInt
+  rating     Int            @db.TinyInt
+  title      String?        @db.VarChar(200)
+  content    String?        @db.Text
+  status     reviews_status @default(PENDING)
+  created_at DateTime       @default(now()) @db.DateTime(0)
+  updated_at DateTime       @default(now()) @db.DateTime(0)
+  orders     orders         @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_reviews_order")
+  products   products       @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_reviews_product")
+  users      users          @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_reviews_user")
+
+  @@index([order_id], map: "fk_reviews_order")
+  @@index([user_id], map: "fk_reviews_user")
+  @@index([product_id], map: "idx_reviews_product")
+}
+
+model roles {
+  id          BigInt       @id @default(autoincrement())
+  name        String       @unique(map: "name") @db.VarChar(50)
+  description String?      @db.VarChar(255)
+  created_at  DateTime     @default(now()) @db.DateTime(0)
+  user_roles  user_roles[]
+}
+
+model suppliers {
+  id              BigInt            @id @default(autoincrement())
+  code            String            @unique(map: "code") @db.VarChar(50)
+  name            String            @db.VarChar(200)
+  phone           String?           @db.VarChar(20)
+  email           String?           @db.VarChar(150)
+  address         String?           @db.VarChar(255)
+  tax_code        String?           @db.VarChar(50)
+  status          suppliers_status  @default(ACTIVE)
+  created_at      DateTime          @default(now()) @db.DateTime(0)
+  updated_at      DateTime          @default(now()) @db.DateTime(0)
+  purchase_orders purchase_orders[]
+}
+
+model user_roles {
+  user_id BigInt
+  role_id BigInt
+  roles   roles  @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_roles_role")
+  users   users  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_roles_user")
+
+  @@id([user_id, role_id])
+  @@index([role_id], map: "fk_user_roles_role")
+}
+
+model users {
+  id                                       BigInt                   @id @default(autoincrement())
+  username                                 String                   @unique(map: "username") @db.VarChar(100)
+  password                                 String                   @db.VarChar(255)
+  full_name                                String                   @db.VarChar(150)
+  phone                                    String?                  @unique(map: "phone") @db.VarChar(20)
+  email                                    String?                  @unique(map: "email") @db.VarChar(150)
+  avatar                                   String?                  @db.VarChar(500)
+  status                                   users_status             @default(ACTIVE)
+  created_at                               DateTime                 @default(now()) @db.DateTime(0)
+  updated_at                               DateTime                 @default(now()) @db.DateTime(0)
+  addresses                                addresses[]
+  affiliates_affiliates_approved_byTousers affiliates[]             @relation("affiliates_approved_byTousers")
+  affiliates_affiliates_user_idTousers     affiliates?              @relation("affiliates_user_idTousers")
+  blog_posts                               blog_posts[]
+  carts                                    carts?
+  coupon_usages                            coupon_usages[]
+  goods_receipts                           goods_receipts[]
+  inventory_transactions                   inventory_transactions[]
+  order_status_history                     order_status_history[]
+  orders                                   orders[]
+  reviews                                  reviews[]
+  user_refresh_tokens                      user_refresh_tokens[]
+  user_roles                               user_roles[]
+}
+
+model warehouses {
+  id              BigInt            @id @default(autoincrement())
+  code            String            @unique(map: "code") @db.VarChar(50)
+  name            String            @db.VarChar(150)
+  address         String?           @db.VarChar(255)
+  status          warehouses_status @default(ACTIVE)
+  created_at      DateTime          @default(now()) @db.DateTime(0)
+  updated_at      DateTime          @default(now()) @db.DateTime(0)
+  goods_receipts  goods_receipts[]
+  inventories     inventories[]
+  orders          orders[]
+  purchase_orders purchase_orders[]
+}
+
+model user_refresh_tokens {
+  id            BigInt   @id @default(autoincrement())
+  user_id       BigInt
+  refresh_token String   @unique(map: "refresh_token_UNIQUE") @db.VarChar(500)
+  expires_at    DateTime @db.DateTime(0)
+  created_at    DateTime @default(now()) @db.DateTime(0)
+  users         users    @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "fk_user_refresh_tokens_users")
+
+  @@index([user_id], map: "fk_user_refresh_tokens_users_idx")
+}
+
+model brand_aliases {
+  id               BigInt   @id @default(autoincrement())
+  brand_id         BigInt
+  alias            String   @db.VarChar(150)
+  normalized_alias String   @db.VarChar(150)
+  created_at       DateTime @default(now()) @db.DateTime(0)
+  brands           brands   @relation(fields: [brand_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_brand_alias_brand")
+
+  @@unique([brand_id, normalized_alias], map: "uk_brand_alias_normalized")
+  @@index([normalized_alias], map: "idx_brand_alias_normalized")
+  @@map("brand_aliases")
+}
+
+model product_aliases {
+  id               BigInt   @id @default(autoincrement())
+  product_id       BigInt
+  alias            String   @db.VarChar(255)
+  normalized_alias String   @db.VarChar(255)
+  created_at       DateTime @default(now()) @db.DateTime(0)
+  products         products @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_product_alias_product")
+
+  @@unique([product_id, normalized_alias], map: "uk_product_alias_product_normalized")
+  @@index([normalized_alias], map: "idx_product_alias_normalized")
+  @@index([product_id], map: "idx_product_alias_product")
+  @@map("product_aliases")
+}
+
+model category_aliases {
+  id               BigInt     @id @default(autoincrement())
+  category_id      BigInt
+  alias            String     @db.VarChar(255)
+  normalized_alias String     @db.VarChar(255)
+  created_at       DateTime   @default(now()) @db.DateTime(0)
+  categories       categories @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_category_aliases_categories")
+
+  @@unique([category_id, normalized_alias], map: "uk_category_alias_category_normalized")
+  @@index([category_id], map: "idx_category_alias_category")
+  @@index([normalized_alias], map: "idx_category_alias_normalized")
+}
+
+enum inventory_transactions_transaction_type {
+  IMPORT
+  SALE
+  RETURN
+  ADJUSTMENT
+  TRANSFER_IN
+  TRANSFER_OUT
+}
+
+enum order_status_history_status {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPING
+  DELIVERED
+  COMPLETED
+  CANCELLED
+  RETURN_REQUESTED
+  RETURNED
+}
+
+enum payments_payment_method {
+  COD
+  BANK_TRANSFER
+  VNPAY
+  MOMO
+}
+
+enum coupons_discount_type {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+enum affiliates_status {
+  PENDING
+  ACTIVE
+  INACTIVE
+  REJECTED
+}
+
+enum blog_categories_status {
+  ACTIVE
+  INACTIVE
+}
+
+enum warehouses_status {
+  ACTIVE
+  INACTIVE
+}
+
+enum affiliate_links_status {
+  ACTIVE
+  INACTIVE
+}
+
+enum brands_status {
+  ACTIVE
+  INACTIVE
+}
+
+enum payments_status {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUND_REQUESTED
+  REFUNDED
+}
+
+enum purchase_orders_status {
+  DRAFT
+  ORDERED
+  PARTIAL_RECEIVED
+  RECEIVED
+  CANCELLED
+}
+
+enum categories_status {
+  ACTIVE
+  INACTIVE
+}
+
+enum commissions_status {
+  PENDING
+  APPROVED
+  PAID
+  CANCELLED
+}
+
+enum reviews_status {
+  PENDING
+  APPROVED
+  HIDDEN
+}
+
+enum suppliers_status {
+  ACTIVE
+  INACTIVE
+}
+
+enum users_status {
+  ACTIVE
+  INACTIVE
+  LOCKED
+  PENDING
+}
+
+enum blog_posts_status {
+  DRAFT
+  PUBLISHED
+  HIDDEN
+}
+
+enum coupons_status {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+}
+
+enum orders_order_status {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPING
+  DELIVERED
+  COMPLETED
+  CANCELLED
+  RETURN_REQUESTED
+  RETURNED
+  REFUND_REQUESTED
+}
+
+enum products_pricing_type {
+  FIXED_PRICE
+  CONTACT_FOR_PRICE
+}
+
+enum products_stock_status {
+  IN_STOCK
+  LOW_STOCK
+  OUT_OF_STOCK
+  PRE_ORDER
+}
+
+enum products_status {
+  ACTIVE
+  INACTIVE
+  DRAFT
+}

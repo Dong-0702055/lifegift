@@ -1,0 +1,109 @@
+{
+  "CF-001": {
+    "name": "Cà phê Robusta nguyên hạt 500g",
+    "category": "cà phê",
+    "aliases": [
+      "cafe robusta",
+      "cà phê Robusta",
+      "cà phê hạt robusta",
+      "robusta",
+      "robusta 500g"
+    ]
+  },
+  "CF-002": {
+    "name": "Cà phê Arabica Cầu Đất 500g",
+    "category": "cà phê",
+    "aliases": [
+      "arabica",
+      "arabica cầu đất",
+      "cafe arabica",
+      "cà phê Arabica Cầu Đất",
+      "cà phê cầu đất"
+    ]
+  },
+  "TR-001": {
+    "name": "Trà Shan Tuyết cổ thụ 200g",
+    "category": "trà",
+    "aliases": [
+      "shan tuyết",
+      "trà Shan Tuyết",
+      "trà shan tuyết cổ thụ"
+    ]
+  },
+  "TR-002": {
+    "name": "Trà Ô Long Tây Bắc 200g",
+    "category": "trà",
+    "aliases": [
+      "tra o long",
+      "trà Ô Long",
+      "trà ô long tây bắc",
+      "ô long"
+    ]
+  },
+  "HN-001": {
+    "name": "Hạt điều rang muối 500g",
+    "category": "hạt",
+    "aliases": [
+      "hạt điều",
+      "hạt điều rang muối",
+      "điều rang muối"
+    ]
+  },
+  "HN-002": {
+    "name": "Hạt mắc ca 500g",
+    "category": "hạt",
+    "aliases": [
+      "hạt mắc ca",
+      "macadamia",
+      "mắc ca"
+    ]
+  },
+  "DS-001": {
+    "name": "Mật ong hoa rừng Tây Bắc 500ml",
+    "category": "đặc sản",
+    "aliases": [
+      "mật ong",
+      "mật ong hoa rừng",
+      "mật ong hoa rừng tây bắc",
+      "mật ong tây bắc"
+    ]
+  },
+  "DS-002": {
+    "name": "Măng khô Tây Bắc 500g",
+    "category": "đặc sản",
+    "aliases": [
+      "măng khô",
+      "măng khô Tây Bắc",
+      "măng tây bắc"
+    ]
+  },
+  "QT-001": {
+    "name": "Hộp Quà Tết Nông Sản Việt",
+    "category": "quà tặng",
+    "aliases": [
+      "hộp quà Tết",
+      "hộp quà nông sản",
+      "hộp quà tết",
+      "quà tết"
+    ]
+  },
+  "QT-002": {
+    "name": "Quà doanh nghiệp Premium",
+    "category": "quà tặng",
+    "aliases": [
+      "bộ quà doanh nghiệp",
+      "quà doanh nghiệp",
+      "quà premium"
+    ]
+  },
+  "LG-SP001": {
+    "name": "Hộp Quà Tết Cao Cấp LifeGift 2026",
+    "category": "quà tặng",
+    "aliases": [
+      "hộp quà Tết cao cấp",
+      "hộp quà lifegift",
+      "hộp quà tết cao cấp",
+      "quà tết lifegift"
+    ]
+  }
+}
