@@ -235,19 +235,22 @@ export class ProductHandler {
   }
 
   private static async getProductDetails(entities: ResolvedEntities): Promise<ChatResponsePayload> {
-    if (entities.productId) {
-      const product = await prisma.products.findUnique({
-        where: { id: BigInt(entities.productId) },
-      });
+  // 1. Nếu có productId cụ thể
+  if (entities.productId) {
+    const product = await prisma.products.findUnique({
+      where: { id: BigInt(entities.productId) },
+    });
 
-      if (product) {
-        return {
-          replyMessage: `Thông tin chi tiết ${product.name}: ${product.description || 'Sản phẩm chất lượng cao.'}`,
-          data: [product],
-        };
-      }
+    if (product) {
+      return {
+        replyMessage: `Thông tin chi tiết ${product.name}: ${product.description || 'Sản phẩm chất lượng cao.'}`,
+        data: [product],
+      };
     }
+  }
 
+  // 2. Nếu tìm theo Danh mục (categoryId) hoặc Thương hiệu (brandId)
+  if (entities.categoryId || entities.brandId) {
     const products = await prisma.products.findMany({
       where: {
         ...(entities.categoryId && { category_id: BigInt(entities.categoryId) }),
@@ -256,13 +259,26 @@ export class ProductHandler {
       take: 5,
     });
 
-    return {
-      replyMessage: products.length > 0
-        ? 'Dưới đây là danh sách sản phẩm thuộc nhóm bạn yêu cầu:'
-        : 'Dưới đây là thông tin danh sách sản phẩm nổi bật:',
-      data: products,
-    };
+    if (products.length > 0) {
+      return {
+        replyMessage: 'Dưới đây là danh sách sản phẩm thuộc nhóm bạn yêu cầu:',
+        data: products,
+      };
+    }
   }
+
+  // 3. FALLBACK: Nếu không có entity nào khớp (như câu "tôi muốn bỏng ngô")
+  // Lấy các sản phẩm nổi bật (is_featured: true) để làm gợi ý
+  const featuredProducts = await prisma.products.findMany({
+    where: { is_featured: true },
+    take: 5,
+  });
+
+  return {
+    replyMessage: 'Rất tiếc, shop chưa có sản phẩm bạn tìm kiếm. Bạn có thể tham khảo một số sản phẩm nổi bật bên dưới nhé:',
+    data: featuredProducts,
+  };
+}
 
   private static async compareProducts(entities: ResolvedEntities): Promise<ChatResponsePayload> {
     const products = await prisma.products.findMany({ take: 2 });

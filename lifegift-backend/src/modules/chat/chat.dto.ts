@@ -7,10 +7,18 @@ export interface ResolvedEntities {
   extractedPrice?: number | null;
   orderId?: string | null;
   phone?: string | null;
-  [key: string]: any; // Thêm dòng này để linh hoạt nhận dữ liệu từ AliasResolver
+
+  // --- Bổ sung các entity mới ---
+  quantity?: number | null;
+  paymentMethod?: 'COD' | 'VNPAY' | 'MOMO' | null;
+  receiverName?: string | null;
+  address?: string | null;
+  
+  [key: string]: any;
 }
 
 export interface ChatResponsePayload {
   replyMessage: string;
   data?: any;
+  nextStep?: string; // Dùng để quản lý luồng trạng thái (State) ở Frontend nếu cần
 }
