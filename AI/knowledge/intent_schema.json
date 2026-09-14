@@ -20,5 +20,6 @@
   "chinh_sach_doi_tra": "Hỏi đổi trả/đồng kiểm",
   "tra_cuu_don_hang": "Tra cứu trạng thái đơn hàng",
   "huy_don_hang": "Yêu cầu hủy đơn",
-  "khong_hieu": "Không xác định/ngoài phạm vi"
+  "khong_hieu": "Không xác định/ngoài phạm vi",
+  "xoa_tat_ca_gio_hang": "Xóa toàn bộ sản phẩm trong giỏ hàng"
 }

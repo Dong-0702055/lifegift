@@ -1,0 +1,96 @@
+import redis from '../../../config/redisClient'; // Đường dẫn tới file khởi tạo Redis client của bạn
+
+export interface ConversationState {
+  lastIntent?: string;
+  productId?: number;
+  productName?: string;
+  categoryId?: number;
+  brandId?: number;
+  orderId?: number;
+  quantity?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  address?: string;
+  receiverName?: string;
+  receiverPhone?: string;
+  paymentMethod?: string;
+  checkoutStep?: 'NONE' | 'CART' | 'ADDRESS' | 'PAYMENT' | 'CONFIRMATION';
+  mentionedProducts?: Array<{ productId: number; name: string }>;
+  extractedPrice?: number;
+  couponCode?: string;
+  checkoutCompleted?: boolean;
+}
+
+export class ConversationContextService {
+  private static getKey(sessionId: string): string {
+    return `chat:state:${sessionId}`;
+  }
+
+  static async getState(sessionId: string): Promise<ConversationState> {
+    try {
+      const raw = await redis.get(this.getKey(sessionId));
+      return raw ? JSON.parse(raw) : {};
+    } catch (err) {
+      console.error('Lỗi khi lấy ConversationState từ Redis:', err);
+      return {};
+    }
+  }
+
+  static async saveState(sessionId: string, state: ConversationState): Promise<void> {
+    try {
+      await redis.set(
+        this.getKey(sessionId),
+        JSON.stringify(state),
+        'EX',
+        30 * 60 // Tự động xóa trạng thái sau 30 phút không tương tác
+      );
+    } catch (err) {
+      console.error('Lỗi khi lưu ConversationState vào Redis:', err);
+    }
+  }
+
+  static async updateState(
+    sessionId: string, 
+    intent: string, 
+    entities: Record<string, any>
+  ): Promise<ConversationState> {
+    const currentState = await this.getState(sessionId);
+
+    const rememberedFields = [
+      'productId', 'productName', 'categoryId', 'brandId', 'orderId',
+      'quantity', 'minPrice', 'maxPrice', 'extractedPrice', 'address',
+      'receiverName', 'receiverPhone', 'paymentMethod', 'couponCode', 'checkoutStep', 'mentionedProducts',
+    ];
+    const updatedState: ConversationState = { ...currentState, lastIntent: intent };
+
+    for (const field of rememberedFields) {
+      const value = entities[field];
+      if (value !== undefined && value !== null && value !== '') {
+        (updatedState as any)[field] = value;
+      }
+    }
+
+    if (intent === 'huy_checkout' || entities.checkoutCompleted) {
+      delete updatedState.checkoutStep;
+      delete updatedState.quantity;
+      delete updatedState.couponCode;
+      delete updatedState.productId;
+      delete updatedState.productName;
+      delete updatedState.address;
+      delete updatedState.receiverName;
+      delete updatedState.receiverPhone;
+      delete updatedState.paymentMethod;
+    }
+
+    await this.saveState(sessionId, updatedState);
+    return updatedState;
+  }
+
+  static async clearState(sessionId: string): Promise<void> {
+    try {
+      await redis.del(this.getKey(sessionId));
+    } catch (err) {
+      console.error('Lỗi khi xóa ConversationState:', err);
+    }
+  }
+}

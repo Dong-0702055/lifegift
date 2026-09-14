@@ -205,12 +205,15 @@ export class CartService {
     return this.toCartResponse(updatedCart);
   }
 
-  public static async clearCart(userId: number): Promise<void> {
+  public static async clearCart(userId: number): Promise<CartResponse> {
     const cart = await prisma.carts.findFirst({ where: { user_id: BigInt(userId) } });
     if (!cart) throw new Error('Giỏ hàng không tồn tại');
 
     await prisma.cart_items.deleteMany({
       where: { cart_id: cart.id },
     });
+
+    const updatedCart = await this.findOrCreateCart(userId);
+    return this.toCartResponse(updatedCart);
   }
 }

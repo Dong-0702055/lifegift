@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { ChatService } from '../services/chat.service';
+import { RedisChatService } from '../redisChat.service';
 
 export class ChatController {
   public static async handleChat(req: Request, res: Response, next: NextFunction) {
@@ -11,8 +12,7 @@ export class ChatController {
         return res.status(400).json({ error: 'Message là bắt buộc và phải là chuỗi.' });
       }
 
-      // 1. Lấy userId từ JWT Bearer Token trong Header
-      let userId: number | undefined = undefined;
+      let userIdNum: number | undefined = undefined;
       const authHeader = req.headers.authorization;
 
       if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -21,21 +21,31 @@ export class ChatController {
           const secretKey = process.env.JWT_SECRET || 'your_default_jwt_secret';
           const decoded = jwt.verify(token, secretKey) as { id?: number; userId?: number; sub?: number };
           
-          // Trích xuất ID người dùng tùy thuộc vào cách bạn payload token khi login
-          userId = decoded.id || decoded.userId || (decoded.sub ? Number(decoded.sub) : undefined);
+          userIdNum = decoded.id || decoded.userId || (decoded.sub ? Number(decoded.sub) : undefined);
         } catch (jwtError) {
-          // Token hết hạn hoặc không hợp lệ -> để userId = undefined
           console.warn('JWT Verification Warning:', (jwtError as Error).message);
         }
       }
 
-      // 2. Nếu không có Token, fallback lấy userId từ req.user (nếu dùng Passport middleware) hoặc req.body
-      if (!userId) {
-        userId = (req as any).user?.id || req.body.userId;
+      if (!userIdNum) {
+        const rawId = (req as any).user?.id || req.body.userId;
+        userIdNum = rawId ? Number(rawId) : undefined;
       }
 
-      // 3. Truyền message và userId đã giải mã vào ChatService
-      const result = await ChatService.processMessage(message, userId);
+      const targetSessionId = userIdNum ? String(userIdNum) : (req.body.sessionId || 'guest_session');
+      const history = await RedisChatService.getHistory(targetSessionId);
+
+      const result = await ChatService.processMessage(message, userIdNum, history);
+
+      const replyMessage = result.response || result.replyMessage || result.message || '';
+      
+      // Lấy danh sách sản phẩm trả về từ result (nếu có)
+      const productsToStore = Array.isArray(result.products) ? result.products : (result.products?.products || []);
+
+      if (replyMessage) {
+        await RedisChatService.saveMessage(targetSessionId, 'user', message);
+        await RedisChatService.saveMessage(targetSessionId, 'assistant', replyMessage, productsToStore);
+      }
 
       return res.status(200).json(result);
     } catch (error) {

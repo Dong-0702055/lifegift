@@ -18,6 +18,11 @@ import { Type } from 'class-transformer';
 
 import { PaymentRequestDto, PaymentResponse } from '../payment/payment.dto';
 
+export interface OrderItemRequest {
+  productId: number | string;
+  quantity: number;
+}
+
 export enum OrderStatus {
   PENDING = 'PENDING',
   CONFIRMED = 'CONFIRMED',
@@ -92,9 +97,13 @@ export class CreateOrderRequestDto {
   @MaxLength(500, { message: 'Ghi chú tối đa 500 ký tự' })
   note?: string;
 
+  @IsOptional()
   @ArrayNotEmpty({ message: 'Đơn hàng phải có ít nhất một sản phẩm' })
   @IsInt({ each: true, message: 'cartItemIds phải là danh sách các số nguyên' })
-  cartItemIds!: number[];
+  cartItemIds?: number[];
+
+  @IsOptional()
+  items?: OrderItemRequest[];
 }
 
 export class UpdateOrderStatusDto {

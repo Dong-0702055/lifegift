@@ -150,6 +150,8 @@ export interface ProductResponse {
   status: string;
   isFeatured: boolean;
   images: ProductImageResponse[];
+  totalStockQuantity: number;
+  totalAvailableQuantity: number;
   createdAt: Date;
   updatedAt: Date;
 }

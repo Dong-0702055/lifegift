@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>LifeGift AI Chat & Auth</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+  <!-- 1. MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ -->
+  <div id="auth-screen" class="auth-container">
+    <div class="auth-header">
+      <h2 id="auth-title">Đăng Nhập</h2>
+      <p id="auth-sub">Chào mừng bạn trở lại với LifeGift AI</p>
+    </div>
+
+    <div id="auth-error" class="error-msg"></div>
+
+    <form id="auth-form" novalidate>
+      <div class="form-group hidden" id="group-name">
+        <label for="fullName">Họ và tên</label>
+        <input type="text" id="fullName" placeholder="Nguyễn Văn A">
+      </div>
+      <div class="form-group hidden" id="group-phone">
+        <label for="phone">Số điện thoại</label>
+        <input type="text" id="phone" placeholder="0912345678">
+      </div>
+      <div class="form-group">
+        <label for="username">Tên đăng nhập</label>
+        <input type="text" id="username" required placeholder="Nhập tên đăng nhập...">
+      </div>
+      <div class="form-group">
+        <label for="password">Mật khẩu</label>
+        <input type="password" id="password" required placeholder="••••••••">
+      </div>
+
+      <button type="submit" id="btn-submit-auth" class="btn-auth">Đăng Nhập</button>
+    </form>
+
+    <div class="auth-toggle">
+      <span id="toggle-text">Chưa có tài khoản?</span>
+      <a id="toggle-btn">Đăng ký ngay</a>
+    </div>
+  </div>
+
+  <!-- 2. MÀN HÌNH CHAT AI -->
+  <div id="chat-screen" class="shell hidden">
+    <header>
+      <div class="brand">
+        <div class="mark">L</div>
+        <div>
+          <h1>LifeGift AI</h1>
+          <p class="subtitle">Trợ lý chọn nông sản & quản lý giỏ hàng</p>
+        </div>
+      </div>
+      <div class="user-profile">
+        <span id="user-display">Xin chào!</span>
+        <button id="btn-cart" class="btn-cart" type="button">Giỏ hàng <span id="cart-count">0</span></button>
+        <button id="btn-logout" class="btn-logout">Đăng xuất</button>
+      </div>
+    </header>
+
+    <main id="main-chat">
+      <section class="welcome" id="welcome">
+        <h2>Xin chào bạn!</h2>
+        <p>Mình là LifeGift AI. Bạn đang cần tìm sản phẩm, xem giỏ hàng hay muốn đặt mua hàng?</p>
+      </section>
+      <section class="messages" id="messages" aria-live="polite"></section>
+    </main>
+
+    <form id="chat-form">
+      <div class="composer-row">
+        <textarea id="message" rows="1" placeholder="Nhập câu hỏi hoặc yêu cầu mua hàng..." aria-label="Tin nhắn"></textarea>
+        <button type="submit" id="send">Gửi</button>
+      </div>
+    </form>
+  </div>
+
+  <aside id="cart-panel" class="cart-panel hidden" aria-label="Giỏ hàng">
+    <div class="cart-panel-header">
+      <div><span class="eyebrow">Đơn hàng</span><h2>Giỏ hàng của bạn</h2></div>
+      <button id="cart-close" class="icon-button" type="button" aria-label="Đóng giỏ hàng">&times;</button>
+    </div>
+    <div id="cart-items" class="cart-items"></div>
+    <div class="cart-panel-footer">
+      <div class="cart-total"><span>Tạm tính</span><strong id="cart-subtotal">0đ</strong></div>
+      <button id="checkout-btn" class="primary-button" type="button">Thanh toán sản phẩm đã chọn</button>
+    </div>
+  </aside>
+
+  <div id="checkout-modal" class="modal-overlay hidden">
+    <div class="checkout-modal modal-content">
+      <button class="modal-close" id="checkout-close" type="button" aria-label="Đóng">&times;</button>
+      <div class="checkout-heading"><span class="eyebrow">Bước cuối</span><h2>Thông tin nhận hàng</h2><p>Điền biểu mẫu để đặt hàng chính xác.</p></div>
+      <form id="checkout-form" class="checkout-form" novalidate>
+        <div class="checkout-grid">
+          <label>Họ và tên<input id="checkout-name" required maxlength="150" autocomplete="name"></label>
+          <label>Số điện thoại<input id="checkout-phone" required maxlength="20" inputmode="tel" autocomplete="tel"></label>
+          <label>Tỉnh / Thành phố<input id="checkout-province" required maxlength="100" autocomplete="address-level1"></label>
+          <label>Quận / Huyện<input id="checkout-district" maxlength="100" autocomplete="address-level2"></label>
+          <label>Phường / Xã<input id="checkout-ward" maxlength="100" autocomplete="address-level3"></label>
+          <label>Địa chỉ chi tiết<input id="checkout-address" required maxlength="255" autocomplete="street-address"></label>
+          <label class="full-width">Mã giảm giá<div class="coupon-row"><input id="checkout-coupon" maxlength="80" placeholder="Nhập mã nếu có"><button id="apply-coupon" type="button" class="secondary-button">Áp dụng</button></div><small id="coupon-message"></small></label>
+          <label class="full-width">Phương thức thanh toán<select id="checkout-payment" required><option value="COD">Thanh toán khi nhận hàng</option><option value="BANK_TRANSFER">Chuyển khoản</option><option value="MOMO">MoMo</option><option value="VNPAY">VNPay</option></select></label>
+          <label class="full-width">Ghi chú<textarea id="checkout-note" maxlength="500" rows="2" placeholder="Ghi chú cho đơn hàng (không bắt buộc)"></textarea></label>
+        </div>
+        <div id="checkout-summary" class="checkout-summary"></div>
+        <div id="checkout-error" class="error-msg"></div>
+        <button id="place-order" class="primary-button" type="submit">Đặt hàng</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. MODAL XEM CHI TIẾT SẢN PHẨM -->
+  <div id="product-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close-btn">&times;</button>
+      <div class="modal-body">
+        <img id="modal-img" src="" alt="Hình sản phẩm" referrerpolicy="no-referrer">
+        <div>
+          <span id="modal-brand" class="product-brand">THƯƠNG HIỆU</span>
+          <h3 id="modal-title" class="modal-title">Tên sản phẩm</h3>
+        </div>
+        <div class="modal-meta">
+          <span id="modal-price" class="product-price" style="font-size: 18px;">0đ</span>
+          <span id="modal-stock" class="product-stock">Kho: 0</span>
+        </div>
+        <div>
+          <strong style="display: block; margin-bottom: 6px; font-size: 14px;">Giới thiệu sản phẩm:</strong>
+          <div id="modal-desc" class="modal-desc">Mô tả sản phẩm sẽ hiển thị tại đây...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import JavaScript Files -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/modal.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

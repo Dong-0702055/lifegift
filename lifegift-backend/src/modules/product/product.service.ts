@@ -7,6 +7,14 @@ const getVietNamDateTime = () => {
 };
 
 export class ProductService {
+  // Đối tượng include chuẩn dùng chung cho tất cả truy vấn
+  private static readonly defaultIncludes = {
+    categories: true,
+    brands: true,
+    product_images: { orderBy: { sort_order: 'asc' as const } },
+    inventories: true, // Bổ sung include inventories
+  };
+
   private static mapToResponse(product: any): ProductResponse {
     const images = (product.product_images || []).map((img: any) => ({
       id: img.id.toString(),
@@ -14,6 +22,18 @@ export class ProductService {
       isPrimary: img.is_primary,
       sortOrder: img.sort_order,
     }));
+
+    // Tính tổng số lượng tồn kho từ tất cả các kho
+    const totalStockQuantity = (product.inventories || []).reduce(
+      (sum: number, inv: any) => sum + (inv.quantity || 0),
+      0
+    );
+
+    // Tính tổng số lượng thực tế có thể bán (chưa bị khóa/giữ) từ tất cả các kho
+    const totalAvailableQuantity = (product.inventories || []).reduce(
+      (sum: number, inv: any) => sum + (inv.available_quantity ?? Math.max((inv.quantity || 0) - (inv.reserved_quantity || 0), 0)),
+      0
+    );
 
     return {
       id: product.id.toString(),
@@ -35,6 +55,11 @@ export class ProductService {
       stockStatus: product.stock_status,
       status: product.status,
       isFeatured: product.is_featured,
+      
+      // Bổ sung 2 trường tổng số lượng vào response
+      totalStockQuantity,
+      totalAvailableQuantity,
+
       images,
       createdAt: product.created_at,
       updatedAt: product.updated_at,
@@ -45,11 +70,7 @@ export class ProductService {
   public static async getActiveProducts(): Promise<ProductResponse[]> {
     const products = await prisma.products.findMany({
       where: { status: ProductStatus.ACTIVE },
-      include: {
-        categories: true,
-        brands: true,
-        product_images: { orderBy: { sort_order: 'asc' } },
-      },
+      include: this.defaultIncludes,
       orderBy: { name: 'asc' },
     });
     return products.map((p) => this.mapToResponse(p));
@@ -59,11 +80,7 @@ export class ProductService {
   public static async getById(id: number): Promise<ProductResponse> {
     const product = await prisma.products.findUnique({
       where: { id },
-      include: {
-        categories: true,
-        brands: true,
-        product_images: { orderBy: { sort_order: 'asc' } },
-      },
+      include: this.defaultIncludes,
     });
     if (!product) throw new Error('Không tìm thấy sản phẩm');
     return this.mapToResponse(product);
@@ -132,11 +149,7 @@ export class ProductService {
           create: imageCreates,
         },
       },
-      include: {
-        categories: true,
-        brands: true,
-        product_images: { orderBy: { sort_order: 'asc' } },
-      },
+      include: this.defaultIncludes,
     });
 
     return this.mapToResponse(created);
@@ -215,11 +228,7 @@ export class ProductService {
             create: imageCreates,
           },
         },
-        include: {
-          categories: true,
-          brands: true,
-          product_images: { orderBy: { sort_order: 'asc' } },
-        },
+        include: this.defaultIncludes,
       });
     });
 
@@ -253,6 +262,7 @@ export class ProductService {
       },
     });
   }
+
   // 7. Lấy danh sách sản phẩm theo Category (chỉ lấy ACTIVE)
   public static async getByCategoryId(categoryId: number): Promise<ProductResponse[]> {
     const products = await prisma.products.findMany({
@@ -260,11 +270,7 @@ export class ProductService {
         category_id: BigInt(categoryId),
         status: ProductStatus.ACTIVE,
       },
-      include: {
-        categories: true,
-        brands: true,
-        product_images: { orderBy: { sort_order: 'asc' } },
-      },
+      include: this.defaultIncludes,
       orderBy: { created_at: 'desc' },
     });
     return products.map((p) => this.mapToResponse(p));
@@ -277,11 +283,7 @@ export class ProductService {
         brand_id: BigInt(brandId),
         status: ProductStatus.ACTIVE,
       },
-      include: {
-        categories: true,
-        brands: true,
-        product_images: { orderBy: { sort_order: 'asc' } },
-      },
+      include: this.defaultIncludes,
       orderBy: { created_at: 'desc' },
     });
     return products.map((p) => this.mapToResponse(p));

@@ -12,6 +12,7 @@ export interface ResolvedEntities {
   quantity?: number | null;
   paymentMethod?: 'COD' | 'VNPAY' | 'MOMO' | null;
   receiverName?: string | null;
+  receiverPhone?: string | null;
   address?: string | null;
   
   [key: string]: any;

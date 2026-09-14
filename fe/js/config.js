@@ -1,0 +1,13 @@
+const API_BASE = 'http://localhost:8080/api';
+const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format&fit=crop';
+
+function getProductImage(product) {
+  if (Array.isArray(product.images) && product.images.length > 0) {
+    return product.images[0].trim();
+  }
+  const url = product.image || product.imageUrl || product.img || product.thumbnail || product.photo || '';
+  if (!url || typeof url !== 'string' || url.trim() === '') {
+    return DEFAULT_IMAGE;
+  }
+  return url.trim();
+}

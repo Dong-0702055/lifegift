@@ -1,9 +1,14 @@
+// src/services/chat/chat.service.ts
 import { AliasResolverService } from './aliasResolver.service';
+import { ConversationContextService } from '../context/conversationContext.service';
+import { ContextResolver } from '../context/contextResolver';
+
 import { ProductHandler } from './intentHandlers/product.handler';
 import { OrderHandler } from './intentHandlers/order.handler';
 import { CartHandler } from './intentHandlers/cart.handler';
 import { PolicyHandler } from './intentHandlers/policy.handler';
 import { ConverseHandler } from './intentHandlers/converse.handler';
+import { ChatMessageItem } from '../redisChat.service';
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:5000';
 
@@ -14,7 +19,21 @@ const serializeData = (data: any) => {
 };
 
 export class ChatService {
-  public static async processMessage(message: string, userId?: number) {
+  public static async processMessage(
+    message: string, 
+    userId?: number, 
+    history: ChatMessageItem[] = [],
+    sessionId?: string
+  ) {
+    // 0. Khởi tạo Session ID để lưu State vào Redis
+    // Dùng cùng session key với ChatController/RedisChatService để state và history
+    // luôn thuộc về cùng một cuộc trò chuyện.
+    const targetSessionId = sessionId || (userId ? String(userId) : 'guest_session');
+
+    // 1. Lấy State hội thoại cũ từ Redis
+    const previousState = await ConversationContextService.getState(targetSessionId);
+
+    // 2. Dự đoán Intent qua PhoBERT AI Service
     let intent = 'fallback';
     let confidence = 0;
 
@@ -22,7 +41,10 @@ export class ChatService {
       const aiRes = await fetch(`${AI_SERVICE_URL}/predict-intent`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: message }),
+        body: JSON.stringify({ 
+          text: message,
+          history: history 
+        }),
       });
 
       if (aiRes.ok) {
@@ -34,52 +56,67 @@ export class ChatService {
       console.error('Lỗi kết nối AI Service:', err);
     }
 
-    const entities = await AliasResolverService.resolveEntities(message);
+    // 3. Trích xuất Entity mới từ câu nói hiện tại
+    const currentEntities = await AliasResolverService.resolveEntities(message);
 
-    // 1. Nhóm Intent Sản phẩm
+    // 4. MERGE CONTEXT: Kết hợp State cũ + Entity mới thành Final Entities
+    const finalEntities = ContextResolver.resolve(
+      previousState, 
+      currentEntities, 
+      intent, 
+      message
+    );
+
+    // 5. Khai báo các nhóm Intent
     const productIntents = [
       'kiem_tra_ton_kho', 'tim_kiem_san_pham', 'tim_san_pham_theo_gia',
       'goi_y_san_pham', 'chi_tiet_san_pham', 'so_sanh_san_pham',
       'hoi_gia', 'hoi_khoi_luong', 'hoi_don_vi', 'hoi_thuong_hieu', 'hoi_nguon_goc'
     ];
 
-    // 2. Nhóm Intent Giỏ hàng (Đã cập nhật đủ)
     const cartIntents = [
       'them_gio_hang', 'them_vao_gio_hang', 'xem_gio_hang', 
-      'cap_nhat_gio_hang', 'xoa_khoi_gio_hang'
+      'cap_nhat_gio_hang', 'xoa_khoi_gio_hang', 'xoa_tat_ca_gio_hang'
     ];
 
-    // 3. Nhóm Intent Đặt hàng & Đơn hàng (Đã bổ sung huy_checkout)
     const orderIntents = [
       'tra_cuu_don_hang', 'huy_don_hang', 
-      'bat_dau_dat_hang', 'nhap_dia_chi_giao_hang', 
+      'bat_dau_dat_hang', 'thanh_toan_don_hang', 'dat_hang',
+      'nhap_dia_chi_giao_hang', 
       'chon_phuong_thuc_thanh_toan', 'xac_nhan_dat_hang', 'huy_checkout'
     ];
 
-    // 4. Nhóm Intent Chính sách
     const policyIntents = [
       'hoi_phi_ship', 'thoi_gian_giao_hang', 'dia_chi_cua_hang',
       'chinh_sach_doi_tra', 'phuong_thuc_thanh_toan', 'khuyen_mai'
     ];
 
-    let responsePayload;
+    // 6. Điều hướng đến Handler tương ứng (Truyền finalEntities)
+    let responsePayload: any;
 
     if (productIntents.includes(intent)) {
-      responsePayload = await ProductHandler.handle(intent, entities);
+      responsePayload = await ProductHandler.handle(intent, finalEntities);
     } else if (cartIntents.includes(intent)) {
-      responsePayload = await CartHandler.handle(intent, entities, userId);
+      responsePayload = await CartHandler.handle(intent, finalEntities, userId, message, history);
     } else if (orderIntents.includes(intent)) {
-      responsePayload = await OrderHandler.handle(intent, entities, userId);
+      responsePayload = await OrderHandler.handle(intent, finalEntities, userId, message);
     } else if (policyIntents.includes(intent)) {
       responsePayload = PolicyHandler.handle(intent);
     } else {
       responsePayload = ConverseHandler.handle(intent);
     }
 
+    // 7. Lưu / Cập nhật Conversation State mới nhất vào Redis
+    const stateEntities = { ...finalEntities };
+    if (responsePayload.nextStep === 'COMPLETED') {
+      stateEntities.checkoutCompleted = true;
+    }
+    await ConversationContextService.updateState(targetSessionId, intent, stateEntities);
+
     return serializeData({
       message,
       intent: { name: intent, confidence },
-      entities,
+      entities: finalEntities,
       products: responsePayload.data || [],
       response: responsePayload.replyMessage,
     });

@@ -1,6 +1,7 @@
 import prisma from '../../config/database';
 import {
   CreateOrderRequestDto,
+  OrderItemRequest,
   OrderResponse,
   OrderItemResponse,
   OrderStatus,
@@ -81,8 +82,23 @@ export class OrderService {
   }
 
   public static async create(userId: number, request: CreateOrderRequestDto): Promise<OrderResponse> {
-    if (!request.cartItemIds || request.cartItemIds.length === 0) {
-      throw new Error('Phải chọn ít nhất một sản phẩm để checkout');
+    let requestedItems: OrderItemRequest[] = request.items || [];
+    const selectedCartItemIds = request.cartItemIds?.map(Number) || [];
+
+    // Giữ tương thích với API cũ: chuyển cartItemIds thành danh sách sản phẩm.
+    if (requestedItems.length === 0 && selectedCartItemIds.length) {
+      const cart = await prisma.carts.findFirst({
+        where: { user_id: BigInt(userId) },
+        include: { cart_items: true },
+      });
+      const cartItemIdSet = new Set(selectedCartItemIds);
+      requestedItems = (cart?.cart_items || [])
+        .filter((item) => cartItemIdSet.has(Number(item.id)))
+        .map((item) => ({ productId: item.product_id.toString(), quantity: item.quantity }));
+    }
+
+    if (requestedItems.length === 0) {
+      throw new Error('Phải chọn ít nhất một sản phẩm để tạo đơn hàng');
     }
 
     const uId = BigInt(userId);
@@ -92,33 +108,32 @@ export class OrderService {
       const warehouse = await tx.warehouses.findUnique({ where: { id: warehouseId } });
       if (!warehouse) throw new Error('Warehouse không tồn tại');
 
-      const cart = await tx.carts.findFirst({ where: { user_id: uId } });
-      if (!cart) throw new Error('Giỏ hàng không tồn tại');
-
-      const bigIntCartItemIds = request.cartItemIds.map((id) => BigInt(id));
-      const cartItems = await tx.cart_items.findMany({
-        where: { id: { in: bigIntCartItemIds }, cart_id: cart.id },
-        include: { products: true },
+      // Chuẩn bị danh sách ID sản phẩm
+      const productIds = requestedItems.map((item) => BigInt(item.productId));
+      const products = await tx.products.findMany({
+        where: { id: { in: [...new Set(productIds)] } },
       });
 
-      if (cartItems.length !== request.cartItemIds.length) {
-        throw new Error('Một hoặc nhiều sản phẩm không tồn tại trong giỏ hàng');
+      if (products.length !== new Set(productIds).size) {
+        throw new Error('Một hoặc nhiều sản phẩm không tồn tại trong hệ thống');
       }
 
       let subtotal = 0;
       const orderItemsData: any[] = [];
 
-      for (const cartItem of cartItems) {
-        const product = cartItem.products;
+      for (const itemReq of requestedItems) {
+        const product = products.find((p) => p.id === BigInt(itemReq.productId));
+
         if (!product || product.status !== 'ACTIVE') {
-          throw new Error(`Sản phẩm không còn hoạt động: ${product?.name || cartItem.product_id}`);
+          throw new Error(`Sản phẩm không tồn tại hoặc ngừng kinh doanh: ${product?.name || itemReq.productId}`);
         }
 
-        const quantity = cartItem.quantity;
+        const quantity = itemReq.quantity;
         if (!quantity || quantity <= 0) {
           throw new Error(`Số lượng sản phẩm không hợp lệ: ${product.name}`);
         }
 
+        // Kiểm tra tồn kho tại Warehouse
         const inventory = await tx.inventories.findFirst({
           where: { warehouse_id: warehouseId, product_id: product.id },
         });
@@ -134,6 +149,7 @@ export class OrderService {
           );
         }
 
+        // Giữ chỗ trong kho
         const currentReserved = inventory.reserved_quantity ?? 0;
         const currentTotal = inventory.quantity ?? 0;
         const updatedReserved = currentReserved + quantity;
@@ -248,7 +264,7 @@ export class OrderService {
         },
       });
 
-      // --- LƯU LỊCH SỬ SỬ DỤNG COUPON & CẬP NHẬT SO LƯỢNG DÙNG ---
+      // --- LƯU LỊCH SỬ SỬ DỤNG COUPON & CẬP NHẬT SỐ LƯỢNG DÙNG ---
       if (appliedCoupon) {
         await tx.coupon_usages.create({
           data: {
@@ -273,7 +289,7 @@ export class OrderService {
         data: {
           order_id: order.id,
           status: OrderStatus.PENDING as order_status_history_status,
-          note: 'Đơn hàng được tạo',
+          note: 'Đơn hàng được tạo trực tiếp qua AI',
           changed_by: uId,
           created_at: now,
         },
@@ -284,10 +300,23 @@ export class OrderService {
         await PaymentService.createForOrder(order, request.payment, tx);
       }
 
-      // Xóa các sản phẩm đã đặt khỏi giỏ hàng
-      await tx.cart_items.deleteMany({
-        where: { id: { in: bigIntCartItemIds } },
-      });
+      if (selectedCartItemIds.length > 0) {
+        const cart = await tx.carts.findFirst({ where: { user_id: uId } });
+        if (!cart) throw new Error('Giỏ hàng không tồn tại');
+
+        const selectedItems = await tx.cart_items.findMany({
+          where: { id: { in: selectedCartItemIds.map((id) => BigInt(id)) }, cart_id: cart.id },
+          select: { id: true },
+        });
+
+        if (selectedItems.length !== selectedCartItemIds.length) {
+          throw new Error('Một hoặc nhiều sản phẩm đã chọn không thuộc giỏ hàng của bạn');
+        }
+
+        await tx.cart_items.deleteMany({
+          where: { id: { in: selectedItems.map((item) => item.id) }, cart_id: cart.id },
+        });
+      }
 
       return order;
     });

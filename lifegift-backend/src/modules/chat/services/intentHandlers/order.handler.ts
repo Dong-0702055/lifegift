@@ -11,7 +11,8 @@ export class OrderHandler {
   public static async handle(
     intent: string,
     entities: ResolvedEntities,
-    userId?: number
+    userId?: number,
+    message?: string
   ): Promise<ChatResponsePayload> {
     if (!userId) {
       return { replyMessage: 'Bạn vui lòng đăng nhập để có thể tra cứu hoặc quản lý đơn hàng nhé!' };
@@ -19,14 +20,30 @@ export class OrderHandler {
 
     const rawOrderId = entities.orderId || (entities.extractedPrice ? String(entities.extractedPrice) : null);
 
+    const paymentMethod = entities.paymentMethod as PaymentMethod | undefined;
+    const receiverPhone = entities.receiverPhone || entities.phone || message?.match(/\b(0\d{9,10})\b/)?.[1];
+    const receiverName = entities.receiverName || message?.match(/(?:tên người nhận|tên)\s*(?:là|:)?\s*([\p{L} ]{2,80})/iu)?.[1]?.trim();
+    const address = entities.address;
+
+    const getMissingCheckoutInfo = (hasProduct: boolean): string[] => {
+      const missing: string[] = [];
+      if (!hasProduct) missing.push('sản phẩm và số lượng');
+      if (!receiverName) missing.push('tên người nhận');
+      if (!receiverPhone) missing.push('số điện thoại người nhận');
+      if (!address) missing.push('địa chỉ giao hàng');
+      if (!paymentMethod) missing.push('phương thức thanh toán');
+      return missing;
+    };
+
     try {
       switch (intent) {
         // gộp tất cả intent liên quan đến đặt hàng / thanh toán / checkout
         case 'bat_dau_dat_hang':
         case 'thanh_toan_don_hang':
         case 'dat_hang': {
-          let cart = await CartService.getMyCart(userId);
+          const cart = await CartService.getMyCart(userId);
           const quantity = entities.quantity && entities.quantity > 0 ? entities.quantity : 1;
+          let directProduct: any = null;
 
           // TRƯỜNG HỢP 1: Khách hàng chỉ định sản phẩm cụ thể (VD: "tôi muốn đặt 1 cafe cầu đất")
           if (entities.productId) {
@@ -34,36 +51,38 @@ export class OrderHandler {
             const prismaAny = prisma as any;
 
             // Kiểm tra sản phẩm có tồn tại không
-            const product = await (prismaAny.products?.findUnique({ where: { id: productId } }) ||
-              prismaAny.product?.findUnique({ where: { id: productId } }));
+            const product = await (prismaAny.products?.findUnique({ where: { id: BigInt(productId) } }) ||
+              prismaAny.product?.findUnique({ where: { id: BigInt(productId) } }));
 
-            if (!product) {
+            if (!product || product.status !== 'ACTIVE') {
               return { replyMessage: 'Sản phẩm này hiện không tồn tại hoặc đã ngừng kinh doanh.' };
             }
 
-            // Tự động thêm sản phẩm này vào giỏ hàng trước khi đặt hàng
-            await CartService.addItem(userId, {
-              productId,
-              quantity
-            });
-
-            // Lấy lại dữ liệu giỏ hàng mới nhất
-            cart = await CartService.getMyCart(userId);
+            // Đặt trực tiếp, không bắt buộc sản phẩm phải nằm trong giỏ hàng.
+            directProduct = { product, quantity };
           }
 
-          // TRƯỜNG HỢP 2: Giỏ hàng trống
-          if (!cart.items || cart.items.length === 0) {
+          if (!directProduct && (!cart.items || cart.items.length === 0)) {
             return { replyMessage: 'Giỏ hàng của bạn đang trống, vui lòng chọn sản phẩm trước khi đặt hàng.' };
           }
 
-          // Hiển thị thông tin đơn hàng và yêu cầu xác nhận
-          const itemsSummary = cart.items
-            .map((item: any, idx: number) => `  ${idx + 1}. ${item.productName} (SL: ${item.quantity})`)
-            .join('\n');
+          const itemsSummary = directProduct
+            ? `  1. ${directProduct.product.name} (SL: ${directProduct.quantity})`
+            : cart.items
+                .map((item: any, idx: number) => `  ${idx + 1}. ${item.productName} (SL: ${item.quantity})`)
+                .join('\n');
+          const subtotal = directProduct
+            ? (directProduct.product.sale_price || directProduct.product.price || 0) * directProduct.quantity
+            : cart.subtotal;
 
+          const missing = getMissingCheckoutInfo(Boolean(directProduct || cart.items?.length));
+          const nextMessage = missing.length
+            ? `Để tiếp tục, vui lòng cung cấp: ${missing.join(', ')}.`
+            : 'Thông tin đã đủ. Bạn hãy kiểm tra lại và gõ "Xác nhận đặt hàng" để hoàn tất.';
           return {
-            replyMessage: `🛒 **Đơn hàng của bạn bao gồm:**\n${itemsSummary}\n\n💰 **Tổng giá trị:** ${Number(cart.subtotal).toLocaleString('vi-VN')}đ.\n\nBạn có muốn xác nhận tạo đơn hàng ngay không? Vui lòng gõ **"Xác nhận đặt hàng"** để hoàn tất.`,
-            data: cart
+            replyMessage: `🛒 **Đơn hàng của bạn gồm:**\n${itemsSummary}\n\n💰 **Tạm tính:** ${Number(subtotal).toLocaleString('vi-VN')}đ.\n\n${nextMessage}`,
+            data: directProduct ? [directProduct.product] : cart,
+            nextStep: missing.length ? 'COLLECT_INFO' : 'CONFIRMATION'
           };
         }
 
@@ -130,14 +149,20 @@ export class OrderHandler {
         }
 
         case 'nhap_dia_chi_giao_hang': {
+          if (!address) {
+            return { replyMessage: 'Bạn vui lòng cung cấp địa chỉ giao hàng cụ thể nhé.' };
+          }
           return {
-            replyMessage: 'Đã ghi nhận yêu cầu cập nhật địa chỉ giao hàng. Bạn hãy tiếp tục chọn phương thức thanh toán hoặc gõ "Xác nhận đặt hàng" để hoàn tất nhé!'
+            replyMessage: `Đã ghi nhận địa chỉ giao hàng: ${address}. Bạn vui lòng cho biết tên và số điện thoại người nhận, cùng phương thức thanh toán (COD, chuyển khoản, MoMo hoặc VNPay).`
           };
         }
 
         case 'chon_phuong_thuc_thanh_toan': {
+          if (!paymentMethod) {
+            return { replyMessage: 'Bạn vui lòng chọn phương thức thanh toán: COD, chuyển khoản, MoMo hoặc VNPay.' };
+          }
           return {
-            replyMessage: 'Đã ghi nhận phương thức thanh toán của bạn. Hãy gõ "Xác nhận đặt hàng" để tiến hành tạo đơn hàng.'
+            replyMessage: `Đã ghi nhận thanh toán bằng ${paymentMethod}. Bạn hãy kiểm tra thông tin và gõ "Xác nhận đặt hàng" để hoàn tất.`
           };
         }
 
@@ -148,34 +173,46 @@ export class OrderHandler {
         }
 
         case 'xac_nhan_dat_hang': {
-          const cart = await CartService.getMyCart(userId);
-
-          if (!cart.items || cart.items.length === 0) {
-            return { replyMessage: 'Không có sản phẩm nào trong giỏ hàng để tạo đơn.' };
+          const directItems = entities.productId
+            ? [{
+                productId: Number(entities.productId),
+                quantity: entities.quantity && entities.quantity > 0 ? Number(entities.quantity) : 1,
+              }]
+            : undefined;
+          const cart = directItems ? null : await CartService.getMyCart(userId);
+          const missing = getMissingCheckoutInfo(Boolean(directItems || cart?.items?.length));
+          if (missing.length > 0) {
+            return {
+              replyMessage: `Chưa thể đặt hàng vì còn thiếu ${missing.join(', ')}. Bạn vui lòng cung cấp đủ thông tin rồi xác nhận lại nhé.`
+            };
           }
 
-          const cartItemIds = cart.items.map((item: any) => Number(item.id));
+          if (!directItems && (!cart?.items || cart.items.length === 0)) {
+            return { replyMessage: 'Bạn chưa chọn sản phẩm để tạo đơn hàng.' };
+          }
 
           const createdOrder = await OrderService.create(userId, {
             warehouseId: 1,
-            cartItemIds,
-            receiverName: 'Khách hàng',
-            receiverPhone: '0000000000',
+            items: directItems,
+            cartItemIds: cart?.items.map((item: any) => Number(item.id)),
+            receiverName: receiverName!,
+            receiverPhone: receiverPhone!,
             shippingProvince: 'Chưa cung cấp',
             shippingDistrict: 'Chưa cung cấp',
             shippingWard: 'Chưa cung cấp',
-            shippingAddress: entities.address || 'Chưa cung cấp',
+            shippingAddress: address!,
             shippingFee: 0,
             discountAmount: 0,
             couponCode: entities.couponCode || undefined,
             payment: {
-              paymentMethod: PaymentMethod.COD,
+              paymentMethod: paymentMethod!,
             }
           });
 
           return {
             replyMessage: `🎉 Bạn đã đặt hàng thành công! Mã đơn hàng của bạn là #${createdOrder.id} (${createdOrder.orderCode}).`,
-            data: createdOrder
+            data: createdOrder,
+            nextStep: 'COMPLETED'
           };
         }
 
