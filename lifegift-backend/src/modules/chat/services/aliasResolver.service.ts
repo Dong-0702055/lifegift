@@ -19,7 +19,9 @@ export class AliasResolverService {
 
     let matchedProductId: bigint | null = null;
     let matchedCategoryId: bigint | null = null;
+    const matchedCategoryIds: bigint[] = [];
     let matchedBrandId: bigint | null = null;
+    const matchedBrandIds: bigint[] = [];
 
     // 2. Khớp Product Alias (Ưu tiên alias dài nhất)
     const sortedProducts = productAliases.sort((a: any, b: any) => b.alias.length - a.alias.length);
@@ -34,31 +36,70 @@ export class AliasResolverService {
     const sortedCategories = categoryAliases.sort((a: any, b: any) => b.alias.length - a.alias.length);
     for (const item of sortedCategories) {
       if (normalizedText.includes(item.alias.toLowerCase())) {
-        matchedCategoryId = item.category_id ?? item.categoryId ?? null;
-        break;
+        const categoryId = item.category_id ?? item.categoryId ?? null;
+        if (categoryId !== null && !matchedCategoryIds.some((id) => id === categoryId)) {
+          matchedCategoryIds.push(categoryId);
+        }
       }
     }
+    matchedCategoryId = matchedCategoryIds[0] ?? null;
 
     // 4. Khớp Brand Alias
     const sortedBrands = brandAliases.sort((a: any, b: any) => b.alias.length - a.alias.length);
     for (const item of sortedBrands) {
       if (normalizedText.includes(item.alias.toLowerCase())) {
-        matchedBrandId = item.brand_id ?? item.brandId ?? null;
-        break;
+        const brandId = item.brand_id ?? item.brandId ?? null;
+        if (brandId !== null && !matchedBrandIds.some((id) => id === brandId)) {
+          matchedBrandIds.push(brandId);
+        }
       }
     }
+    matchedBrandId = matchedBrandIds[0] ?? null;
 
-    // 5. Bóc tách Giá tiền (Ưu tiên số có đơn vị tiền tệ rõ ràng: k, nghìn, tr, đ, vnd)
+    // 5. Bóc tách địa điểm xuất xứ, ưu tiên vùng lớn trước địa danh cụ thể
+    const originAliases = [
+      'tây nguyên', 'đắk lắk', 'dak lak', 'buôn ma thuột', 'đà lạt', 'cầu đất', 'lâm đồng',
+      'tây bắc', 'sơn la', 'hà giang', 'bình phước', 'điện biên', 'lai châu', 'lào cai',
+      'yên bái', 'hòa bình', 'gia lai', 'kon tum', 'đắk nông', 'hà nội',
+    ];
+    const knownOrigin = originAliases
+      .sort((a, b) => b.length - a.length)
+      .find((alias) => normalizedText.includes(alias)) || null;
+    const originPhraseMatch = normalizedText.match(
+      /(?:xuất xứ|nguồn gốc|đến từ|sản xuất tại|trồng tại|thu hoạch tại)\s+([^,.!?]+)/i
+    );
+    const origin = knownOrigin || originPhraseMatch?.[1]?.trim() || null;
+
+    // 6. Bóc tách giá và hướng lọc (trên, dưới hoặc một khoảng giá)
+    const pricePattern = '(\\d+(?:[.,]\\d+)?)\\s*(k|nghìn|ngan|tr|triệu|đ|vnd)\\b';
+    const parsePrice = (value: string, unit: string): number => {
+      let num = parseFloat(value.replace(',', '.'));
+      const normalizedUnit = unit.toLowerCase();
+      if (['k', 'nghìn', 'ngan'].includes(normalizedUnit)) num *= 1000;
+      if (['tr', 'triệu'].includes(normalizedUnit)) num *= 1000000;
+      return num;
+    };
+
     let extractedPrice: number | null = null;
-    const priceWithUnitRegex = /(\d+(?:\.\d+)?)\s*(k|nghìn|ngan|tr|triệu|đ|vnd)\b/i;
-    const priceMatch = normalizedText.match(priceWithUnitRegex);
+    let minPrice: number | null = null;
+    let maxPrice: number | null = null;
 
-    if (priceMatch) {
-      let num = parseFloat(priceMatch[1]);
-      const unit = priceMatch[2].toLowerCase();
-      if (['k', 'nghìn', 'ngan'].includes(unit)) num *= 1000;
-      if (['tr', 'triệu'].includes(unit)) num *= 1000000;
-      extractedPrice = num;
+    const rangeMatch = normalizedText.match(
+      new RegExp(`(?:từ\\s*)?${pricePattern}\\s*(?:đến|tới|-|–)\\s*${pricePattern}`, 'i')
+    );
+    if (rangeMatch) {
+      minPrice = parsePrice(rangeMatch[1], rangeMatch[2]);
+      maxPrice = parsePrice(rangeMatch[3], rangeMatch[4]);
+    } else {
+      const priceMatch = normalizedText.match(new RegExp(pricePattern, 'i'));
+      if (priceMatch) {
+        extractedPrice = parsePrice(priceMatch[1], priceMatch[2]);
+        const hasLowerBound = /(?:trên|hơn|từ|>=|tối thiểu|ít nhất|thấp nhất)/i.test(normalizedText);
+        const hasUpperBound = /(?:dưới|ít hơn|đến|<=|tối đa|cao nhất)/i.test(normalizedText);
+
+        if (hasLowerBound && !hasUpperBound) minPrice = extractedPrice;
+        if (hasUpperBound && !hasLowerBound) maxPrice = extractedPrice;
+      }
     }
 
     // 6. Bóc tách Số lượng (Quantity)
@@ -90,7 +131,12 @@ export class AliasResolverService {
     return {
       productId: matchedProductId,
       categoryId: matchedCategoryId,
+      categoryIds: matchedCategoryIds,
       brandId: matchedBrandId,
+      brandIds: matchedBrandIds,
+      origin,
+      minPrice,
+      maxPrice,
       extractedPrice: extractedPrice,
       quantity: quantity,
     };

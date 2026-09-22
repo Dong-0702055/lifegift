@@ -95,7 +95,14 @@ def main():
     prediction = trainer.predict(test_ds)
     preds = np.argmax(prediction.predictions[0] if isinstance(prediction.predictions, tuple) else prediction.predictions, axis=-1)
     
-    report = classification_report(prediction.label_ids, preds, target_names=labels, digits=4, zero_division=0)
+    report = classification_report(
+        prediction.label_ids,
+        preds,
+        labels=list(range(num_labels)),
+        target_names=labels,
+        digits=4,
+        zero_division=0,
+    )
     print("\nClassification Report:\n", report)
 
     # 6. Save Artifacts & Charts

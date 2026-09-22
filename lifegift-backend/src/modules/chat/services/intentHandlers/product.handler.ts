@@ -4,6 +4,25 @@ import { ResolvedEntities, ChatResponsePayload } from '../../chat.dto';
 const prisma = new PrismaClient();
 
 export class ProductHandler {
+  private static toBigIntIds(
+    primaryId: bigint | number | null | undefined,
+    ids: Array<bigint | number> | undefined
+  ): bigint[] {
+    const values = [...(ids || []), ...(primaryId !== null && primaryId !== undefined ? [primaryId] : [])];
+    return [...new Set(values.map((id) => BigInt(id)))];
+  }
+
+  private static getOriginKeywords(origin: string): string[] {
+    const normalizedOrigin = origin.toLowerCase();
+    if (normalizedOrigin === 'tây nguyên') {
+      return ['tây nguyên', 'đắk lắk', 'buôn ma thuột', 'đắk nông', 'gia lai', 'kon tum', 'lâm đồng', 'đà lạt', 'cầu đất'];
+    }
+    if (normalizedOrigin === 'tây bắc') {
+      return ['tây bắc', 'sơn la', 'điện biên', 'lai châu', 'lào cai', 'yên bái', 'hòa bình'];
+    }
+    return [origin];
+  }
+
   /**
    * Helper Mapper: Chuyển đổi dữ liệu Prisma (snake_case) sang định dạng Chuẩn DTO (camelCase)
    * và trích xuất hình ảnh, tên danh mục, tên thương hiệu, cùng số lượng tồn kho.
@@ -138,6 +157,8 @@ export class ProductHandler {
 
   private static async searchByPriceOrSuggest(entities: ResolvedEntities): Promise<ChatResponsePayload> {
     let priceQuery: any = {};
+    const categoryIds = this.toBigIntIds(entities.categoryId, entities.categoryIds);
+    const brandIds = this.toBigIntIds(entities.brandId, entities.brandIds);
 
     if ((entities.minPrice !== undefined && entities.minPrice !== null) || 
         (entities.maxPrice !== undefined && entities.maxPrice !== null)) {
@@ -155,8 +176,8 @@ export class ProductHandler {
     let products = await prisma.products.findMany({
       where: {
         ...(Object.keys(priceQuery).length > 0 && { price: priceQuery }),
-        ...(entities.categoryId && { category_id: BigInt(entities.categoryId) }),
-        ...(entities.brandId && { brand_id: BigInt(entities.brandId) }),
+        ...(categoryIds.length > 0 && { category_id: { in: categoryIds } }),
+        ...(brandIds.length > 0 && { brand_id: { in: brandIds } }),
       },
       include: this.defaultIncludes,
       take: 5,
@@ -170,11 +191,19 @@ export class ProductHandler {
     }
 
     const hasPriceFilter = Object.keys(priceQuery).length > 0;
+    const priceDescription = entities.minPrice !== null && entities.minPrice !== undefined
+      && entities.maxPrice !== null && entities.maxPrice !== undefined
+      ? 'trong khoảng giá bạn yêu cầu'
+      : entities.minPrice !== null && entities.minPrice !== undefined
+        ? `từ ${Number(entities.minPrice).toLocaleString('vi-VN')}đ trở lên`
+        : entities.maxPrice !== null && entities.maxPrice !== undefined
+          ? `không quá ${Number(entities.maxPrice).toLocaleString('vi-VN')}đ`
+          : 'phù hợp với khoảng giá của bạn';
 
     return {
       replyMessage: products.length > 0
         ? (hasPriceFilter 
-            ? 'Shop gợi ý các sản phẩm phù hợp với khoảng giá của bạn:' 
+            ? `Shop gợi ý các sản phẩm ${priceDescription}:`
             : 'Shop gợi ý các sản phẩm phù hợp cho nhu cầu của bạn ạ:')
         : 'Rất tiếc, hiện tại không tìm thấy sản phẩm phù hợp.',
       data: products.map((p) => this.formatProductResponse(p)),
@@ -233,6 +262,29 @@ export class ProductHandler {
           data: [this.formatProductResponse(product)],
         };
       }
+    }
+
+    if (entities.origin) {
+      const originKeywords = this.getOriginKeywords(entities.origin);
+      const products = await prisma.products.findMany({
+        where: {
+          OR: originKeywords.map((keyword) => ({ origin: { contains: keyword } })),
+        },
+        include: this.defaultIncludes,
+        take: 5,
+      });
+
+      if (products.length > 0) {
+        return {
+          replyMessage: `Các sản phẩm có xuất xứ từ ${entities.origin}:`,
+          data: products.map((p) => this.formatProductResponse(p)),
+        };
+      }
+
+      return {
+        replyMessage: `Hiện chưa tìm thấy sản phẩm có xuất xứ từ ${entities.origin}.`,
+        data: [],
+      };
     }
 
     return {
@@ -311,11 +363,14 @@ export class ProductHandler {
       }
     }
 
-    if (entities.categoryId || entities.brandId) {
+    const categoryIds = this.toBigIntIds(entities.categoryId, entities.categoryIds);
+    const brandIds = this.toBigIntIds(entities.brandId, entities.brandIds);
+
+    if (categoryIds.length > 0 || brandIds.length > 0) {
       const products = await prisma.products.findMany({
         where: {
-          ...(entities.categoryId && { category_id: BigInt(entities.categoryId) }),
-          ...(entities.brandId && { brand_id: BigInt(entities.brandId) }),
+          ...(categoryIds.length > 0 && { category_id: { in: categoryIds } }),
+          ...(brandIds.length > 0 && { brand_id: { in: brandIds } }),
         },
         include: this.defaultIncludes,
         take: 5,

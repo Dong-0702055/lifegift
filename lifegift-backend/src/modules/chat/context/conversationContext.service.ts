@@ -5,7 +5,10 @@ export interface ConversationState {
   productId?: number;
   productName?: string;
   categoryId?: number;
+  categoryIds?: number[];
   brandId?: number;
+  brandIds?: number[];
+  origin?: string;
   orderId?: number;
   quantity?: number;
   minPrice?: number;
@@ -57,7 +60,7 @@ export class ConversationContextService {
     const currentState = await this.getState(sessionId);
 
     const rememberedFields = [
-      'productId', 'productName', 'categoryId', 'brandId', 'orderId',
+      'productId', 'productName', 'categoryId', 'categoryIds', 'brandId', 'brandIds', 'origin', 'orderId',
       'quantity', 'minPrice', 'maxPrice', 'extractedPrice', 'address',
       'receiverName', 'receiverPhone', 'paymentMethod', 'couponCode', 'checkoutStep', 'mentionedProducts',
     ];

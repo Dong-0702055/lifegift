@@ -23,6 +23,7 @@
   "so_sanh_san_pham",
   "tam_biet",
   "thanh_toan_don_hang",
+  "thanh_toan_don_hàng",
   "them_vao_gio_hang",
   "thoi_gian_giao_hang",
   "tim_kiem_san_pham",
@@ -30,5 +31,6 @@
   "tra_cuu_don_hang",
   "xac_nhan_dat_hang",
   "xem_gio_hang",
-  "xoa_khoi_gio_hang"
+  "xoa_khoi_gio_hang",
+  "xoa_tat_ca_gio_hang"
 ]

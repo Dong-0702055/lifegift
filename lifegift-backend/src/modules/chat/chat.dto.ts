@@ -1,7 +1,10 @@
 export interface ResolvedEntities {
   productId?: bigint | number | null;
   categoryId?: bigint | number | null;
+  categoryIds?: Array<bigint | number>;
   brandId?: bigint | number | null;
+  brandIds?: Array<bigint | number>;
+  origin?: string | null;
   minPrice?: number | null;
   maxPrice?: number | null;
   extractedPrice?: number | null;

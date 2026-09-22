@@ -2,7 +2,6 @@ import json
 import unicodedata
 from pathlib import Path
 import uvicorn
-
 import torch
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
