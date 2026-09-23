@@ -1,0 +1,5 @@
+{"tokens":["xem","sản_phẩm","có","nguồn_gốc","từ","Cà_Mau"],"tags":["O","O","O","O","O","B-LOCATION"]}
+{"tokens":["cà_phê","Robusta","Buôn_Ma_Thuột","còn","hàng","không"],"tags":["B-PRODUCT","I-PRODUCT","B-LOCATION","O","O","O"]}
+{"tokens":["tìm","hạt","mắc_ca","ở","Lâm_Đồng"],"tags":["O","B-PRODUCT","I-PRODUCT","O","B-LOCATION"]}
+{"tokens":["trà","Shan_Tuyết","Hà_Giang","giá","299k"],"tags":["B-PRODUCT","I-PRODUCT","B-LOCATION","O","B-MONEY"]}
+{"tokens":["sản_phẩm","tại","Hà_Nội"],"tags":["O","O","B-LOCATION"]}

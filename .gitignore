@@ -5,7 +5,7 @@
 *.pyc
 
 # AI Datasets & Models
-**/phobert_dataset/
+# Keep the training dataset in version control.
 **/best_model/
 **/checkpoints/
 *.bin

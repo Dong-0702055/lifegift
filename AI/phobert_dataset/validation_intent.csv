@@ -1,0 +1,339 @@
+﻿text,intent
+cho mình xem 5 sản phẩm nổi bật khác với trước đó,xem_san_pham_khac
+hiển thị các sản phẩm tiếp theo chưa xuất hiện,xem_san_pham_khac
+đổi số lượng cà phê trong giỏ thành 3 gói,cap_nhat_gio_hang
+cảm ơn shop nhiều nhé,cam_on
+giá cà phê Robusta hiện tại bao nhiêu,hoi_gia
+trà Ô Long Tây Bắc được sản xuất ở đâu,hoi_nguon_goc
+quà doanh nghiệp Premium còn nhận đặt không,kiem_tra_ton_kho
+tư vấn giúp mình một sản phẩm dễ làm quà,goi_y_san_pham
+mình không hiểu gì cả,khong_hieu
+chào LifeGift ạ,chao_hoi
+nội dung này là sao,khong_hieu
+mở giỏ hàng giúp mình giúp mình,xem_gio_hang
+mình muốn thanh toán đơn hàng với,thanh_toan_don_hang
+cà phê Arabica Cầu Đất nặng bao nhiêu,hoi_khoi_luong
+tìm sản phẩm khoảng 150 nghìn,tim_san_pham_theo_gia
+shop tính phí ship như thế nào,hoi_phi_ship
+hủy việc đặt đơn hiện tại,huy_checkout
+asdf không biết,khong_hieu
+mình muốn biết tiến trình giao hàng của đơn,tra_cuu_don_hang
+LifeGift có nhận chuyển khoản không,phuong_thuc_thanh_toan
+hả,khong_hieu
+mình muốn hủy đơn ạ,huy_don_hang
+gợi ý đặc sản cho mình,goi_y_san_pham
+mình muốn thêm hạt mắc ca vào giỏ hàng,them_vao_gio_hang
+ship hỏa tốc được không ạ,thoi_gian_giao_hang
+mình muốn hỏi chính sách đổi trả,chinh_sach_doi_tra
+shop đang có khuyến mãi gì ạ,khuyen_mai
+cho mình xem thông tin đơn đã đặt,tra_cuu_don_hang
+địa chỉ nhận hàng của mình ở Đà Nẵng,nhap_dia_chi_giao_hang
+chốt đơn giúp mình nhé,xac_nhan_dat_hang
+quà doanh nghiệp Premium có mô tả không,chi_tiet_san_pham
+shop có ưu đãi nào hiện nay không,khuyen_mai
+mình cần trả tiền cho đơn hàng,thanh_toan_don_hang
+shop có giao hỏa tốc không,thoi_gian_giao_hang
+giảm một hộp quà trong giỏ,cap_nhat_gio_hang
+cảm ơn LifeGift ạ,cam_on
+cà phê Arabica Cầu Đất giá bao nhiêu,hoi_gia
+có nhận ship COD không ạ,phuong_thuc_thanh_toan
+mật ong 500ml giá bao nhiêu,hoi_gia
+khi nào cần mình sẽ quay lại,tam_biet
+khách mới có ưu đãi gì khg,khuyen_mai
+thêm mật ong hoa rừng vào giỏ hàng,them_vao_gio_hang
+cà phê Arabica Cầu Đất có đặc điểm gì,chi_tiet_san_pham
+giao hàng mất bao lâu vậy,thoi_gian_giao_hang
+loại hạt điều khỏi giỏ hàng,xoa_khoi_gio_hang
+"chào shop, mình cần tư vấn",chao_hoi
+cà phê Robusta có nguồn gốc từ đâu,hoi_nguon_goc
+trà Shan Tuyết và trà Ô Long khác nhau thế nào,so_sanh_san_pham
+đơn hàng đã được giao chưa,tra_cuu_don_hang
+mật ong hoa rừng của thương hiệu nào shop,hoi_thuong_hieu
+cho mình xem thông tin chi tiết cà phê Robusta,chi_tiet_san_pham
+thời gian vận chuyển về tỉnh khoảng bao lâu,thoi_gian_giao_hang
+gợi ý cho mình một sản phẩm ạ,goi_y_san_pham
+miễn phí giao hàng ko,hoi_phi_ship
+shop hỗ trợ hủy đơn được không,huy_don_hang
+đổi số lượng cà phê trong giỏ thành 3 gói nhé,cap_nhat_gio_hang
+mình muốn cung cấp địa chỉ nhận hàng,nhap_dia_chi_giao_hang
+nếu sản phẩm lỗi thì shop xử lý thế nào,chinh_sach_doi_tra
+bỏ hạt mắc ca khỏi giỏ giúp mình,xoa_khoi_gio_hang
+giao hàng có mất phí không nhé,hoi_phi_ship
+"mình đi trước nhé, tạm biệt shop",tam_biet
+còn hạt mắc ca không,kiem_tra_ton_kho
+kiểm tra các sản phẩm đang nằm trong giỏ,xem_gio_hang
+tư vấn giúp mình với ạ,chao_hoi
+dạ em cảm ơn nha,cam_on
+cái quà doanh nghiệp này bao tiền,hoi_gia
+mình muốn thanh toán đơn hàng ạ,thanh_toan_don_hang
+so sánh hạt điều với hạt mắc ca giúp mình,so_sanh_san_pham
+hàng bị lỗi có được đổi khg nhé,chinh_sach_doi_tra
+giảm số lượng Arabica còn 1 gói,cap_nhat_gio_hang
+cho mình bỏ 2 gói Arabica vào giỏ,them_vao_gio_hang
+cho mình kiểm tra đơn hàng với,tra_cuu_don_hang
+có được kiểm tra hàng trước khi thanh toán không ạ,chinh_sach_doi_tra
+"mình có ngân sách 100k, nên mua gì",goi_y_san_pham
+bye LifeGift,tam_biet
+cho mình bỏ sạch mọi sản phẩm đang ở trong giỏ nhé,xoa_tat_ca_gio_hang
+xóa toàn bộ các món hàng đang nằm trong giỏ,xoa_tat_ca_gio_hang
+tôi muốn loại bỏ mọi món hiện có trong giỏ,xoa_tat_ca_gio_hang
+xóa hết hàng hóa tôi đã cho vào giỏ,xoa_tat_ca_gio_hang
+làm rỗng toàn bộ giỏ hàng của tôi,xoa_tat_ca_gio_hang
+"giao hàng tới 25 Lê Lợi, Đà Nẵng",nhap_dia_chi_giao_hang
+shop ơi mình hỏi chút,chao_hoi
+shop đang có khuyến mãi gì giúp mình,khuyen_mai
+măng khô Tây Bắc đóng gói bao nhiêu gam,hoi_khoi_luong
+tôi muốn hủy đơn hàng,huy_don_hang
+giỏ hàng hiện có bao nhiêu món,xem_gio_hang
+xóa cà phê Robusta khỏi giỏ hàng nhé,xoa_khoi_gio_hang
+bắt đầu thanh toán đơn này,bat_dau_dat_hang
+"địa chỉ giao hàng: 15 Hoàng Diệu, Huế",nhap_dia_chi_giao_hang
+mở giỏ hàng giúp mình ạ,xem_gio_hang
+tạm biệt giúp mình,tam_biet
+mình muốn sửa số lượng sản phẩm trong giỏ,cap_nhat_gio_hang
+mật ong hoa rừng tính theo túi hay hộp,hoi_don_vi
+măng khô Tây Bắc còn bao nhiêu,kiem_tra_ton_kho
+??? giúp mình,khong_hieu
+mình muốn xóa trà Shan Tuyết khỏi giỏ,xoa_khoi_gio_hang
+có đặc sản nào phù hợp làm quà không,goi_y_san_pham
+giúp mình thêm măng khô Tây Bắc vào giỏ,them_vao_gio_hang
+cho đơn này thanh toán chuyển khoản,chon_phuong_thuc_thanh_toan
+trà Shan Tuyết bán theo đơn vị nào ạ,hoi_don_vi
+"mình không mua măng khô nữa, xóa khỏi giỏ",xoa_khoi_gio_hang
+hạt mắc ca một hộp nặng bao nhiêu,hoi_khoi_luong
+mình có thể thanh toán bằng cách nào,phuong_thuc_thanh_toan
+cho mình chào shop,chao_hoi
+"địa chỉ giao hàng của mình là 12 Nguyễn Trãi, Hà Nội",nhap_dia_chi_giao_hang
+quà Tết Nông Sản Việt tính theo hộp hay bộ,hoi_don_vi
+tăng hạt điều trong giỏ lên 2 hộp,cap_nhat_gio_hang
+phí vận chuyển thế nào shop,hoi_phi_ship
+so sánh hai loại quà tặng này,so_sanh_san_pham
+mình muốn xem các loại hạt,tim_kiem_san_pham
+thêm 3 gói cà phê vào giỏ giúp mình,them_vao_gio_hang
+giúp mình đặt đơn,bat_dau_dat_hang
+mình muốn thanh toán đơn hàng được không,thanh_toan_don_hang
+so sánh trà Ô Long và măng khô Tây Bắc giúp mình,so_sanh_san_pham
+hạt mắc ca tính theo gì,hoi_don_vi
+đồng ý tạo đơn hàng,xac_nhan_dat_hang
+có voucher ko,khuyen_mai
+trà Shan Tuyết được sản xuất ở đâu,hoi_nguon_goc
+có hạt nào trong tầm 200 nghìn không,tim_san_pham_theo_gia
+tiến hành tạo đơn cho mình,bat_dau_dat_hang
+trà Ô Long Tây Bắc còn sẵn hàng chứ,kiem_tra_ton_kho
+tra cứu đơn mình đã đặt,tra_cuu_don_hang
+"mình đổi ý, không mua nữa",huy_checkout
+có chương trình khuyến mãi cho khách mới không,khuyen_mai
+mình muốn xem giỏ hàng,xem_gio_hang
+tìm măng khô Tây Bắc giúp mình,tim_kiem_san_pham
+mình muốn thoát khỏi quá trình đặt hàng,huy_checkout
+mình xác nhận đặt đơn,xac_nhan_dat_hang
+tạm biệt và cảm ơn shop,tam_biet
+hạt điều rang muối còn hàng chứ,kiem_tra_ton_kho
+hiện có chương trình giảm giá nào không vậy,khuyen_mai
+shop cho mình hủy đơn được ko,huy_don_hang
+không biết phải hỏi thế nào,khong_hieu
+không đặt đơn nữa,huy_checkout
+cho mình biết chi tiết về hạt mắc ca,chi_tiet_san_pham
+tư vấn giúp mình với ạ nhé,chao_hoi
+"xin chào, shop hỗ trợ mình nhé",chao_hoi
+đổi số lượng trà Shan Tuyết thành 2 hộp,cap_nhat_gio_hang
+có thể giúp mình hủy đơn không,huy_don_hang
+mình không muốn đặt nữa nhé,huy_checkout
+dạ em cảm ơn,cam_on
+mình muốn thanh toán online cho đơn này,chon_phuong_thuc_thanh_toan
+thay đổi số lượng sản phẩm đã chọn,cap_nhat_gio_hang
+phí vận chuyển thế nào giúp mình,hoi_phi_ship
+"địa chỉ giao hàng của mình là 12 Nguyễn Trãi, Hà Nội ạ",nhap_dia_chi_giao_hang
+hạt điều rang muối của thương hiệu nào,hoi_thuong_hieu
+có trà nào dưới 350k không,tim_san_pham_theo_gia
+mình muốn thanh toán đơn hàng nha,thanh_toan_don_hang
+hộp quà Tết cao cấp lấy từ vùng nào,hoi_nguon_goc
+mình chọn thanh toán COD nhé,chon_phuong_thuc_thanh_toan
+mật ong hoa rừng hãng nào,hoi_thuong_hieu
+cà phê Arabica Cầu Đất có quy cách bao nhiêu,hoi_khoi_luong
+đặt hôm nay thì bao lâu nhận được,thoi_gian_giao_hang
+shop có cà phê Arabica Cầu Đất không,tim_kiem_san_pham
+trà Ô Long được bán theo đơn vị nào,hoi_don_vi
+thanh toán đơn đã đặt thế nào,thanh_toan_don_hang
+xác nhận mua các sản phẩm trong giỏ,xac_nhan_dat_hang
+mình muốn thanh toán đơn hàng giúp mình,thanh_toan_don_hang
+thêm cà phê Robusta vào giỏ giúp mình,them_vao_gio_hang
+shop có bán mật ong hoa rừng không,tim_kiem_san_pham
+hủy đơn hàng giúp mình shop,huy_don_hang
+giao hàng có mất phí không shop,hoi_phi_ship
+Robusta và Arabica loại nào phù hợp hơn,so_sanh_san_pham
+quà doanh nghiệp hãng nào,hoi_thuong_hieu
+cà phê Arabica Cầu Đất thuộc thương hiệu nào,hoi_thuong_hieu
+cho mình hỏi giá mật ong hoa rừng,hoi_gia
+tìm sản phẩm từ 200k đến 250k,tim_san_pham_theo_gia
+tìm hạt trong tầm giá 1 triệu,tim_san_pham_theo_gia
+mình muốn chọn phương thức thanh toán,chon_phuong_thuc_thanh_toan
+mình muốn kiểm tra lại giỏ trước khi mua,xem_gio_hang
+tìm giúp mình hạt mắc ca,tim_kiem_san_pham
+mật ong và trà loại nào thích hợp làm quà hơn,so_sanh_san_pham
+cho mình xem giỏ hàng với,xem_gio_hang
+đơn hàng của mình hiện thế nào,tra_cuu_don_hang
+trà Shan Tuyết của thương hiệu nào,hoi_thuong_hieu
+hạt mắc ca có quy cách bao nhiêu,hoi_khoi_luong
+hàng bị lỗi có được đổi khg,chinh_sach_doi_tra
+trà Ô Long Tây Bắc bao nhiêu tiền,hoi_gia
+shop hỗ trợ phương thức thanh toán nào shop,phuong_thuc_thanh_toan
+xóa món vừa thêm vào giỏ,xoa_khoi_gio_hang
+shop giao hàng trong bao lâu,thoi_gian_giao_hang
+"giao đơn này về 20 Hai Bà Trưng, Hà Nội",nhap_dia_chi_giao_hang
+??? giúp mình nhé,khong_hieu
+cho mình xem các loại trà,tim_kiem_san_pham
+hiện có chương trình giảm giá nào không,khuyen_mai
+cảm ơn shop đã tư vấn,cam_on
+có chuyển khoản được không ạ,phuong_thuc_thanh_toan
+xóa sản phẩm này khỏi giỏ,xoa_khoi_gio_hang
+chào shop nhé vậy,tam_biet
+đơn của mình đang xử lý đến đâu,tra_cuu_don_hang
+"ship đến 88 Cách Mạng Tháng 8, TP HCM",nhap_dia_chi_giao_hang
+"cảm ơn, mình sẽ quay lại shop",tam_biet
+có thể trả tiền khi nhận hàng không,phuong_thuc_thanh_toan
+hộp quà Tết hãng nào,hoi_thuong_hieu
+mình muốn checkout giỏ hàng,bat_dau_dat_hang
+"mình muốn tìm một món quà ý nghĩa, gợi ý giúp mình",goi_y_san_pham
+nhận hàng rồi phát hiện lỗi thì có được đổi không,chinh_sach_doi_tra
+shop hỗ trợ những hình thức trả tiền nào,phuong_thuc_thanh_toan
+kiểm tra tình trạng đơn giúp mình,tra_cuu_don_hang
+có sản phẩm nào từ 100k đến 500k không,tim_san_pham_theo_gia
+hạt mắc ca xuất xứ ở đâu,hoi_nguon_goc
+nói gì vậy mình chưa rõ,khong_hieu
+mình xác nhận thông tin đơn,xac_nhan_dat_hang
+chọn COD cho đơn hàng này nhé,chon_phuong_thuc_thanh_toan
+hộp quà Tết Nông Sản Việt nặng bao nhiêu,hoi_khoi_luong
+cho mình hủy đơn vừa đặt nhé,huy_don_hang
+dừng checkout nhé,huy_checkout
+đơn của mình giao chưa nhé,tra_cuu_don_hang
+hạt mắc ca shop bán theo đơn vị gì,hoi_don_vi
+cà phê Robusta và trà Shan Tuyết khác nhau thế nào,so_sanh_san_pham
+shop có trà Ô Long Tây Bắc không,tim_kiem_san_pham
+hạt điều rang muối được mô tả thế nào,chi_tiet_san_pham
+shop có cà phê không,tim_kiem_san_pham
+shop nhận thanh toán chuyển khoản không,phuong_thuc_thanh_toan
+mình muốn tìm cà phê Robusta,tim_kiem_san_pham
+đặt phương thức thanh toán là COD,chon_phuong_thuc_thanh_toan
+mình chọn thanh toán COD,chon_phuong_thuc_thanh_toan
+măng khô Tây Bắc giá bao nhiêu,hoi_gia
+mình chốt đơn này,xac_nhan_dat_hang
+tìm cà phê dưới 300 nghìn,tim_san_pham_theo_gia
+xác nhận đặt hàng ngay,xac_nhan_dat_hang
+mình muốn đưa hạt điều rang muối vào giỏ,them_vao_gio_hang
+kiểm tra giúp mình đơn hàng đang ở đâu,tra_cuu_don_hang
+"mình không muốn nhận đơn nữa, hủy giúp mình",huy_don_hang
+??? shop ơi,khong_hieu
+mình muốn bắt đầu đặt hàng,bat_dau_dat_hang
+có voucher không shop,khuyen_mai
+mật ong hoa rừng Tây Bắc có thông tin sản phẩm gì,chi_tiet_san_pham
+shop cho mình hủy đơn được khg ạ,huy_don_hang
+mô tả hộp quà Tết,chi_tiet_san_pham
+quy định trả hàng của shop như thế nào,chinh_sach_doi_tra
+mình cảm ơn tư vấn của shop,cam_on
+măng khô Tây Bắc có đặc điểm ra sao,chi_tiet_san_pham
+hạt điều rang muối tính theo hộp hay kg,hoi_don_vi
+quà doanh nghiệp Premium có trọng lượng bao nhiêu,hoi_khoi_luong
+hạt điều rang muối trọng lượng bao nhiêu,hoi_khoi_luong
+thương hiệu của cà phê Robusta là gì,hoi_thuong_hieu
+cảm ơn shop nha,cam_on
+"ok, đặt đơn giúp mình",xac_nhan_dat_hang
+mình muốn cập nhật địa chỉ nhận hàng,nhap_dia_chi_giao_hang
+mình muốn thanh toán đơn hàng nhé,thanh_toan_don_hang
+Arabica Cầu Đất xuất xứ ở đâu,hoi_nguon_goc
+đồng ý đặt hàng,xac_nhan_dat_hang
+"mình có ngân sách 200k, nên mua gì giúp mình",goi_y_san_pham
+mật ong hoa rừng có phải hàng Tây Bắc không,hoi_nguon_goc
+hạt mắc ca hiện còn không,kiem_tra_ton_kho
+cho mình hủy phiên đặt hàng,huy_checkout
+tư vấn giúp mình với ạ ạ,chao_hoi
+sửa số lượng măng khô thành 2 túi,cap_nhat_gio_hang
+mẫu trà Shan Tuyết còn sẵn không,kiem_tra_ton_kho
+hủy bước đặt hàng giúp mình,huy_checkout
+"địa chỉ giao hàng của mình là 12 Nguyễn Trãi, Hà Nội nhé",nhap_dia_chi_giao_hang
+miễn phí giao hàng không shop,hoi_phi_ship
+so sánh hai loại trà này,so_sanh_san_pham
+loại sản phẩm này khỏi giỏ giúp mình,xoa_khoi_gio_hang
+ok cảm ơn shop nhé,cam_on
+mật ong hoa rừng bán theo chai đúng không,hoi_don_vi
+mình muốn chuyển giỏ hàng sang bước tạo đơn,bat_dau_dat_hang
+mình sẵn sàng đặt hàng,bat_dau_dat_hang
+bye shop giúp mình,tam_biet
+cho mình thêm một hộp quà Tết vào giỏ,them_vao_gio_hang
+thêm một hộp trà Shan Tuyết nhé,them_vao_gio_hang
+bao lâu thì đơn tới nơi,thoi_gian_giao_hang
+đơn hàng thường mất mấy ngày để giao,thoi_gian_giao_hang
+cho mình xem quà tặng,tim_kiem_san_pham
+trà Ô Long Tây Bắc quy cách bao nhiêu gam,hoi_khoi_luong
+mình không muốn đặt nữa ạ,huy_checkout
+trà Shan Tuyết là sản phẩm của hãng nào,hoi_thuong_hieu
+giúp mình chọn cách thanh toán,chon_phuong_thuc_thanh_toan
+cho mình sang bước đặt hàng,bat_dau_dat_hang
+được đổi hàng trong trường hợp nào,chinh_sach_doi_tra
+tiến hành thanh toán cho đơn của mình,thanh_toan_don_hang
+có được đồng kiểm không nhé,chinh_sach_doi_tra
+tiến hành đặt đơn giúp mình,bat_dau_dat_hang
+dạ em cảm ơn với,cam_on
+cho mình cập nhật số lượng mật ong,cap_nhat_gio_hang
+hạt điều rang muối còn hàng không,kiem_tra_ton_kho
+hộp quà Tết Nông Sản Việt còn không,kiem_tra_ton_kho
+trà Ô Long Tây Bắc có những thông tin gì,chi_tiet_san_pham
+đơn hàng có được miễn phí vận chuyển không,hoi_phi_ship
+cho sản phẩm này vào giỏ,them_vao_gio_hang
+có giao nhanh được không,thoi_gian_giao_hang
+có sản phẩm nào từ 200k đến 300k không vậy,tim_san_pham_theo_gia
+cho mình xem các món trong giỏ,xem_gio_hang
+mình muốn hủy đơn hàng đã đặt,huy_don_hang
+gợi ý cà phê cho mình,goi_y_san_pham
+xác nhận đơn hàng này nhé,xac_nhan_dat_hang
+xin hủy đơn hàng của mình,huy_don_hang
+xem giúp mình những sản phẩm đã chọn,xem_gio_hang
+tìm trà dưới 100k,tim_san_pham_theo_gia
+dừng thanh toán và đặt hàng,huy_checkout
+có thanh toán COD không,phuong_thuc_thanh_toan
+mình muốn mua quà khoảng 800k,tim_san_pham_theo_gia
+đơn này mình trả bằng chuyển khoản,chon_phuong_thuc_thanh_toan
+giúp mình bỏ mật ong ra khỏi giỏ,xoa_khoi_gio_hang
+...???,khong_hieu
+shop tư vấn giúp mình nên mua loại cà phê nào,goi_y_san_pham
+hạt điều rang muối có nguồn gốc vùng nào,hoi_nguon_goc
+quà doanh nghiệp với măng khô Tây Bắc loại nào ngon hơn,so_sanh_san_pham
+có thể đặt hạt điều rang muối ngay không,kiem_tra_ton_kho
+hạt mắc ca hiện có giá bao nhiêu,hoi_gia
+hạt mắc ca của thương hiệu nào,hoi_thuong_hieu
+mua nhiều có được giảm giá không ạ,khuyen_mai
+mở giỏ hàng giúp mình nhé,xem_gio_hang
+cà phê Arabica bán theo gói hay hộp,hoi_don_vi
+tư vấn giúp mình với ạ giúp mình,chao_hoi
+mình muốn mua những món trong giỏ,bat_dau_dat_hang
+chọn chuyển khoản cho đơn giúp mình,chon_phuong_thuc_thanh_toan
+thanh toán online được không,phuong_thuc_thanh_toan
+xóa cà phê Robusta khỏi giỏ hàng,xoa_khoi_gio_hang
+thời gian giao hàng dự kiến là mấy ngày,thoi_gian_giao_hang
+cho mình hỏi nguồn gốc măng khô Tây Bắc,hoi_nguon_goc
+mình xin phép chào tạm biệt shop,tam_biet
+shop ơi chào bạn,chao_hoi
+mua quà cho bố mẹ thì nên chọn gì,goi_y_san_pham
+hộp quà Tết Nông Sản Việt gồm thông tin gì,chi_tiet_san_pham
+đơn bao nhiêu thì được freeship vậy,hoi_phi_ship
+hạt mắc ca lấy từ vùng nào,hoi_nguon_goc
+trà Shan Tuyết đang bán giá nào,hoi_gia
+hẹn gặp lại LifeGift nhé,tam_biet
+nên mua măng khô Tây Bắc hay cà phê Robusta,so_sanh_san_pham
+shop có hỗ trợ đổi sản phẩm bị hỏng không,chinh_sach_doi_tra
+ship về Hà Nội bao nhiêu shop,hoi_phi_ship
+mật ong hoa rừng có quy cách bao nhiêu ml,hoi_khoi_luong
+cà phê Robusta tính theo túi hay hộp,hoi_don_vi
+"cảm ơn bạn, mình hiểu rồi",cam_on
+hướng dẫn mình thanh toán đơn,thanh_toan_don_hang
+hạt điều rang muối giá bao nhiêu một hộp,hoi_gia
+xóa sạch giỏ hàng giúp tôi,xoa_tat_ca_gio_hang
+làm trống toàn bộ giỏ hàng,xoa_tat_ca_gio_hang
+tôi muốn bỏ hết đồ trong giỏ,xoa_tat_ca_gio_hang
+xóa toàn bộ món trong giỏ hàng nhé,xoa_tat_ca_gio_hang
+giúp mình dọn sạch giỏ hàng,xoa_tat_ca_gio_hang
+không giữ lại gì trong giỏ, xoa_tat_ca_gio_hang
+hãy xóa hết sản phẩm đang có,xoa_tat_ca_gio_hang
+cho mình xóa cả giỏ hàng,xoa_tat_ca_gio_hang
+bỏ tất cả hàng trong giỏ đi,xoa_tat_ca_gio_hang
+xóa hết các món khỏi giỏ,xoa_tat_ca_gio_hang

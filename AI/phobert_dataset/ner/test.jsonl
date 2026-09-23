@@ -1,0 +1,4 @@
+{"tokens":["tôi","muốn","xem","sản_phẩm","từ","Hà_Nội"],"tags":["O","O","O","O","O","B-LOCATION"]}
+{"tokens":["có","cà_phê","Arabica","ở","Cầu_Đất","không"],"tags":["O","B-PRODUCT","I-PRODUCT","O","B-LOCATION","O"]}
+{"tokens":["tìm","các","loại","hạt","từ","Cà_Mau"],"tags":["O","O","O","B-CATEGORY","O","B-LOCATION"]}
+{"tokens":["xem","trà","dưới","300k","tại","Hà_Giang"],"tags":["O","B-CATEGORY","O","B-MONEY","O","B-LOCATION"]}
