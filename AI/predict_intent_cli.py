@@ -14,7 +14,7 @@ CONFIDENCE_THRESHOLD = 0.35
 TEMPERATURE = 0.3  # Giúp phân bố Softmax sắc nét hơn, phản ánh đúng độ tự tin
 
 # ============================================================
-# LOAD
+# Load the trained intent classifier.
 # ============================================================
 print("Loading model...")
 tokenizer = AutoTokenizer.from_pretrained(str(MODEL_DIR))

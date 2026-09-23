@@ -6,7 +6,7 @@ export class AliasResolverService {
   /**
    * Tìm product_id, category_id, brand_id, quantity, price từ câu văn bản của khách hàng
    */
-  static async resolveEntities(text: string) {
+  static async resolveEntities(text: string, detectedEntities: Array<{ type?: string; text?: string }> = []) {
     const normalizedText = text.toLowerCase().trim();
 
     // 1. Quét lấy danh sách Alias từ DB
@@ -66,9 +66,18 @@ export class AliasResolverService {
       .sort((a, b) => b.length - a.length)
       .find((alias) => normalizedText.includes(alias)) || null;
     const originPhraseMatch = normalizedText.match(
-      /(?:xuất xứ|nguồn gốc|đến từ|sản xuất tại|trồng tại|thu hoạch tại)\s+([^,.!?]+)/i
+      /(?:xuất xứ|nguồn gốc|đến từ|sản xuất tại|trồng tại|thu hoạch tại)\s+(?:(?:ở|từ|tại)\s+)?([^,.!?]+)/i
     );
-    const origin = knownOrigin || originPhraseMatch?.[1]?.trim() || null;
+    const extractedOrigin = originPhraseMatch?.[1]
+      ?.trim()
+      .replace(/^(?:ở|từ|tại)\s+/i, '')
+      .trim();
+    const nerOrigin = detectedEntities
+      .find((entity) => entity.type === 'LOCATION' && entity.text?.trim())
+      ?.text?.trim()
+      .replace(/^(?:ở|từ|tại)\s+/i, '')
+      .trim() || null;
+    const origin = knownOrigin || nerOrigin || extractedOrigin || null;
 
     // 6. Bóc tách giá và hướng lọc (trên, dưới hoặc một khoảng giá)
     const pricePattern = '(\\d+(?:[.,]\\d+)?)\\s*(k|nghìn|ngan|tr|triệu|đ|vnd)\\b';

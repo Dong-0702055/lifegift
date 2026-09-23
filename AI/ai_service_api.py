@@ -7,6 +7,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from underthesea import word_tokenize
+from src.ner_entity_inference import EntityRecognizer
 
 # --- CẤU HÌNH ---
 BASE_DIR = Path(__file__).resolve().parent
@@ -31,6 +32,7 @@ else:
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 model.eval()
+ner = EntityRecognizer()
 
 
 def preprocess(text: str) -> str:
@@ -80,6 +82,14 @@ def predict_intent(req: PredictRequest):
         "intent": best["intent"],
         "confidence": round(best["confidence"], 4),
         "top_3": results,
+        "entities": ner.predict(req.text),
     }
+
+
+@app.post("/predict-entities")
+def predict_entities(req: PredictRequest):
+    if not req.text.strip():
+        raise HTTPException(status_code=400, detail="Text cannot be empty")
+    return {"text": req.text, "entities": ner.predict(req.text), "available": ner.available}
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=5000, reload=True)
+    uvicorn.run("ai_service_api:app", host="0.0.0.0", port=5000, reload=True)

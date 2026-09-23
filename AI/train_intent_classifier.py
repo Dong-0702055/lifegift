@@ -15,10 +15,10 @@ from transformers import (
     set_seed,
 )
 
-from src.config import *
-from src.dataset import prepare_data
-from src.metrics import compute_metrics
-from src.visualization import create_training_charts
+from src.model_training_config import *
+from src.intent_dataset_loader import prepare_data
+from src.intent_metrics import compute_metrics
+from src.training_visualization import create_training_charts
 
 def main():
     # Reproducibility

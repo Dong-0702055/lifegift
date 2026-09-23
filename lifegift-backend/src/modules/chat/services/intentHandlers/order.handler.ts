@@ -4,21 +4,80 @@ import { ResolvedEntities, ChatResponsePayload } from '../../chat.dto';
 import { OrderStatus } from '../../../order/order.dto';
 import { PaymentMethod } from '../../../payment/payment.dto';
 import { PrismaClient } from '@prisma/client';
+import { ChatMessageItem } from '../../redisChat.service';
 
 const prisma = new PrismaClient();
 
 export class OrderHandler {
+  private static toBigIntIds(primaryId: bigint | number | null | undefined, ids?: Array<bigint | number>): bigint[] {
+    const values = [...(ids || []), ...(primaryId !== null && primaryId !== undefined ? [primaryId] : [])];
+    return [...new Set(values.map((id) => BigInt(id)))];
+  }
+
+  private static getOriginKeywords(origin: string): string[] {
+    const normalizedOrigin = origin.toLowerCase();
+    if (normalizedOrigin === 'tây nguyên') return ['tây nguyên', 'đắk lắk', 'buôn ma thuột', 'đắk nông', 'gia lai', 'kon tum', 'lâm đồng', 'đà lạt', 'cầu đất'];
+    if (normalizedOrigin === 'tây bắc') return ['tây bắc', 'sơn la', 'điện biên', 'lai châu', 'lào cai', 'yên bái', 'hòa bình'];
+    return [origin];
+  }
+
+  private static buildProductFilter(entities: ResolvedEntities): Record<string, any> {
+    const categoryIds = this.toBigIntIds(entities.categoryId, entities.categoryIds);
+    const brandIds = this.toBigIntIds(entities.brandId, entities.brandIds);
+    const where: Record<string, any> = {
+      status: 'ACTIVE',
+      ...(categoryIds.length > 0 && { category_id: { in: categoryIds } }),
+      ...(brandIds.length > 0 && { brand_id: { in: brandIds } }),
+    };
+    if (entities.origin) {
+      where.OR = this.getOriginKeywords(entities.origin).map((keyword) => ({ origin: { contains: keyword } }));
+    }
+    const priceQuery = {
+      ...(entities.minPrice !== null && entities.minPrice !== undefined && { gte: entities.minPrice }),
+      ...(entities.maxPrice !== null && entities.maxPrice !== undefined && { lte: entities.maxPrice }),
+    };
+    if (Object.keys(priceQuery).length > 0) where.price = priceQuery;
+    else if (entities.extractedPrice) where.price = { gte: entities.extractedPrice * 0.8, lte: entities.extractedPrice * 1.2 };
+    return where;
+  }
+
+  private static hasProductFilters(entities: ResolvedEntities): boolean {
+    return Boolean(entities.categoryId || entities.categoryIds?.length || entities.brandId || entities.brandIds?.length || entities.origin || entities.minPrice !== null && entities.minPrice !== undefined || entities.maxPrice !== null && entities.maxPrice !== undefined || entities.extractedPrice);
+  }
+
+  private static describeProductFilters(entities: ResolvedEntities): string {
+    const names: Record<string, string> = { '4': 'cà phê', '5': 'trà', '6': 'hạt dinh dưỡng', '7': 'đặc sản Tây Bắc' };
+    const categories = this.toBigIntIds(entities.categoryId, entities.categoryIds)
+      .map((id) => names[id.toString()] || 'nhóm sản phẩm')
+      .filter((name, index, values) => values.indexOf(name) === index);
+    const filters = [...categories];
+    if (entities.origin) filters.push(`có xuất xứ từ ${entities.origin}`);
+    if (entities.minPrice !== null && entities.minPrice !== undefined) filters.push(`từ ${Number(entities.minPrice).toLocaleString('vi-VN')}đ`);
+    if (entities.maxPrice !== null && entities.maxPrice !== undefined) filters.push(`không quá ${Number(entities.maxPrice).toLocaleString('vi-VN')}đ`);
+    return filters.join(', ');
+  }
+
+  private static resolveProductIdFromHistory(message: string, history: ChatMessageItem[] = []): number | null {
+    const match = message.match(/(?:sản phẩm|sp|món|thứ|số)\s*(\d+)/i);
+    if (!match) return null;
+    const index = Number(match[1]) - 1;
+    const previous = [...history].reverse().find((item) => item.role === 'assistant' && Array.isArray(item.products) && item.products.length > 0);
+    const product = previous?.products?.[index];
+    return product ? Number(product.id || product.productId || product.product_id) : null;
+  }
+
   public static async handle(
     intent: string,
     entities: ResolvedEntities,
     userId?: number,
-    message?: string
+    message?: string,
+    history: ChatMessageItem[] = []
   ): Promise<ChatResponsePayload> {
     if (!userId) {
       return { replyMessage: 'Bạn vui lòng đăng nhập để có thể tra cứu hoặc quản lý đơn hàng nhé!' };
     }
 
-    const rawOrderId = entities.orderId || (entities.extractedPrice ? String(entities.extractedPrice) : null);
+    const rawOrderId = entities.orderId || null;
 
     const paymentMethod = entities.paymentMethod as PaymentMethod | undefined;
     const receiverPhone = entities.receiverPhone || entities.phone || message?.match(/\b(0\d{9,10})\b/)?.[1];
@@ -45,13 +104,34 @@ export class OrderHandler {
           const quantity = entities.quantity && entities.quantity > 0 ? entities.quantity : 1;
           let directProduct: any = null;
 
+          if (!entities.productId && message) {
+            const selectedProductId = OrderHandler.resolveProductIdFromHistory(message, history);
+            if (selectedProductId) entities.productId = selectedProductId;
+          }
+
+          if (!entities.productId && OrderHandler.hasProductFilters(entities)) {
+            const candidates = await prisma.products.findMany({
+              where: OrderHandler.buildProductFilter(entities),
+              take: 5,
+            });
+            if (candidates.length === 0) {
+              return { replyMessage: `Hiện chưa tìm thấy sản phẩm ${OrderHandler.describeProductFilters(entities) || 'phù hợp'} để đặt hàng.` };
+            }
+            const list = candidates.map((product, index) => `${index + 1}. ${product.name} - ${Number(product.sale_price || product.price).toLocaleString('vi-VN')}đ`).join('\n');
+            return {
+              replyMessage: `Tôi tìm thấy các sản phẩm ${OrderHandler.describeProductFilters(entities) || 'phù hợp'}. Bạn muốn đặt sản phẩm số mấy?\n\n${list}`,
+              data: candidates,
+              nextStep: 'SELECT_PRODUCT',
+            };
+          }
+
           // TRƯỜNG HỢP 1: Khách hàng chỉ định sản phẩm cụ thể (VD: "tôi muốn đặt 1 cafe cầu đất")
           if (entities.productId) {
             const productId = Number(entities.productId);
             const prismaAny = prisma as any;
 
             // Kiểm tra sản phẩm có tồn tại không
-            const product = await (prismaAny.products?.findUnique({ where: { id: BigInt(productId) } }) ||
+            const product = await (prismaAny.products?.findFirst({ where: { id: BigInt(productId), ...OrderHandler.buildProductFilter(entities) } }) ||
               prismaAny.product?.findUnique({ where: { id: BigInt(productId) } }));
 
             if (!product || product.status !== 'ACTIVE') {
@@ -131,6 +211,9 @@ export class OrderHandler {
           }
 
           const order = await OrderService.getById(orderIdNumber);
+          if (!order) {
+            return { replyMessage: `Không tìm thấy đơn hàng #${orderIdNumber}.` };
+          }
           if (Number(order.userId) !== userId) {
             return { replyMessage: `Bạn không thể hủy đơn hàng #${orderIdNumber} do đơn này không thuộc tài khoản của bạn.` };
           }

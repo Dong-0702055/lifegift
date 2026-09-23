@@ -6,6 +6,61 @@ import { ChatMessageItem } from '../../redisChat.service';
 const prisma = new PrismaClient();
 
 export class CartHandler {
+  private static toBigIntIds(
+    primaryId: bigint | number | null | undefined,
+    ids: Array<bigint | number> | undefined
+  ): bigint[] {
+    const values = [...(ids || []), ...(primaryId !== null && primaryId !== undefined ? [primaryId] : [])];
+    return [...new Set(values.map((id) => BigInt(id)))];
+  }
+
+  private static getOriginKeywords(origin: string): string[] {
+    const normalizedOrigin = origin.toLowerCase();
+    if (normalizedOrigin === 'tây nguyên') {
+      return ['tây nguyên', 'đắk lắk', 'buôn ma thuột', 'đắk nông', 'gia lai', 'kon tum', 'lâm đồng', 'đà lạt', 'cầu đất'];
+    }
+    if (normalizedOrigin === 'tây bắc') {
+      return ['tây bắc', 'sơn la', 'điện biên', 'lai châu', 'lào cai', 'yên bái', 'hòa bình'];
+    }
+    return [origin];
+  }
+
+  private static buildProductFilter(entities: ResolvedEntities): Record<string, any> {
+    const categoryIds = this.toBigIntIds(entities.categoryId, entities.categoryIds);
+    const brandIds = this.toBigIntIds(entities.brandId, entities.brandIds);
+    const where: Record<string, any> = {
+      ...(categoryIds.length > 0 && { category_id: { in: categoryIds } }),
+      ...(brandIds.length > 0 && { brand_id: { in: brandIds } }),
+    };
+
+    if (entities.origin) {
+      where.OR = this.getOriginKeywords(entities.origin).map((keyword) => ({
+        origin: { contains: keyword },
+      }));
+    }
+
+    const priceQuery = {
+      ...(entities.minPrice !== null && entities.minPrice !== undefined && { gte: entities.minPrice }),
+      ...(entities.maxPrice !== null && entities.maxPrice !== undefined && { lte: entities.maxPrice }),
+    };
+    if (Object.keys(priceQuery).length > 0) {
+      where.price = priceQuery;
+    } else if (entities.extractedPrice) {
+      where.price = {
+        gte: entities.extractedPrice * 0.8,
+        lte: entities.extractedPrice * 1.2,
+      };
+    }
+    return where;
+  }
+
+  private static hasProductFilters(entities: ResolvedEntities): boolean {
+    return Boolean(
+      entities.categoryId || entities.categoryIds?.length || entities.brandId || entities.brandIds?.length ||
+      entities.origin || entities.minPrice !== null && entities.minPrice !== undefined ||
+      entities.maxPrice !== null && entities.maxPrice !== undefined || entities.extractedPrice
+    );
+  }
   /**
    * Trích xuất số lượng tồn kho khả dụng từ Record sản phẩm
    */
@@ -126,38 +181,40 @@ export class CartHandler {
           }
 
           if (!targetProductId) {
-            if (entities.categoryId) {
-              const categoryIdNum = Number(entities.categoryId);
-              const prismaAny = prisma as any;
+            if (CartHandler.hasProductFilters(entities)) {
+              const categoryIds = CartHandler.toBigIntIds(entities.categoryId, entities.categoryIds);
+              const categoryNames = categoryIds.map((id) => {
+                const names: Record<string, string> = { '4': 'cà phê', '5': 'trà', '6': 'hạt dinh dưỡng' };
+                return names[id.toString()] || 'nhóm sản phẩm';
+              });
+              const filterDescription = [
+                categoryNames.length > 0 ? categoryNames.join(' và ') : '',
+                entities.origin ? `có xuất xứ từ ${entities.origin}` : '',
+                entities.minPrice !== null && entities.minPrice !== undefined
+                  ? `từ ${Number(entities.minPrice).toLocaleString('vi-VN')}đ` : '',
+                entities.maxPrice !== null && entities.maxPrice !== undefined
+                  ? `không quá ${Number(entities.maxPrice).toLocaleString('vi-VN')}đ` : '',
+              ].filter(Boolean).join(', ');
+              const categoryProducts = await (prisma as any).products.findMany({
+                where: CartHandler.buildProductFilter(entities),
+                include: { inventories: true },
+                take: 5,
+              });
 
-              const [category, categoryProducts] = await Promise.all([
-                prismaAny.categories?.findUnique({ where: { id: categoryIdNum } }) ||
-                  prismaAny.category?.findUnique({ where: { id: categoryIdNum } }),
-                prismaAny.products?.findMany({
-                  where: { category_id: categoryIdNum },
-                  take: 5
-                }) ||
-                  prismaAny.product?.findMany({
-                    where: { category_id: categoryIdNum },
-                    take: 5
-                  })
-              ]);
-
-              const categoryName = category?.name || category?.categoryName || 'danh mục này';
-
-              if (categoryProducts && categoryProducts.length > 0) {
+              if (categoryProducts.length > 0) {
                 const productListStr = categoryProducts
-                  .map(
-                    (p: any, index: number) =>
-                      `  ${index + 1}. ${p.name || p.productName} - ${Number(p.salePrice || p.price || 0).toLocaleString('vi-VN')}đ`
+                  .map((p: any, index: number) =>
+                    `  ${index + 1}. ${p.name || p.productName} - ${Number(p.sale_price || p.salePrice || p.price || 0).toLocaleString('vi-VN')}đ`
                   )
                   .join('\n');
 
                 return {
-                  replyMessage: `Dưới đây là các sản phẩm thuộc danh mục **${categoryName}**. Bạn muốn chọn sản phẩm nào ạ?\n\n${productListStr}`,
-                  data: categoryProducts
+                  replyMessage: `Tôi tìm thấy các sản phẩm ${filterDescription || 'phù hợp'}. Bạn muốn thêm sản phẩm số mấy vào giỏ hàng ạ?\n\n${productListStr}`,
+                  data: categoryProducts,
                 };
               }
+
+              return { replyMessage: `Hiện chưa tìm thấy sản phẩm ${filterDescription || 'phù hợp'} để thêm vào giỏ hàng.` };
             }
 
             return { replyMessage: 'Bạn muốn thêm sản phẩm nào vào giỏ hàng ạ?' };

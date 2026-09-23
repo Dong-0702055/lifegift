@@ -19,6 +19,7 @@ export interface ConversationState {
   paymentMethod?: string;
   checkoutStep?: 'NONE' | 'CART' | 'ADDRESS' | 'PAYMENT' | 'CONFIRMATION';
   mentionedProducts?: Array<{ productId: number; name: string }>;
+  viewedProductIds?: number[];
   extractedPrice?: number;
   couponCode?: string;
   checkoutCompleted?: boolean;
@@ -95,5 +96,18 @@ export class ConversationContextService {
     } catch (err) {
       console.error('Lỗi khi xóa ConversationState:', err);
     }
+  }
+
+  static async rememberViewedProducts(sessionId: string, products: any[]): Promise<void> {
+    if (!Array.isArray(products) || products.length === 0) return;
+
+    const currentState = await this.getState(sessionId);
+    const previousIds = currentState.viewedProductIds || [];
+    const newIds = products
+      .map((product) => Number(product?.id))
+      .filter((id) => Number.isInteger(id) && id > 0);
+    const viewedProductIds = [...new Set([...previousIds, ...newIds])].slice(-50);
+
+    await this.saveState(sessionId, { ...currentState, viewedProductIds });
   }
 }

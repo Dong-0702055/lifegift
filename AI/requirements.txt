@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+torch
+transformers
+datasets
+pandas
+numpy
+scikit-learn
+underthesea
+python-docx

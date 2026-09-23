@@ -35,7 +35,7 @@ export class ChatController {
       const targetSessionId = userIdNum ? String(userIdNum) : (req.body.sessionId || 'guest_session');
       const history = await RedisChatService.getHistory(targetSessionId);
 
-      const result = await ChatService.processMessage(message, userIdNum, history);
+      const result = await ChatService.processMessage(message, userIdNum, history, targetSessionId);
 
       const replyMessage = result.response || result.replyMessage || result.message || '';
       

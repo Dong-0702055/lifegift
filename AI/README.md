@@ -6,6 +6,7 @@ Project hiện có hai chức năng chính:
 
 - Fine-tune PhoBERT trên bộ dữ liệu intent tiếng Việt.
 - Nạp model đã huấn luyện để dự đoán intent, confidence và top 3 kết quả.
+- Fine-tune PhoBERT token-classification để nhận diện entity theo BIO.
 
 ## Công nghệ
 
@@ -20,17 +21,23 @@ Project hiện có hai chức năng chính:
 
 ```text
 .
-├── train_intent.py                  # Huấn luyện, đánh giá và lưu model
-├── predict_intent.py                # Dự đoán intent tương tác trên terminal
+├── train_intent_classifier.py       # Huấn luyện và đánh giá model phân loại intent
+├── predict_intent_cli.py            # Dự đoán intent qua giao diện dòng lệnh
+├── ai_service_api.py                # FastAPI phục vụ intent và entity extraction
+├── train_ner_model.py               # Huấn luyện model nhận diện entity NER
 ├── knowledge/
 │   ├── intent_schema.json            # Mô tả 22 intent
-│   ├── entity_dataset.jsonl          # Ví dụ entity và SKU chuẩn hóa
+│   ├── entity_examples.jsonl        # Ví dụ entity và SKU chuẩn hóa
 │   ├── product_aliases.json          # Alias sản phẩm -> SKU
 │   └── category_aliases.json         # Alias danh mục
 ├── phobert_dataset/
 │   ├── train_intent.csv              # 752 mẫu train
 │   ├── validation_intent.csv         # 94 mẫu validation
 │   └── test_intent.csv               # 94 mẫu test
+│   └── ner/
+│       ├── train.jsonl               # BIO entity training samples
+│       ├── validation.jsonl
+│       └── test.jsonl
 └── model/intent_classifier/
 	├── best_model/                   # Model/tokenizer tốt nhất
 	├── checkpoints/                  # Checkpoint trong quá trình train
@@ -64,12 +71,12 @@ pip install torch transformers datasets pandas numpy scikit-learn underthesea
 
 PhoBERT sẽ được tải từ Hugging Face khi chạy huấn luyện lần đầu. Vì vậy cần kết nối Internet ở lần chạy đó, trừ khi model đã có sẵn trong cache.
 
-## Huấn luyện model
+## Huấn luyện intent classifier
 
 Đảm bảo ba file CSV nằm trong `phobert_dataset/`, sau đó chạy:
 
 ```bash
-python train_intent.py
+python train_intent_classifier.py
 ```
 
 Pipeline sẽ:
@@ -82,7 +89,7 @@ Pipeline sẽ:
 6. Đánh giá trên validation và test.
 7. Lưu model tốt nhất cùng các báo cáo vào `model/intent_classifier/`.
 
-Các cấu hình chính trong `train_intent.py`:
+Các cấu hình chính trong `src/model_training_config.py`:
 
 | Cấu hình | Giá trị |
 | --- | --- |
@@ -100,7 +107,7 @@ Các cấu hình chính trong `train_intent.py`:
 Model có sẵn được lưu tại `model/intent_classifier/best_model/`. Chạy:
 
 ```bash
-python predict_intent.py
+python predict_intent_cli.py
 ```
 
 Script sẽ chạy một số câu mẫu trước, sau đó mở chế độ nhập tương tác:
@@ -136,13 +143,27 @@ chinh_sach_doi_tra, tra_cuu_don_hang, huy_don_hang, khong_hieu
 
 ## Dữ liệu entity và alias
 
-`knowledge/entity_dataset.jsonl` chứa ví dụ entity sản phẩm với các loại như `PRODUCT`. Những file knowledge hỗ trợ bước chuẩn hóa sau khi nhận diện intent:
+`knowledge/entity_examples.jsonl` chứa ví dụ entity sản phẩm với các loại như `PRODUCT`. Những file knowledge hỗ trợ bước chuẩn hóa sau khi nhận diện intent:
 
 - `product_aliases.json`: chuẩn hóa tên hoặc alias sản phẩm về SKU.
 - `category_aliases.json`: chuẩn hóa alias danh mục.
-- `entity_dataset.jsonl`: dữ liệu mẫu entity/slot, hiện có các nhóm sản phẩm như cà phê và trà.
+- `entity_examples.jsonl`: dữ liệu mẫu entity/slot, hiện có các nhóm sản phẩm như cà phê và trà.
 
 Các entity dự kiến của pipeline nghiệp vụ gồm `PRODUCT`, `CATEGORY`, `MONEY`, `WEIGHT` và `VOLUME`. Hai script hiện tại tập trung vào intent classification; bước resolver, truy vấn database và sinh response cần được tích hợp ở tầng chatbot phía trên.
+
+## NER và entity extraction
+
+NER dùng cùng backbone `vinai/phobert-base-v2` nhưng có `TokenClassificationHead`, độc lập với intent classifier. Dataset dùng BIO tags và được lưu tại `phobert_dataset/ner/`. Các entity hiện có khung cho `PRODUCT`, `CATEGORY`, `BRAND`, `LOCATION`, `MONEY`, `QUANTITY`, `UNIT`, `ORDER_ID`, `PAYMENT_METHOD`, `PERSON_NAME`, `PHONE` và `ADDRESS`.
+
+Chạy huấn luyện sau khi bổ sung đủ dữ liệu thực tế:
+
+```bash
+python train_ner_model.py
+```
+
+Model được lưu tại `model/ner_model/best_model/`. AI service sẽ tự trả thêm `entities` trong `/predict-intent` và cung cấp endpoint `/predict-entities`; khi chưa có model NER, endpoint trả danh sách rỗng và backend tiếp tục dùng alias/regex fallback.
+
+Địa điểm được bổ sung thêm qua `knowledge/vietnam_locations.json`. Gazetteer này giúp nhận diện chắc chắn tên tỉnh/thành như `Nam Định`, `Cà Mau`, `Hà Nội` ngay cả khi model NER chưa có đủ dữ liệu huấn luyện. Các entity NER có confidence dưới `0.5` được loại bỏ để tránh trả về từ nhiễu như `ở` hoặc `từ`.
 
 ## Kết quả hiện tại
 

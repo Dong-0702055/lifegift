@@ -32,10 +32,21 @@ export class ChatService {
 
     // 1. Lấy State hội thoại cũ từ Redis
     const previousState = await ConversationContextService.getState(targetSessionId);
+    const lastSingleProductMessage = [...history]
+      .reverse()
+      .find((item) => item.role === 'assistant' && Array.isArray(item.products) && item.products.length === 1);
+    const contextState = !previousState.productId && lastSingleProductMessage?.products?.[0]?.id
+      ? {
+          ...previousState,
+          productId: Number(lastSingleProductMessage.products[0].id),
+          productName: lastSingleProductMessage.products[0].name,
+        }
+      : previousState;
 
     // 2. Dự đoán Intent qua PhoBERT AI Service
     let intent = 'fallback';
     let confidence = 0;
+    let detectedEntities: Array<{ type?: string; text?: string }> = [];
 
     try {
       const aiRes = await fetch(`${AI_SERVICE_URL}/predict-intent`, {
@@ -51,17 +62,25 @@ export class ChatService {
         const aiData: any = await aiRes.json();
         intent = aiData.intent;
         confidence = aiData.confidence;
+        detectedEntities = Array.isArray(aiData.entities) ? aiData.entities : [];
       }
     } catch (err) {
       console.error('Lỗi kết nối AI Service:', err);
     }
 
+    // Giữ đúng ý định phân trang sản phẩm ngay cả khi model cũ chưa được huấn luyện lại.
+    if (/(sản phẩm|san pham|mặt hàng|mat hang)/i.test(message) &&
+        /(khác|khac|trước đó|truoc do|đã xem|da xem|tiếp theo|tiep theo)/i.test(message)) {
+      intent = 'xem_san_pham_khac';
+      confidence = 1;
+    }
+
     // 3. Trích xuất Entity mới từ câu nói hiện tại
-    const currentEntities = await AliasResolverService.resolveEntities(message);
+    const currentEntities = await AliasResolverService.resolveEntities(message, detectedEntities);
 
     // 4. MERGE CONTEXT: Kết hợp State cũ + Entity mới thành Final Entities
     const finalEntities = ContextResolver.resolve(
-      previousState, 
+      contextState, 
       currentEntities, 
       intent, 
       message
@@ -71,6 +90,7 @@ export class ChatService {
     const productIntents = [
       'kiem_tra_ton_kho', 'tim_kiem_san_pham', 'tim_san_pham_theo_gia',
       'goi_y_san_pham', 'chi_tiet_san_pham', 'so_sanh_san_pham',
+      'xem_san_pham_khac',
       'hoi_gia', 'hoi_khoi_luong', 'hoi_don_vi', 'hoi_thuong_hieu', 'hoi_nguon_goc'
     ];
 
@@ -95,11 +115,11 @@ export class ChatService {
     let responsePayload: any;
 
     if (productIntents.includes(intent)) {
-      responsePayload = await ProductHandler.handle(intent, finalEntities);
+      responsePayload = await ProductHandler.handle(intent, finalEntities, previousState.viewedProductIds || []);
     } else if (cartIntents.includes(intent)) {
       responsePayload = await CartHandler.handle(intent, finalEntities, userId, message, history);
     } else if (orderIntents.includes(intent)) {
-      responsePayload = await OrderHandler.handle(intent, finalEntities, userId, message);
+      responsePayload = await OrderHandler.handle(intent, finalEntities, userId, message, history);
     } else if (policyIntents.includes(intent)) {
       responsePayload = PolicyHandler.handle(intent);
     } else {
@@ -108,10 +128,19 @@ export class ChatService {
 
     // 7. Lưu / Cập nhật Conversation State mới nhất vào Redis
     const stateEntities = { ...finalEntities };
+    const responseProducts = Array.isArray(responsePayload.data) ? responsePayload.data : [];
+    const singleResponseProduct = responseProducts.length === 1 ? responseProducts[0] : null;
+    if (!stateEntities.productId && singleResponseProduct?.id) {
+      stateEntities.productId = Number(singleResponseProduct.id);
+      stateEntities.productName = singleResponseProduct.name || undefined;
+    }
     if (responsePayload.nextStep === 'COMPLETED') {
       stateEntities.checkoutCompleted = true;
     }
     await ConversationContextService.updateState(targetSessionId, intent, stateEntities);
+    if (productIntents.includes(intent)) {
+      await ConversationContextService.rememberViewedProducts(targetSessionId, responsePayload.data || []);
+    }
 
     return serializeData({
       message,

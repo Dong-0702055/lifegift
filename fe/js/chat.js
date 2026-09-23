@@ -51,6 +51,23 @@ const ChatModule = {
 
       this.addMessage(replyMsg, 'assistant', products);
       const intentName = data.intent?.name || data.intent;
+      const cartIntents = [
+        'them_gio_hang', 'them_vao_gio_hang', 'xem_gio_hang',
+        'cap_nhat_gio_hang', 'xoa_khoi_gio_hang', 'xoa_tat_ca_gio_hang'
+      ];
+
+      // Chat cũng trả về snapshot giỏ hàng; cập nhật ngay để panel không giữ dữ liệu rỗng cũ.
+      if (cartIntents.includes(intentName)) {
+        const cartSnapshot = data.products && !Array.isArray(data.products) && Array.isArray(data.products.items)
+          ? data.products
+          : null;
+        if (cartSnapshot) {
+          CartModule.cart = cartSnapshot;
+          CartModule.render();
+        }
+        await CartModule.load();
+      }
+
       if (['bat_dau_dat_hang', 'thanh_toan_don_hang', 'dat_hang'].includes(intentName)) {
         CartModule.openPanel();
       }

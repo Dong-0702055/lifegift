@@ -23,6 +23,58 @@ export class ProductHandler {
     return [origin];
   }
 
+  private static buildProductWhere(entities: ResolvedEntities): Record<string, any> {
+    const categoryIds = this.toBigIntIds(entities.categoryId, entities.categoryIds);
+    const brandIds = this.toBigIntIds(entities.brandId, entities.brandIds);
+    const where: Record<string, any> = {
+      ...(categoryIds.length > 0 && { category_id: { in: categoryIds } }),
+      ...(brandIds.length > 0 && { brand_id: { in: brandIds } }),
+    };
+
+    if (entities.origin) {
+      where.OR = this.getOriginKeywords(entities.origin).map((keyword) => ({
+        origin: { contains: keyword },
+      }));
+    }
+
+    const priceQuery = {
+      ...(entities.minPrice !== null && entities.minPrice !== undefined && { gte: entities.minPrice }),
+      ...(entities.maxPrice !== null && entities.maxPrice !== undefined && { lte: entities.maxPrice }),
+    };
+    if (Object.keys(priceQuery).length > 0) {
+      where.price = priceQuery;
+    } else if (entities.extractedPrice) {
+      where.price = {
+        gte: entities.extractedPrice * 0.8,
+        lte: entities.extractedPrice * 1.2,
+      };
+    }
+    return where;
+  }
+
+  private static describeFilters(entities: ResolvedEntities): string {
+    const categoryNames: Record<string, string> = {
+      '4': 'cà phê',
+      '5': 'trà',
+      '6': 'hạt dinh dưỡng',
+      '7': 'đặc sản Tây Bắc',
+    };
+    const categoryIds = this.toBigIntIds(entities.categoryId, entities.categoryIds);
+    const categories = categoryIds.map((id) => categoryNames[id.toString()] || 'nhóm sản phẩm').filter(
+      (name, index, values) => values.indexOf(name) === index
+    );
+    const conditions: string[] = [];
+    if (categories.length > 0) conditions.push(categories.join(' và '));
+    if (entities.origin) conditions.push(`có xuất xứ từ ${entities.origin}`);
+    if (entities.minPrice !== null && entities.minPrice !== undefined) {
+      conditions.push(`từ ${Number(entities.minPrice).toLocaleString('vi-VN')}đ trở lên`);
+    }
+    if (entities.maxPrice !== null && entities.maxPrice !== undefined) {
+      conditions.push(`không quá ${Number(entities.maxPrice).toLocaleString('vi-VN')}đ`);
+    }
+    return conditions.join(', ');
+  }
+
   /**
    * Helper Mapper: Chuyển đổi dữ liệu Prisma (snake_case) sang định dạng Chuẩn DTO (camelCase)
    * và trích xuất hình ảnh, tên danh mục, tên thương hiệu, cùng số lượng tồn kho.
@@ -89,7 +141,8 @@ export class ProductHandler {
 
   public static async handle(
     intent: string,
-    entities: ResolvedEntities
+    entities: ResolvedEntities,
+    viewedProductIds: number[] = []
   ): Promise<ChatResponsePayload> {
     switch (intent) {
       case 'kiem_tra_ton_kho':
@@ -100,6 +153,8 @@ export class ProductHandler {
       case 'tim_san_pham_theo_gia':
       case 'goi_y_san_pham':
         return this.searchByPriceOrSuggest(entities);
+      case 'xem_san_pham_khac':
+        return this.getOtherFeaturedProducts(viewedProductIds);
       case 'hoi_gia':
         return this.getProductPrice(entities);
       case 'hoi_nguon_goc':
@@ -114,6 +169,27 @@ export class ProductHandler {
       default:
         return { replyMessage: 'Dạ shop chưa tìm thấy thông tin sản phẩm bạn yêu cầu.' };
     }
+  }
+
+  private static async getOtherFeaturedProducts(viewedProductIds: number[]): Promise<ChatResponsePayload> {
+    const excludedIds = viewedProductIds
+      .filter((id) => Number.isInteger(Number(id)) && Number(id) > 0)
+      .map((id) => BigInt(id));
+    const products = await prisma.products.findMany({
+      where: {
+        is_featured: true,
+        ...(excludedIds.length > 0 && { id: { notIn: excludedIds } }),
+      },
+      include: this.defaultIncludes,
+      take: 5,
+    });
+
+    return {
+      replyMessage: products.length > 0
+        ? 'Dưới đây là 5 sản phẩm nổi bật khác với những sản phẩm bạn đã xem trước đó ạ:'
+        : 'Bạn đã xem hết các sản phẩm nổi bật hiện có. Bạn muốn shop tìm theo danh mục hoặc mức giá nào không ạ?',
+      data: products.map((product) => this.formatProductResponse(product)),
+    };
   }
 
   private static async checkStock(entities: ResolvedEntities): Promise<ChatResponsePayload> {
@@ -134,19 +210,16 @@ export class ProductHandler {
       }
     }
 
-    if (entities.categoryId || entities.brandId) {
+    if (entities.categoryId || entities.categoryIds?.length || entities.brandId || entities.brandIds?.length || entities.origin) {
       const products = await prisma.products.findMany({
-        where: {
-          ...(entities.categoryId && { category_id: BigInt(entities.categoryId) }),
-          ...(entities.brandId && { brand_id: BigInt(entities.brandId) }),
-        },
+        where: this.buildProductWhere(entities),
         include: this.defaultIncludes,
         take: 5,
       });
 
       if (products.length > 0) {
         return {
-          replyMessage: 'Các sản phẩm phù hợp hiện có sẵn trong kho:',
+          replyMessage: `Các sản phẩm ${this.describeFilters(entities)} hiện có sẵn trong kho:`,
           data: products.map((p) => this.formatProductResponse(p)),
         };
       }
@@ -156,41 +229,20 @@ export class ProductHandler {
   }
 
   private static async searchByPriceOrSuggest(entities: ResolvedEntities): Promise<ChatResponsePayload> {
-    let priceQuery: any = {};
-    const categoryIds = this.toBigIntIds(entities.categoryId, entities.categoryIds);
-    const brandIds = this.toBigIntIds(entities.brandId, entities.brandIds);
-
-    if ((entities.minPrice !== undefined && entities.minPrice !== null) || 
-        (entities.maxPrice !== undefined && entities.maxPrice !== null)) {
-      priceQuery = {
-        ...(entities.minPrice !== null && entities.minPrice !== undefined && { gte: entities.minPrice }),
-        ...(entities.maxPrice !== null && entities.maxPrice !== undefined && { lte: entities.maxPrice }),
-      };
-    } else if (entities.extractedPrice) {
-      priceQuery = {
-        gte: entities.extractedPrice * 0.8,
-        lte: entities.extractedPrice * 1.2,
-      };
-    }
-
     let products = await prisma.products.findMany({
-      where: {
-        ...(Object.keys(priceQuery).length > 0 && { price: priceQuery }),
-        ...(categoryIds.length > 0 && { category_id: { in: categoryIds } }),
-        ...(brandIds.length > 0 && { brand_id: { in: brandIds } }),
-      },
+      where: this.buildProductWhere(entities),
       include: this.defaultIncludes,
       take: 5,
     });
 
-    if (products.length === 0 && !Object.keys(priceQuery).length) {
+    if (products.length === 0 && !entities.origin && !entities.categoryId && !entities.categoryIds?.length && !entities.brandId && !entities.brandIds?.length) {
       products = await prisma.products.findMany({
         include: this.defaultIncludes,
         take: 5,
       });
     }
 
-    const hasPriceFilter = Object.keys(priceQuery).length > 0;
+    const hasPriceFilter = Boolean(entities.minPrice || entities.maxPrice || entities.extractedPrice);
     const priceDescription = entities.minPrice !== null && entities.minPrice !== undefined
       && entities.maxPrice !== null && entities.maxPrice !== undefined
       ? 'trong khoảng giá bạn yêu cầu'
@@ -203,8 +255,8 @@ export class ProductHandler {
     return {
       replyMessage: products.length > 0
         ? (hasPriceFilter 
-            ? `Shop gợi ý các sản phẩm ${priceDescription}:`
-            : 'Shop gợi ý các sản phẩm phù hợp cho nhu cầu của bạn ạ:')
+            ? `Shop gợi ý các sản phẩm ${this.describeFilters(entities) || priceDescription}:`
+            : 'Shop gợi ý các sản phẩm nổi bật, bán chạy bên shop mời bạn xem và tham khảo ạ:')
         : 'Rất tiếc, hiện tại không tìm thấy sản phẩm phù hợp.',
       data: products.map((p) => this.formatProductResponse(p)),
     };
@@ -226,19 +278,16 @@ export class ProductHandler {
       }
     }
 
-    if (entities.categoryId || entities.brandId) {
+    if (entities.categoryId || entities.categoryIds?.length || entities.brandId || entities.brandIds?.length || entities.origin) {
       const products = await prisma.products.findMany({
-        where: {
-          ...(entities.categoryId && { category_id: BigInt(entities.categoryId) }),
-          ...(entities.brandId && { brand_id: BigInt(entities.brandId) }),
-        },
+        where: this.buildProductWhere(entities),
         include: this.defaultIncludes,
         take: 5,
       });
 
       if (products.length > 0) {
         return {
-          replyMessage: 'Bảng giá các sản phẩm bạn quan tâm:',
+          replyMessage: `Bảng giá các sản phẩm ${this.describeFilters(entities)}:`,
           data: products.map((p) => this.formatProductResponse(p)),
         };
       }
@@ -264,25 +313,22 @@ export class ProductHandler {
       }
     }
 
-    if (entities.origin) {
-      const originKeywords = this.getOriginKeywords(entities.origin);
+    if (entities.origin || entities.categoryId || entities.categoryIds?.length || entities.brandId || entities.brandIds?.length) {
       const products = await prisma.products.findMany({
-        where: {
-          OR: originKeywords.map((keyword) => ({ origin: { contains: keyword } })),
-        },
+        where: this.buildProductWhere(entities),
         include: this.defaultIncludes,
         take: 5,
       });
 
       if (products.length > 0) {
         return {
-          replyMessage: `Các sản phẩm có xuất xứ từ ${entities.origin}:`,
+          replyMessage: `Các sản phẩm ${this.describeFilters(entities)}:`,
           data: products.map((p) => this.formatProductResponse(p)),
         };
       }
 
       return {
-        replyMessage: `Hiện chưa tìm thấy sản phẩm có xuất xứ từ ${entities.origin}.`,
+        replyMessage: `Hiện chưa tìm thấy sản phẩm ${this.describeFilters(entities) || 'phù hợp với yêu cầu'}.`,
         data: [],
       };
     }
@@ -366,19 +412,16 @@ export class ProductHandler {
     const categoryIds = this.toBigIntIds(entities.categoryId, entities.categoryIds);
     const brandIds = this.toBigIntIds(entities.brandId, entities.brandIds);
 
-    if (categoryIds.length > 0 || brandIds.length > 0) {
+    if (categoryIds.length > 0 || brandIds.length > 0 || entities.origin) {
       const products = await prisma.products.findMany({
-        where: {
-          ...(categoryIds.length > 0 && { category_id: { in: categoryIds } }),
-          ...(brandIds.length > 0 && { brand_id: { in: brandIds } }),
-        },
+        where: this.buildProductWhere(entities),
         include: this.defaultIncludes,
         take: 5,
       });
 
       if (products.length > 0) {
         return {
-          replyMessage: 'Dưới đây là danh sách sản phẩm thuộc nhóm bạn yêu cầu:',
+          replyMessage: `Dưới đây là danh sách sản phẩm ${this.describeFilters(entities)}:`,
           data: products.map((p) => this.formatProductResponse(p)),
         };
       }
@@ -391,7 +434,9 @@ export class ProductHandler {
     });
 
     return {
-      replyMessage: 'Rất tiếc, shop chưa có sản phẩm bạn tìm kiếm. Bạn có thể tham khảo một số sản phẩm nổi bật bên dưới nhé:',
+      replyMessage: entities.origin || entities.categoryId || entities.categoryIds?.length
+        ? `Rất tiếc, hiện chưa tìm thấy sản phẩm ${this.describeFilters(entities) || 'phù hợp với yêu cầu'}.`
+        : 'Rất tiếc, shop chưa có sản phẩm bạn tìm kiếm. Bạn có thể tham khảo một số sản phẩm nổi bật bên dưới nhé:',
       data: featuredProducts.map((p) => this.formatProductResponse(p)),
     };
   }
