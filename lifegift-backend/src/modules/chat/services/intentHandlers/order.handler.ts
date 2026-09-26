@@ -9,6 +9,47 @@ import { ChatMessageItem } from '../../redisChat.service';
 const prisma = new PrismaClient();
 
 export class OrderHandler {
+  private static resolveCartPositions(message?: string): number[] {
+    if (!message || !/(?:trong|ở|o)\s+(?:giỏ hàng|gio hang)|(?:giỏ hàng|gio hang)\s+(?:của tôi|cua toi)/i.test(message)) {
+      return [];
+    }
+
+    const matches = [...message.matchAll(
+      /(?:sản phẩm|san pham|sp|món|mon)\s*(?:số|so|thứ|thu)?\s*(\d+)|(?:và|va|,|hoặc|hoac)\s*(?:(?:sản phẩm|san pham|sp|món|mon)\s*)?(?:số|so)?\s*(\d+)/gi
+    )];
+    return [...new Set(matches
+      .map((match) => Number(match[1] || match[2]))
+      .filter((position) => Number.isInteger(position) && position > 0))];
+  }
+
+  private static formatCheckoutProduct(product: any, quantity: number, cartItemId?: number) {
+    const inventories = Array.isArray(product.inventories) ? product.inventories : [];
+    return {
+      id: Number(product.id),
+      productId: Number(product.id),
+      ...(cartItemId !== undefined && { cartItemId }),
+      name: product.name,
+      productName: product.name,
+      sku: product.sku,
+      description: product.description,
+      shortDescription: product.short_description,
+      images: (product.product_images || []).map((image: any) => image.image_url),
+      brandName: product.brands?.name || null,
+      categoryName: product.categories?.name || null,
+      price: Number(product.price || 0),
+      salePrice: product.sale_price ? Number(product.sale_price) : null,
+      totalStockQuantity: inventories.reduce((sum: number, inventory: any) => sum + Number(inventory.quantity || 0), 0),
+      totalAvailableQuantity: inventories.reduce(
+        (sum: number, inventory: any) => sum + Number(inventory.available_quantity ?? Math.max(
+          Number(inventory.quantity || 0) - Number(inventory.reserved_quantity || 0),
+          0
+        )),
+        0
+      ),
+      quantity,
+    };
+  }
+
   private static toBigIntIds(primaryId: bigint | number | null | undefined, ids?: Array<bigint | number>): bigint[] {
     const values = [...(ids || []), ...(primaryId !== null && primaryId !== undefined ? [primaryId] : [])];
     return [...new Set(values.map((id) => BigInt(id)))];
@@ -81,7 +122,7 @@ export class OrderHandler {
 
     const paymentMethod = entities.paymentMethod as PaymentMethod | undefined;
     const receiverPhone = entities.receiverPhone || entities.phone || message?.match(/\b(0\d{9,10})\b/)?.[1];
-    const receiverName = entities.receiverName || message?.match(/(?:tên người nhận|tên)\s*(?:là|:)?\s*([\p{L} ]{2,80})/iu)?.[1]?.trim();
+    const receiverName = entities.receiverName || message?.match(/(?:họ và tên|tên(?: người nhận)?)(?:\s+tôi)?\s*(?:là|:)?\s*([^,;\n]+)/iu)?.[1]?.trim();
     const address = entities.address;
 
     const getMissingCheckoutInfo = (hasProduct: boolean): string[] => {
@@ -94,6 +135,52 @@ export class OrderHandler {
       return missing;
     };
 
+    const formatCheckoutReview = (items: Array<{ name: string; quantity: number; unitPrice: number }>, subtotal: number): string => {
+      const paymentLabels: Record<string, string> = {
+        COD: 'Thanh toán khi nhận hàng (COD)',
+        BANK_TRANSFER: 'Chuyển khoản',
+        MOMO: 'MoMo',
+        VNPAY: 'VNPay',
+      };
+      const productLines = items.map((item, index) =>
+        `${index + 1}. ${item.name} (SL: ${item.quantity} x ${item.unitPrice.toLocaleString('vi-VN')}đ)`
+      );
+      const missing = getMissingCheckoutInfo(items.length > 0);
+      const customerLines = [
+        `Tên người nhận: ${receiverName || 'Chưa cung cấp'}`,
+        `Số điện thoại: ${receiverPhone || 'Chưa cung cấp'}`,
+        `Địa chỉ giao hàng: ${address || 'Chưa cung cấp'}`,
+        `Phương thức thanh toán: ${paymentMethod ? paymentLabels[paymentMethod] || paymentMethod : 'Chưa cung cấp'}`,
+      ];
+      const review = [
+        'Vui lòng kiểm tra thông tin đơn hàng:',
+        productLines.length ? productLines.join('\n') : 'Chưa có sản phẩm',
+        `Tạm tính: ${subtotal.toLocaleString('vi-VN')}đ`,
+        '',
+        'Thông tin nhận hàng:',
+        ...customerLines,
+      ].join('\n');
+
+      if (missing.length > 0) {
+        return `${review}\n\nCòn thiếu: ${missing.join(', ')}. Vui lòng gửi bổ sung hoặc gửi lại trường cần sửa.`;
+      }
+      return `${review}\n\nNếu mọi thông tin đã chính xác, hãy gửi "Xác nhận đặt hàng". Nếu cần sửa, hãy gửi lại trường muốn thay đổi.`;
+    };
+
+    const getCheckoutInfoReply = (): string => {
+      const items = (entities.checkoutItems || []).map((item: any) => ({
+        name: String(item.name || 'Sản phẩm'),
+        quantity: Number(item.quantity || 0),
+        unitPrice: Number(item.unitPrice || 0),
+      }));
+      const subtotal = items.reduce((sum: number, item: any) => sum + item.quantity * item.unitPrice, 0);
+      const review = formatCheckoutReview(items, subtotal);
+      const phoneNeedsCorrection = !receiverPhone && /(?:số điện thoại|sdt|điện thoại|phone)\s*(?:là|:)?\s*0?[\d\s.-]{1,14}/i.test(message || '');
+      return phoneNeedsCorrection
+        ? review.replace('số điện thoại người nhận.', 'số điện thoại người nhận (cần 10–11 chữ số).')
+        : review;
+    };
+
     try {
       switch (intent) {
         // gộp tất cả intent liên quan đến đặt hàng / thanh toán / checkout
@@ -103,6 +190,25 @@ export class OrderHandler {
           const cart = await CartService.getMyCart(userId);
           const quantity = entities.quantity && entities.quantity > 0 ? entities.quantity : 1;
           let directProduct: any = null;
+          const cartPositions = OrderHandler.resolveCartPositions(message);
+          if (cartPositions.length === 0 && entities.productIndex && message && /(?:trong|ở|o)\s+(?:giỏ hàng|gio hang)|(?:giỏ hàng|gio hang)\s+(?:của tôi|cua toi)/i.test(message)) {
+            cartPositions.push(Number(entities.productIndex));
+          }
+          const isCartPositionRequest = cartPositions.length > 0;
+          const selectedByCartPosition = cartPositions.map((position) => cart.items[position - 1]);
+
+          if (isCartPositionRequest) {
+            const missingPositions = cartPositions.filter((_, index) => !selectedByCartPosition[index]);
+            if (missingPositions.length > 0) {
+              return { replyMessage: `Giỏ hàng của bạn không có sản phẩm số ${missingPositions.join(', ')}.` };
+            }
+            entities.productId = Number(selectedByCartPosition[0].productId);
+            entities.productIds = selectedByCartPosition.map((item: any) => Number(item.productId));
+            entities.cartItemIds = selectedByCartPosition.map((item: any) => Number(item.id));
+          }
+
+          const requestedProductIds = OrderHandler.toBigIntIds(entities.productId, entities.productIds);
+          const hasMultipleRequestedProducts = requestedProductIds.length > 1;
 
           if (!entities.productId && message) {
             const selectedProductId = OrderHandler.resolveProductIdFromHistory(message, history);
@@ -126,12 +232,20 @@ export class OrderHandler {
           }
 
           // TRƯỜNG HỢP 1: Khách hàng chỉ định sản phẩm cụ thể (VD: "tôi muốn đặt 1 cafe cầu đất")
-          if (entities.productId) {
+          if (entities.productId && !hasMultipleRequestedProducts && !isCartPositionRequest) {
             const productId = Number(entities.productId);
             const prismaAny = prisma as any;
 
             // Kiểm tra sản phẩm có tồn tại không
-            const product = await (prismaAny.products?.findFirst({ where: { id: BigInt(productId), ...OrderHandler.buildProductFilter(entities) } }) ||
+            const product = await (prismaAny.products?.findFirst({
+              where: { id: BigInt(productId), ...OrderHandler.buildProductFilter(entities) },
+              include: {
+                inventories: true,
+                product_images: { orderBy: { sort_order: 'asc' } },
+                brands: true,
+                categories: true,
+              },
+            }) ||
               prismaAny.product?.findUnique({ where: { id: BigInt(productId) } }));
 
             if (!product || product.status !== 'ACTIVE') {
@@ -142,26 +256,54 @@ export class OrderHandler {
             directProduct = { product, quantity };
           }
 
-          if (!directProduct && (!cart.items || cart.items.length === 0)) {
+          const selectedCartItems = isCartPositionRequest
+            ? selectedByCartPosition
+            : hasMultipleRequestedProducts
+            ? cart.items.filter((item: any) => requestedProductIds.some((id) => id === BigInt(item.productId)))
+            : cart.items;
+
+          if (!directProduct && (!selectedCartItems || selectedCartItems.length === 0)) {
             return { replyMessage: 'Giỏ hàng của bạn đang trống, vui lòng chọn sản phẩm trước khi đặt hàng.' };
           }
 
           const itemsSummary = directProduct
             ? `  1. ${directProduct.product.name} (SL: ${directProduct.quantity})`
-            : cart.items
+            : selectedCartItems
                 .map((item: any, idx: number) => `  ${idx + 1}. ${item.productName} (SL: ${item.quantity})`)
                 .join('\n');
           const subtotal = directProduct
             ? (directProduct.product.sale_price || directProduct.product.price || 0) * directProduct.quantity
-            : cart.subtotal;
+            : selectedCartItems.reduce((sum: number, item: any) => sum + Number(item.subtotal || 0), 0);
 
-          const missing = getMissingCheckoutInfo(Boolean(directProduct || cart.items?.length));
-          const nextMessage = missing.length
-            ? `Để tiếp tục, vui lòng cung cấp: ${missing.join(', ')}.`
-            : 'Thông tin đã đủ. Bạn hãy kiểm tra lại và gõ "Xác nhận đặt hàng" để hoàn tất.';
+          const missing = getMissingCheckoutInfo(Boolean(directProduct || selectedCartItems?.length));
+          const checkoutProducts = directProduct
+            ? [OrderHandler.formatCheckoutProduct(directProduct.product, directProduct.quantity)]
+            : await (async () => {
+                const productRecords = await prisma.products.findMany({
+                  where: { id: { in: selectedCartItems.map((item: any) => BigInt(item.productId)) } },
+                  include: {
+                    inventories: true,
+                    product_images: { orderBy: { sort_order: 'asc' } },
+                    brands: true,
+                    categories: true,
+                  },
+                });
+                const productsById = new Map(productRecords.map((product) => [Number(product.id), product]));
+                return selectedCartItems.flatMap((item: any) => {
+                  const product = productsById.get(Number(item.productId));
+                  return product
+                    ? [OrderHandler.formatCheckoutProduct(product, Number(item.quantity), Number(item.id))]
+                    : [];
+                });
+              })();
+          const reviewItems = checkoutProducts.map((product: any) => ({
+            name: String(product.name || 'Sản phẩm'),
+            quantity: Number(product.quantity || 0),
+            unitPrice: Number(product.salePrice || product.price || 0),
+          }));
           return {
-            replyMessage: `🛒 **Đơn hàng của bạn gồm:**\n${itemsSummary}\n\n💰 **Tạm tính:** ${Number(subtotal).toLocaleString('vi-VN')}đ.\n\n${nextMessage}`,
-            data: directProduct ? [directProduct.product] : cart,
+            replyMessage: formatCheckoutReview(reviewItems, Number(subtotal)),
+            data: checkoutProducts,
             nextStep: missing.length ? 'COLLECT_INFO' : 'CONFIRMATION'
           };
         }
@@ -195,14 +337,29 @@ export class OrderHandler {
 
           const latestOrder = myOrders[0];
           return {
-            replyMessage: `Đơn hàng gần nhất #${latestOrder.id} (${latestOrder.orderCode}) đang ở trạng thái: ${latestOrder.orderStatus}. Tổng tiền: ${Number(latestOrder.totalAmount).toLocaleString('vi-VN')}đ.`,
+            replyMessage: `Dưới đât là các đơn hàng của bạn:`,
             data: myOrders
           };
         }
 
         case 'huy_don_hang': {
+          const cancellableStatuses = [OrderStatus.PENDING, OrderStatus.CONFIRMED, OrderStatus.PROCESSING];
+
           if (!rawOrderId) {
-            return { replyMessage: 'Bạn vui lòng cung cấp Mã đơn hàng bạn muốn hủy giúp shop nhé.' };
+            const myOrders = await OrderService.getMyOrders(userId);
+            const cancellableOrders = myOrders.filter((item) => cancellableStatuses.includes(item.orderStatus));
+            if (cancellableOrders.length === 0) {
+              return { replyMessage: 'Hiện bạn không có đơn hàng nào có thể hủy. Chỉ đơn ở trạng thái PENDING, CONFIRMED hoặc PROCESSING mới được hủy.' };
+            }
+
+            const orderList = cancellableOrders.map((item, index) =>
+              `${index + 1}. Đơn #${item.id} (${item.orderCode}) - ${item.orderStatus} - ${Number(item.totalAmount).toLocaleString('vi-VN')}đ`
+            ).join('\n');
+            return {
+              replyMessage: `Các đơn hàng bạn có thể hủy:\n${orderList}\n\nBạn hãy chọn nút "Hủy đơn" bên dưới hoặc gửi mã đơn hàng cần hủy.`,
+              data: cancellableOrders,
+              nextStep: 'SELECT_ORDER_TO_CANCEL'
+            };
           }
 
           const orderIdNumber = Number(rawOrderId);
@@ -216,6 +373,12 @@ export class OrderHandler {
           }
           if (Number(order.userId) !== userId) {
             return { replyMessage: `Bạn không thể hủy đơn hàng #${orderIdNumber} do đơn này không thuộc tài khoản của bạn.` };
+          }
+          if (!cancellableStatuses.includes(order.orderStatus)) {
+            return {
+              replyMessage: `Đơn hàng #${orderIdNumber} đang ở trạng thái ${order.orderStatus} nên không thể hủy. Chỉ đơn ở trạng thái PENDING, CONFIRMED hoặc PROCESSING mới được hủy.`,
+              data: order
+            };
           }
 
           const updatedOrder = await OrderService.updateStatus(
@@ -232,21 +395,11 @@ export class OrderHandler {
         }
 
         case 'nhap_dia_chi_giao_hang': {
-          if (!address) {
-            return { replyMessage: 'Bạn vui lòng cung cấp địa chỉ giao hàng cụ thể nhé.' };
-          }
-          return {
-            replyMessage: `Đã ghi nhận địa chỉ giao hàng: ${address}. Bạn vui lòng cho biết tên và số điện thoại người nhận, cùng phương thức thanh toán (COD, chuyển khoản, MoMo hoặc VNPay).`
-          };
+          return { replyMessage: getCheckoutInfoReply() };
         }
 
         case 'chon_phuong_thuc_thanh_toan': {
-          if (!paymentMethod) {
-            return { replyMessage: 'Bạn vui lòng chọn phương thức thanh toán: COD, chuyển khoản, MoMo hoặc VNPay.' };
-          }
-          return {
-            replyMessage: `Đã ghi nhận thanh toán bằng ${paymentMethod}. Bạn hãy kiểm tra thông tin và gõ "Xác nhận đặt hàng" để hoàn tất.`
-          };
+          return { replyMessage: getCheckoutInfoReply() };
         }
 
         case 'huy_checkout': {
@@ -256,28 +409,35 @@ export class OrderHandler {
         }
 
         case 'xac_nhan_dat_hang': {
-          const directItems = entities.productId
+          const requestedProductIds = OrderHandler.toBigIntIds(entities.productId, entities.productIds);
+          const hasSelectedCartItems = Array.isArray(entities.cartItemIds) && entities.cartItemIds.length > 0;
+          const directItems = !hasSelectedCartItems && requestedProductIds.length <= 1 && entities.productId
             ? [{
                 productId: Number(entities.productId),
                 quantity: entities.quantity && entities.quantity > 0 ? Number(entities.quantity) : 1,
               }]
             : undefined;
           const cart = directItems ? null : await CartService.getMyCart(userId);
-          const missing = getMissingCheckoutInfo(Boolean(directItems || cart?.items?.length));
+          const selectedCartItems = hasSelectedCartItems
+            ? cart?.items.filter((item: any) => entities.cartItemIds.some((id: any) => Number(id) === Number(item.id)))
+            : requestedProductIds.length > 1
+            ? cart?.items.filter((item: any) => requestedProductIds.some((id) => id === BigInt(item.productId)))
+            : cart?.items;
+          const missing = getMissingCheckoutInfo(Boolean(directItems || selectedCartItems?.length));
           if (missing.length > 0) {
             return {
               replyMessage: `Chưa thể đặt hàng vì còn thiếu ${missing.join(', ')}. Bạn vui lòng cung cấp đủ thông tin rồi xác nhận lại nhé.`
             };
           }
 
-          if (!directItems && (!cart?.items || cart.items.length === 0)) {
+          if (!directItems && (!selectedCartItems || selectedCartItems.length === 0)) {
             return { replyMessage: 'Bạn chưa chọn sản phẩm để tạo đơn hàng.' };
           }
 
           const createdOrder = await OrderService.create(userId, {
             warehouseId: 1,
             items: directItems,
-            cartItemIds: cart?.items.map((item: any) => Number(item.id)),
+            cartItemIds: selectedCartItems?.map((item: any) => Number(item.id)),
             receiverName: receiverName!,
             receiverPhone: receiverPhone!,
             shippingProvince: 'Chưa cung cấp',
@@ -291,6 +451,10 @@ export class OrderHandler {
               paymentMethod: paymentMethod!,
             }
           });
+
+          if (selectedCartItems?.length) {
+            await CartService.removeItems(userId, selectedCartItems.map((item: any) => Number(item.id)));
+          }
 
           return {
             replyMessage: `🎉 Bạn đã đặt hàng thành công! Mã đơn hàng của bạn là #${createdOrder.id} (${createdOrder.orderCode}).`,

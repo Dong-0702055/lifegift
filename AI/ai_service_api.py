@@ -7,7 +7,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from underthesea import word_tokenize
-from src.ner_entity_inference import EntityRecognizer
+from src.phase_05_entity_recognition_inference import EntityRecognizer
 
 # --- CẤU HÌNH ---
 BASE_DIR = Path(__file__).resolve().parent

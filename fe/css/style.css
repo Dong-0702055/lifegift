@@ -199,6 +199,42 @@ main { min-height: 0; overflow-y: auto; padding: 30px; }
   margin-top: 4px;
 }
 
+.comparison-table-wrap {
+  width: 100%;
+  margin-top: 14px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+.comparison-table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  font: 12px/1.4 "Segoe UI", sans-serif;
+  text-align: left;
+}
+.comparison-table th,
+.comparison-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid #e8efeb;
+  vertical-align: top;
+}
+.comparison-table thead th {
+  color: #fff;
+  background: var(--green);
+  font-weight: 700;
+}
+.comparison-table tbody th {
+  width: 115px;
+  color: var(--ink);
+  background: #f4f8f4;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.comparison-table tbody tr:last-child th,
+.comparison-table tbody tr:last-child td { border-bottom: 0; }
+
 /* MODAL CHI TIẾT SẢN PHẨM */
 .modal-overlay {
   position: fixed;
@@ -289,7 +325,70 @@ button[type="submit"] { min-width: 98px; padding: 0 18px; color: #fff; backgroun
 .checkout-summary { display: grid; gap: 5px; margin: 18px 0; padding: 13px 14px; background: #f5faf5; border: 1px solid var(--line); border-radius: 8px; color: var(--muted); font-size: 13px; }
 .checkout-summary strong { color: var(--ink); }
 .discount-line { color: var(--green); }
+.checkout-edit-form { display: grid; gap: 12px; margin-top: 14px; padding: 14px; border: 1px solid #cfe0d7; border-radius: 8px; background: #f8fbf8; font-family: "Segoe UI", sans-serif; }
+.checkout-edit-form h3 { margin: 0; color: var(--green-dark); font: 600 15px "Segoe UI", sans-serif; }
+.checkout-edit-items { padding-bottom: 10px; border-bottom: 1px solid var(--line); font-size: 12px; }
+.checkout-edit-items ul { display: grid; gap: 4px; margin: 6px 0 0; padding-left: 20px; color: var(--muted); }
+.checkout-edit-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.checkout-edit-fields label { display: grid; gap: 5px; color: var(--ink); font-size: 12px; font-weight: 600; }
+.checkout-edit-fields input, .checkout-edit-fields select { width: 100%; min-width: 0; padding: 9px 10px; color: var(--ink); background: #fff; border: 1px solid #c9dce4; border-radius: 6px; outline: none; font: 13px "Segoe UI", sans-serif; }
+.checkout-edit-fields input:focus, .checkout-edit-fields select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(45, 111, 159, .12); }
+.checkout-edit-help { margin: 0; color: var(--muted); font: 12px/1.4 "Segoe UI", sans-serif; }
+.checkout-edit-submit { justify-self: end; min-height: 38px; padding: 0 16px; color: #fff; background: linear-gradient(135deg, var(--green), var(--blue)); border: 0; border-radius: 7px; cursor: pointer; font: 600 13px "Segoe UI", sans-serif; }
+.checkout-edit-submit:disabled { opacity: .6; cursor: wait; }
 @keyframes slide-in { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-@media (max-width: 680px) { .user-profile { gap: 6px; } .user-profile > span { display: none; } .checkout-grid { grid-template-columns: 1fr; } .full-width { grid-column: auto; } .checkout-modal { padding: 22px; } }
+@media (max-width: 680px) { .user-profile { gap: 6px; } .user-profile > span { display: none; } .checkout-grid, .checkout-edit-fields { grid-template-columns: 1fr; } .full-width { grid-column: auto; } .checkout-modal { padding: 22px; } }
 @keyframes rise { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes shell-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+.order-table-wrap {
+  width: 100%;
+  margin-top: 12px;
+  overflow-x: auto;
+}
+
+.order-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  border: 1px solid #d9e4e1;
+  background: #fbfdfc;
+  font-size: 12px;
+}
+
+.order-table th,
+.order-table td {
+  padding: 10px;
+  border-bottom: 1px solid #e4ecea;
+  text-align: left;
+  vertical-align: top;
+}
+
+.order-table th {
+  color: #315e58;
+  background: #eef7f4;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.order-table td {
+  color: #344b48;
+  line-height: 1.45;
+}
+
+.order-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.order-cancel-button {
+  border: 0;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #fff;
+  background: #c94b3c;
+  cursor: pointer;
+}
+
+.order-cancel-button:hover {
+  background: #a83c30;
+}

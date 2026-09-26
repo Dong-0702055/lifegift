@@ -18,6 +18,7 @@ export class AliasResolverService {
     ]);
 
     let matchedProductId: bigint | null = null;
+    const matchedProductIds: bigint[] = [];
     let matchedCategoryId: bigint | null = null;
     const matchedCategoryIds: bigint[] = [];
     let matchedBrandId: bigint | null = null;
@@ -27,10 +28,13 @@ export class AliasResolverService {
     const sortedProducts = productAliases.sort((a: any, b: any) => b.alias.length - a.alias.length);
     for (const item of sortedProducts) {
       if (normalizedText.includes(item.alias.toLowerCase())) {
-        matchedProductId = item.product_id ?? item.productId ?? null;
-        break;
+        const productId = item.product_id ?? item.productId ?? null;
+        if (productId !== null && !matchedProductIds.some((id) => id === productId)) {
+          matchedProductIds.push(productId);
+        }
       }
     }
+    matchedProductId = matchedProductIds[0] ?? null;
 
     // 3. Khớp Category Alias
     const sortedCategories = categoryAliases.sort((a: any, b: any) => b.alias.length - a.alias.length);
@@ -139,6 +143,7 @@ export class AliasResolverService {
 
     return {
       productId: matchedProductId,
+      productIds: matchedProductIds,
       categoryId: matchedCategoryId,
       categoryIds: matchedCategoryIds,
       brandId: matchedBrandId,

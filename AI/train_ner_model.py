@@ -16,7 +16,7 @@ from transformers import (
     set_seed,
 )
 
-from src.model_training_config import MODEL_NAME, MAX_LENGTH, SEED, DEVICE, USE_FP16
+from src.phase_00_training_configuration import MODEL_NAME, MAX_LENGTH, SEED, DEVICE, USE_FP16
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "phobert_dataset" / "ner"

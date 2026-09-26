@@ -25,6 +25,13 @@ Project hiện có hai chức năng chính:
 ├── predict_intent_cli.py            # Dự đoán intent qua giao diện dòng lệnh
 ├── ai_service_api.py                # FastAPI phục vụ intent và entity extraction
 ├── train_ner_model.py               # Huấn luyện model nhận diện entity NER
+├── src/
+│   ├── phase_00_training_configuration.py            # Cấu hình model, dữ liệu, tham số train và thiết bị
+│   ├── phase_01_text_preprocessing.py                 # Chuẩn hóa Unicode và tách từ tiếng Việt
+│   ├── phase_02_intent_dataset_preparation.py         # Đọc CSV, làm sạch dữ liệu, chống leakage, mã hóa nhãn
+│   ├── phase_03_intent_evaluation_metrics.py          # Tính accuracy, precision, recall và F1
+│   ├── phase_04_training_results_visualization.py    # Vẽ loss, metrics và confusion matrix
+│   └── phase_05_entity_recognition_inference.py      # Nạp NER, nhận diện entity và địa danh lúc chạy API
 ├── knowledge/
 │   ├── intent_schema.json            # Mô tả 22 intent
 │   ├── entity_examples.jsonl        # Ví dụ entity và SKU chuẩn hóa
@@ -89,7 +96,7 @@ Pipeline sẽ:
 6. Đánh giá trên validation và test.
 7. Lưu model tốt nhất cùng các báo cáo vào `model/intent_classifier/`.
 
-Các cấu hình chính trong `src/model_training_config.py`:
+Các cấu hình chính trong `src/phase_00_training_configuration.py`:
 
 | Cấu hình | Giá trị |
 | --- | --- |

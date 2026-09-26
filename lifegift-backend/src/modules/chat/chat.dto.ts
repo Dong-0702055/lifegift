@@ -1,5 +1,8 @@
 export interface ResolvedEntities {
   productId?: bigint | number | null;
+  productIds?: Array<bigint | number>;
+  productIndex?: number | null;
+  productIndices?: number[];
   categoryId?: bigint | number | null;
   categoryIds?: Array<bigint | number>;
   brandId?: bigint | number | null;

@@ -1,8 +1,11 @@
 import redis from '../../../config/redisClient'; // Đường dẫn tới file khởi tạo Redis client của bạn
 
 export interface ConversationState {
+  checkoutItems?: Array<{ productId: number; cartItemId?: number; name: string; quantity?: number; unitPrice?: number }>;
   lastIntent?: string;
   productId?: number;
+  productIds?: number[];
+  cartItemIds?: number[];
   productName?: string;
   categoryId?: number;
   categoryIds?: number[];
@@ -19,6 +22,7 @@ export interface ConversationState {
   paymentMethod?: string;
   checkoutStep?: 'NONE' | 'CART' | 'ADDRESS' | 'PAYMENT' | 'CONFIRMATION';
   mentionedProducts?: Array<{ productId: number; name: string }>;
+  recentProducts?: Array<{ productId: number; name: string }>;
   viewedProductIds?: number[];
   extractedPrice?: number;
   couponCode?: string;
@@ -61,8 +65,8 @@ export class ConversationContextService {
     const currentState = await this.getState(sessionId);
 
     const rememberedFields = [
-      'productId', 'productName', 'categoryId', 'categoryIds', 'brandId', 'brandIds', 'origin', 'orderId',
-      'quantity', 'minPrice', 'maxPrice', 'extractedPrice', 'address',
+      'productId', 'productIds', 'cartItemIds', 'productName', 'categoryId', 'categoryIds', 'brandId', 'brandIds', 'origin', 'orderId',
+      'quantity', 'minPrice', 'maxPrice', 'extractedPrice', 'address', 'checkoutItems',
       'receiverName', 'receiverPhone', 'paymentMethod', 'couponCode', 'checkoutStep', 'mentionedProducts',
     ];
     const updatedState: ConversationState = { ...currentState, lastIntent: intent };
@@ -74,12 +78,26 @@ export class ConversationContextService {
       }
     }
 
+    if (entities.invalidReceiverPhone) delete updatedState.receiverPhone;
+
+    if (intent === 'bat_dau_dat_hang' && !entities.productId) {
+      delete updatedState.productId;
+      delete updatedState.productName;
+      delete (updatedState as any).productIds;
+      delete (updatedState as any).productIndex;
+      delete (updatedState as any).productIndices;
+      if (!entities.checkoutItems) delete updatedState.checkoutItems;
+    }
+
     if (intent === 'huy_checkout' || entities.checkoutCompleted) {
       delete updatedState.checkoutStep;
       delete updatedState.quantity;
       delete updatedState.couponCode;
       delete updatedState.productId;
       delete updatedState.productName;
+      delete updatedState.productIds;
+      delete updatedState.cartItemIds;
+      delete updatedState.checkoutItems;
       delete updatedState.address;
       delete updatedState.receiverName;
       delete updatedState.receiverPhone;
@@ -109,5 +127,22 @@ export class ConversationContextService {
     const viewedProductIds = [...new Set([...previousIds, ...newIds])].slice(-50);
 
     await this.saveState(sessionId, { ...currentState, viewedProductIds });
+  }
+
+  static async rememberRecentProducts(sessionId: string, products: any[]): Promise<void> {
+    if (!Array.isArray(products) || products.length < 2) return;
+
+    const recentProducts = products
+      .map((product) => ({
+        productId: Number(product?.id ?? product?.productId ?? product?.product_id),
+        name: String(product?.name ?? product?.productName ?? ''),
+      }))
+      .filter((product) => Number.isInteger(product.productId) && product.productId > 0)
+      .slice(0, 10);
+
+    if (recentProducts.length === 0) return;
+
+    const currentState = await this.getState(sessionId);
+    await this.saveState(sessionId, { ...currentState, recentProducts });
   }
 }

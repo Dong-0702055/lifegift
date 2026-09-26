@@ -59,6 +59,16 @@ const ApiService = {
     });
   },
 
+  cancelOrder(orderId) {
+    return this.request(`/orders/${orderId}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        status: 'CANCELLED',
+        note: 'Khách hàng hủy đơn hàng từ giao diện'
+      })
+    });
+  },
+
   applyCoupon(payload) {
     return this.request('/coupons/apply', {
       method: 'POST',

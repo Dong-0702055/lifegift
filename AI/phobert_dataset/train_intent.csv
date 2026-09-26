@@ -1,4 +1,14 @@
 ﻿text,intent
+mình muốn đặt hàng thì phải làm như thế nào,huong_dan_dat_hang
+shop hướng dẫn giúp mình cách đặt hàng với,huong_dan_dat_hang
+quy trình đặt hàng ở LifeGift thực hiện ra sao,huong_dan_dat_hang
+"tôi chưa biết đặt hàng trên shop, chỉ giúp tôi với",huong_dan_dat_hang
+muốn mua hàng thì cần làm những bước nào,huong_dan_dat_hang
+đặt hàng online ở đây như thế nào vậy,huong_dan_dat_hang
+làm sao để tôi đặt được một đơn hàng,huong_dan_dat_hang
+tôi cần hướng dẫn các bước mua hàng,huong_dan_dat_hang
+đầu tiên tôi phải làm gì để đặt hàng,huong_dan_dat_hang
+hướng dẫn tôi từ lúc cho hàng vào giỏ đến lúc xác nhận đơn,huong_dan_dat_hang
 cho tôi xem 5 sản phẩm nổi bật khác với các sản phẩm vừa xem,xem_san_pham_khac
 gợi ý 5 sản phẩm khác những sản phẩm trước đó,xem_san_pham_khac
 cho xem các sản phẩm nổi bật tiếp theo,xem_san_pham_khac
@@ -9,6 +19,7 @@ cho tôi xem thêm sản phẩm nổi bật khác,xem_san_pham_khac
 không lấy 5 sản phẩm cũ cho xem 5 sản phẩm khác,xem_san_pham_khac
 shop có trà Shan Tuyết không,tim_kiem_san_pham
 cái hộp quà Tết này bao tiền,hoi_gia
+xem sản phẩm, xem_chi_tiet_san_pham
 mình muốn tiếp tục để đặt hàng,bat_dau_dat_hang
 cảm ơn bạn đã giúp mình,cam_on
 chính sách đổi trả thế nào giúp mình,chinh_sach_doi_tra
@@ -46,6 +57,7 @@ bỏ hộp quà Tết ra khỏi giỏ,xoa_khoi_gio_hang
 trà Shan Tuyết tính theo túi hay hộp,hoi_don_vi
 mình muốn tiến hành mua hàng,bat_dau_dat_hang
 xóa cà phê Robusta khỏi giỏ,xoa_khoi_gio_hang
+xem sản phẩm vừa thêm vào giỏ hàng,xem_gio_hang
 "giao hàng đến số 25 Lê Lợi, Đà Nẵng",nhap_dia_chi_giao_hang
 thêm một chai mật ong vào giỏ,them_vao_gio_hang
 có nhận ship COD ko,phuong_thuc_thanh_toan
@@ -57,6 +69,7 @@ giảm măng khô từ 3 túi xuống 2 túi,cap_nhat_gio_hang
 hẹn gặp lại giúp mình,tam_biet
 dạ em cảm ơn nhé,cam_on
 có ai ở đây không,chao_hoi
+xem sản phẩm khác,xem_san_pham_khac
 cảm ơn bạn nhiều giúp mình,cam_on
 thêm món này vào giỏ hàng,them_vao_gio_hang
 cho mình thêm trà Ô Long vào giỏ,them_vao_gio_hang
@@ -95,6 +108,7 @@ khi nào mua mình nhắn lại shop,tam_biet
 shop cho mình hủy đơn được không shop,huy_don_hang
 chốt đơn giúp mình,xac_nhan_dat_hang
 shop đang có khuyến mãi gì nhé,khuyen_mai
+xem sản phẩm thứ 3 trong giỏ hàng,xem_gio_hang
 giúp mình bỏ cà phê vào giỏ,them_vao_gio_hang
 shop hỗ trợ phương thức thanh toán nào nhé,phuong_thuc_thanh_toan
 đổi sang thanh toán online,chon_phuong_thuc_thanh_toan
@@ -122,6 +136,7 @@ hộp quà tết cao cấp và hạt điều rang muối khác nhau thế nào,s
 có chuyển khoản được không shop,phuong_thuc_thanh_toan
 "thông tin đã đúng, tiến hành đặt hàng",xac_nhan_dat_hang
 shop đề xuất giúp mình,goi_y_san_pham
+xem sản phẩm đàu tiên tỏng giỏ hàng,xem_gio_hang
 ship về Hà Nội bao nhiêu,hoi_phi_ship
 làm sao để hủy đơn,huy_don_hang
 bắt đầu quy trình đặt hàng,bat_dau_dat_hang
@@ -143,6 +158,7 @@ trọng lượng của hộp quà Tết cao cấp là bao nhiêu,hoi_khoi_luong
 nếu hàng khg giống hình thì sao,chinh_sach_doi_tra
 có ai hỗ trợ mình không,chao_hoi
 mình muốn xem giỏ trước khi mua,xem_gio_hang
+ngoài sản phẩm trên còn có những sản phẩm nào khác không,xem_san_pham_khac
 shop đang có khuyến mãi gì,khuyen_mai
 shop tư vấn giúp mình với,goi_y_san_pham
 đồng ý tiến hành đặt hàng,xac_nhan_dat_hang
@@ -183,6 +199,7 @@ shop đang bán quà tặng gì,tim_kiem_san_pham
 thanh toán khi nhận hàng được không giúp mình,phuong_thuc_thanh_toan
 xóa trà Shan Tuyết giúp mình,xoa_khoi_gio_hang
 mình muốn đặt địa chỉ giao hàng mới,nhap_dia_chi_giao_hang
+tôi muốn xem chi tiết sản phầm thứ 3 và thứ 5,xem_chi_tiet_san_pham
 có hộp quà nào dưới 1 triệu không,tim_san_pham_theo_gia
 tìm giúp mình sản phẩm khoảng 150k,tim_san_pham_theo_gia
 "mình chọn cà phê Robusta, thêm vào giỏ",them_vao_gio_hang
@@ -209,6 +226,7 @@ giới thiệu mật ong hoa rừng cho mình,chi_tiet_san_pham
 đơn hàng này mình trả tiền lúc nhận nhé,chon_phuong_thuc_thanh_toan
 chính sách đổi trả thế nào nhé,chinh_sach_doi_tra
 có ưu đãi cho đơn hàng lớn ko,khuyen_mai
+"tôi muốn xem các sản phẩm liên quan đến cà phê,trà, hạt dinh dưỡng",tim_kiem_san_pham
 cà phê Arabica Cầu Đất còn không shop,kiem_tra_ton_kho
 shop có nhận quẹt thẻ không,phuong_thuc_thanh_toan
 quà doanh nghiệp dùng như thế nào,chi_tiet_san_pham
@@ -244,6 +262,7 @@ có được đồng kiểm khg,chinh_sach_doi_tra
 cho mình xem chi tiết mật ong hoa rừng,chi_tiet_san_pham
 mua nhiều có được giảm không,khuyen_mai
 có thể đặt hộp quà Tết ngay không,kiem_tra_ton_kho
+tôi chỉ muốn đặt sản phẩm cafe arabica và trà ô long trong đơn hàng thôi,bat_dau_dat_hang
 hộp quà Tết lấy từ vùng nào,hoi_nguon_goc
 Xóa tất cả giỏ hàng, xoa_tat_ca_gio_hang
 mình muốn hủy đơn shop,huy_don_hang
@@ -1070,6 +1089,7 @@ thanks shop nhé,cam_on
 có voucher không nhé,khuyen_mai
 mình muốn hoàn tất việc đặt hàng,bat_dau_dat_hang
 giới thiệu trà ô long cho mình,chi_tiet_san_pham
+tôi muốn biết quy trình đặt hàng bên mình như thế nào,huong_dan_dat_hang
 xin chào cửa hàng,chao_hoi
 nếu hàng không giống hình thì sao giúp mình,chinh_sach_doi_tra
 có loại hộp quà Tết cao cấp nào không,tim_kiem_san_pham
@@ -1154,7 +1174,7 @@ mình xác nhận hoàn tất đơn,xac_nhan_dat_hang
 đặt đơn này giúp mình,bat_dau_dat_hang
 mình lấy một hộp quà Tết,them_vao_gio_hang
 cho mình xem cà phê,tim_kiem_san_pham
-ship hỏa tốc được ko,thoi_gian_giao_hang
+ship hỏa tốc được ko,thoi_gian_giao_hàng
 "mọi thứ ổn, xác nhận đơn",xac_nhan_dat_hang
 thời gian vận chuyển khoảng bao lâu,thoi_gian_giao_hang
 đơn này mình dùng chuyển khoản,chon_phuong_thuc_thanh_toan

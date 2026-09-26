@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
-from src.model_training_config import DATA_DIR
-from src.text_preprocessor import preprocess_text
+from src.phase_00_training_configuration import DATA_DIR
+from src.phase_01_text_preprocessing import preprocess_text
 
 def load_csv(file_path):
     if not file_path.exists():

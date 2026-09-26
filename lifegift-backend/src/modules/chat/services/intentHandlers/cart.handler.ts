@@ -117,9 +117,18 @@ export class CartHandler {
    */
   private static resolveProductIdFromHistory(message: string, history: ChatMessageItem[]): number | null {
     const indexMatch = message.match(/(?:sản phẩm|sp|món|thứ|số)\s*(\d+)/i);
-    if (!indexMatch) return null;
+    const wordIndexMatch = message.match(/(?:sản phẩm|sp|món)\s+(đầu tiên|thứ nhất|thứ hai|thứ ba)/i);
+    const ordinalWords: Record<string, number> = {
+      'đầu tiên': 1,
+      'thứ nhất': 1,
+      'thứ hai': 2,
+      'thứ ba': 3,
+    };
+    if (!indexMatch && !wordIndexMatch) return null;
 
-    const targetIndex = parseInt(indexMatch[1], 10) - 1;
+    const targetIndex = indexMatch
+      ? parseInt(indexMatch[1], 10) - 1
+      : (ordinalWords[wordIndexMatch![1].toLowerCase()] || 0) - 1;
     if (targetIndex < 0) return null;
 
     const lastMsgWithProducts = [...history]
@@ -277,11 +286,15 @@ export class CartHandler {
             targetProductId = CartHandler.resolveProductIdFromHistory(message, history);
           }
 
+          const cart = await CartService.getMyCart(userId);
+          if (!targetProductId && cart.items.length === 1) {
+            targetProductId = Number(cart.items[0].productId);
+          }
+
           if (!targetProductId) {
             return { replyMessage: 'Bạn muốn cập nhật số lượng cho sản phẩm nào ạ?' };
           }
 
-          const cart = await CartService.getMyCart(userId);
           const targetItem = cart.items.find((item: any) => Number(item.productId) === targetProductId);
 
           if (!targetItem) {

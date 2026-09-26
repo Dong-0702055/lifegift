@@ -110,6 +110,7 @@ export class ProductHandler {
       shortDescription: product.short_description,
       price: Number(product.price),
       salePrice: product.sale_price ? Number(product.sale_price) : null,
+      weight: product.weight !== null && product.weight !== undefined ? Number(product.weight) : null,
       
       // Bổ sung & thay thế các trường tồn kho
       totalStockQuantity,
@@ -395,6 +396,31 @@ export class ProductHandler {
   }
 
   private static async getProductDetails(entities: ResolvedEntities): Promise<ChatResponsePayload> {
+    const productIds = [...new Set(
+      (entities.productIds || [])
+        .concat(entities.productId !== null && entities.productId !== undefined ? [entities.productId] : [])
+        .map((id) => Number(id))
+        .filter((id) => Number.isInteger(id) && id > 0)
+    )];
+
+    if (productIds.length > 1) {
+      const products = await prisma.products.findMany({
+        where: { id: { in: productIds.map((id) => BigInt(id)) } },
+        include: this.defaultIncludes,
+      });
+      const productsById = new Map(products.map((product) => [Number(product.id), product]));
+      const orderedProducts = productIds
+        .map((id) => productsById.get(id))
+        .filter((product): product is NonNullable<typeof product> => Boolean(product));
+
+      if (orderedProducts.length > 0) {
+        return {
+          replyMessage: `Thông tin chi tiết ${orderedProducts.map((product) => `${product.name}: ${product.description || 'Sản phẩm chất lượng cao.'}`).join(' | ')}`,
+          data: orderedProducts.map((product) => this.formatProductResponse(product)),
+        };
+      }
+    }
+
     if (entities.productId) {
       const product = await prisma.products.findUnique({
         where: { id: BigInt(entities.productId) },
@@ -442,13 +468,25 @@ export class ProductHandler {
   }
 
   private static async compareProducts(entities: ResolvedEntities): Promise<ChatResponsePayload> {
+    const requestedIds = [...new Set(
+      (entities.productIds || [])
+        .concat(entities.productId !== null && entities.productId !== undefined ? [entities.productId] : [])
+        .map((id) => Number(id))
+        .filter((id) => Number.isInteger(id) && id > 0)
+    )];
     const products = await prisma.products.findMany({
+      where: requestedIds.length > 0 ? { id: { in: requestedIds.map((id) => BigInt(id)) } } : undefined,
       include: this.defaultIncludes,
-      take: 2,
+      take: requestedIds.length > 0 ? requestedIds.length : 2,
     });
+    const productsById = new Map(products.map((product) => [Number(product.id), product]));
+    const orderedProducts = requestedIds.length > 0
+      ? requestedIds.map((id) => productsById.get(id)).filter((product): product is NonNullable<typeof product> => Boolean(product))
+      : products;
+
     return {
-      replyMessage: 'Mỗi dòng sản phẩm đều có hương vị đặc trưng riêng. Bạn tham khảo thông tin sản phẩm bên dưới nhé:',
-      data: products.map((p) => this.formatProductResponse(p)),
+      replyMessage: 'Bảng so sánh sản phẩm (giá, quy cách, nguồn gốc, thương hiệu và tồn kho) nằm bên dưới nhé:',
+      data: orderedProducts.map((p) => this.formatProductResponse(p)),
     };
   }
 }

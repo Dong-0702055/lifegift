@@ -363,6 +363,9 @@ export class OrderService {
       });
 
       if (!order) throw new Error('Order không tồn tại');
+      if (order.user_id !== BigInt(userId)) {
+        throw new Error('Bạn không có quyền cập nhật đơn hàng này');
+      }
 
       const currentStatus = order.order_status as OrderStatus;
       if (currentStatus === newStatus) {

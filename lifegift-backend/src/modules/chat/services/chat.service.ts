@@ -35,13 +35,26 @@ export class ChatService {
     const lastSingleProductMessage = [...history]
       .reverse()
       .find((item) => item.role === 'assistant' && Array.isArray(item.products) && item.products.length === 1);
-    const contextState = !previousState.productId && lastSingleProductMessage?.products?.[0]?.id
-      ? {
-          ...previousState,
-          productId: Number(lastSingleProductMessage.products[0].id),
-          productName: lastSingleProductMessage.products[0].name,
-        }
-      : previousState;
+    const lastProductListMessage = [...history]
+      .reverse()
+      .find((item) => item.role === 'assistant' && Array.isArray(item.products) && item.products.length > 1);
+    const recentProductsFromHistory = lastProductListMessage?.products
+      ?.map((product: any) => ({
+        productId: Number(product?.id ?? product?.productId ?? product?.product_id),
+        name: String(product?.name ?? product?.productName ?? ''),
+      }))
+      .filter((product: { productId: number; name: string }) => Number.isInteger(product.productId) && product.productId > 0)
+      .slice(0, 10);
+    const contextState = {
+      ...previousState,
+      ...(!previousState.productId && lastSingleProductMessage?.products?.[0]?.id && {
+        productId: Number(lastSingleProductMessage.products[0].id),
+        productName: lastSingleProductMessage.products[0].name,
+      }),
+      ...(recentProductsFromHistory?.length && {
+        recentProducts: recentProductsFromHistory,
+      }),
+    };
 
     // 2. Dự đoán Intent qua PhoBERT AI Service
     let intent = 'fallback';
@@ -68,6 +81,20 @@ export class ChatService {
       console.error('Lỗi kết nối AI Service:', err);
     }
 
+    if (
+      previousState.checkoutStep && previousState.checkoutStep !== 'NONE' &&
+      /(?:xác nhận|xac nhan|đặt hàng|dat hang)/i.test(message)
+    ) {
+      intent = 'xac_nhan_dat_hang';
+      confidence = 1;
+    } else if (
+      previousState.checkoutStep && previousState.checkoutStep !== 'NONE' &&
+      /(?:tên người nhận|họ và tên|số điện thoại|\bsdt\b|địa chỉ giao hàng|phương thức thanh toán)/i.test(message)
+    ) {
+      intent = 'nhap_dia_chi_giao_hang';
+      confidence = 1;
+    }
+
     // Giữ đúng ý định phân trang sản phẩm ngay cả khi model cũ chưa được huấn luyện lại.
     if (/(sản phẩm|san pham|mặt hàng|mat hang)/i.test(message) &&
         /(khác|khac|trước đó|truoc do|đã xem|da xem|tiếp theo|tiep theo)/i.test(message)) {
@@ -85,6 +112,12 @@ export class ChatService {
       intent, 
       message
     );
+
+    if ((finalEntities.productIndex || finalEntities.productIds?.length > 1) &&
+      ['tim_kiem_san_pham', 'goi_y_san_pham', 'xem_san_pham_khac'].includes(intent)) {
+      intent = 'chi_tiet_san_pham';
+      confidence = 1;
+    }
 
     // 5. Khai báo các nhóm Intent
     const productIntents = [
@@ -108,7 +141,8 @@ export class ChatService {
 
     const policyIntents = [
       'hoi_phi_ship', 'thoi_gian_giao_hang', 'dia_chi_cua_hang',
-      'chinh_sach_doi_tra', 'phuong_thuc_thanh_toan', 'khuyen_mai'
+      'chinh_sach_doi_tra', 'phuong_thuc_thanh_toan', 'khuyen_mai',
+      'huong_dan_dat_hang'
     ];
 
     // 6. Điều hướng đến Handler tương ứng (Truyền finalEntities)
@@ -130,9 +164,25 @@ export class ChatService {
     const stateEntities = { ...finalEntities };
     const responseProducts = Array.isArray(responsePayload.data) ? responsePayload.data : [];
     const singleResponseProduct = responseProducts.length === 1 ? responseProducts[0] : null;
-    if (!stateEntities.productId && singleResponseProduct?.id) {
-      stateEntities.productId = Number(singleResponseProduct.id);
-      stateEntities.productName = singleResponseProduct.name || undefined;
+    const singleResponseProductId = singleResponseProduct?.productId ?? singleResponseProduct?.id;
+    if (!stateEntities.productId && singleResponseProductId) {
+      stateEntities.productId = Number(singleResponseProductId);
+      stateEntities.productName = singleResponseProduct.productName || singleResponseProduct.name || undefined;
+    }
+    if (
+      ['bat_dau_dat_hang', 'thanh_toan_don_hang', 'dat_hang'].includes(intent) &&
+      ['COLLECT_INFO', 'CONFIRMATION'].includes(responsePayload.nextStep) &&
+      responseProducts.length > 0
+    ) {
+      stateEntities.checkoutItems = responseProducts
+        .map((product: any) => ({
+          productId: Number(product?.productId ?? product?.id),
+          cartItemId: Number(product?.cartItemId) || undefined,
+          name: String(product?.productName ?? product?.name ?? ''),
+          quantity: Number(product?.quantity || 0),
+          unitPrice: Number(product?.salePrice || product?.price || 0),
+        }))
+        .filter((product: { productId: number; name: string }) => Number.isInteger(product.productId) && product.productId > 0);
     }
     if (responsePayload.nextStep === 'COMPLETED') {
       stateEntities.checkoutCompleted = true;
@@ -140,6 +190,7 @@ export class ChatService {
     await ConversationContextService.updateState(targetSessionId, intent, stateEntities);
     if (productIntents.includes(intent)) {
       await ConversationContextService.rememberViewedProducts(targetSessionId, responsePayload.data || []);
+      await ConversationContextService.rememberRecentProducts(targetSessionId, responsePayload.data || []);
     }
 
     return serializeData({
