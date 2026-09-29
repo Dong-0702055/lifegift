@@ -132,6 +132,7 @@ model categories {
   status           categories_status  @default(ACTIVE)
   created_at       DateTime           @default(now()) @db.DateTime(0)
   updated_at       DateTime           @default(now()) @db.DateTime(0)
+  section          String             @default("product") @db.VarChar(20)
   categories       categories?        @relation("categoriesTocategories", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_categories_parent")
   other_categories categories[]       @relation("categoriesTocategories")
   category_aliases category_aliases[]
@@ -695,4 +696,34 @@ enum products_status {
   ACTIVE
   INACTIVE
   DRAFT
+}
+
+model agency_leads {
+  id         BigInt   @id @default(autoincrement())
+  full_name  String   @db.VarChar(150)
+  phone      String   @db.VarChar(20)
+  area       String   @db.VarChar(255)
+  message    String?  @db.VarChar(1000)
+  status     String   @default("PENDING") @db.VarChar(20)
+  created_at DateTime @default(now()) @db.DateTime(0)
+  updated_at DateTime @default(now()) @db.DateTime(0)
+
+  @@index([status], map: "idx_agency_leads_status")
+}
+
+model site_settings {
+  id                     Int      @id @default(1)
+  phone_primary          String   @db.VarChar(30)
+  phone_secondary        String   @db.VarChar(30)
+  email                  String   @db.VarChar(150)
+  address                String   @db.VarChar(255)
+  map_query              String   @db.VarChar(255)
+  hanoi_fee              Int      @default(25000)
+  major_city_fee         Int      @default(35000)
+  other_province_fee     Int      @default(45000)
+  free_shipping_threshold Int     @default(600000)
+  bank_name              String   @db.VarChar(100)
+  bank_account           String   @db.VarChar(100)
+  bank_owner             String   @db.VarChar(150)
+  updated_at             DateTime @default(now()) @db.DateTime(0)
 }

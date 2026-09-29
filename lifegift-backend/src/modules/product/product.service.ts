@@ -76,6 +76,14 @@ export class ProductService {
     return products.map((p) => this.mapToResponse(p));
   }
 
+  public static async getAllProducts(): Promise<ProductResponse[]> {
+    const products = await prisma.products.findMany({
+      include: this.defaultIncludes,
+      orderBy: { name: 'asc' },
+    });
+    return products.map((product) => this.mapToResponse(product));
+  }
+
   // 2. Lấy chi tiết sản phẩm
   public static async getById(id: number): Promise<ProductResponse> {
     const product = await prisma.products.findUnique({

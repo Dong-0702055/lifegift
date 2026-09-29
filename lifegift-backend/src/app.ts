@@ -23,6 +23,8 @@ import couponRoutes from './modules/coupon/coupon.router';
 import reviewRoutes from './modules/review/review.routes';
 import blogRoutes from './modules/blog/blog.routes';
 import chatRoutes from './modules/chat/chat.router';
+import agencyLeadRoutes from './modules/agency-lead/agency-lead.routes';
+import siteSettingsRoutes from './modules/site-settings/site-settings.routes';
 
 // Import file Swagger Output bằng require để tránh lỗi TypeScript
 const swaggerDocument = require('../swagger-output.json');
@@ -58,6 +60,8 @@ app.use('/api/coupons', couponRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/blog', blogRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/agency-leads', agencyLeadRoutes);
+app.use('/api/site-settings', siteSettingsRoutes);
 
 // Global Error Handler
 app.use(errorHandler);

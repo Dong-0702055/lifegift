@@ -3,6 +3,7 @@ import {
   IsNotEmpty,
   IsNumberString,
   IsOptional,
+  IsIn,
   IsString,
   Matches,
   MaxLength,
@@ -62,4 +63,62 @@ export class ChangePasswordDto {
 export class UserIdParamDto {
   @IsNumberString({}, { message: 'ID người dùng phải là một số nguyên' })
   id!: string;
+}
+
+export class CreateAdminUserDto {
+  @IsString()
+  @MinLength(4)
+  @MaxLength(50)
+  username!: string;
+
+  @IsString()
+  @MinLength(8)
+  @MaxLength(100)
+  password!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(150)
+  fullName!: string;
+
+  @IsOptional()
+  @IsString()
+  @Matches(/^(0|\+84)[0-9]{9,10}$/)
+  phone?: string;
+
+  @IsOptional()
+  @IsEmail()
+  @MaxLength(150)
+  email?: string;
+
+  @IsString()
+  @IsIn(['ADMIN', 'STAFF', 'CUSTOMER', 'AFFILIATE'])
+  role!: string;
+}
+
+export class UpdateAdminUserDto {
+  @IsOptional()
+  @IsString()
+  @MaxLength(150)
+  fullName?: string;
+
+  @IsOptional()
+  @IsString()
+  @Matches(/^(0|\+84)[0-9]{9,10}$/)
+  phone?: string;
+
+  @IsOptional()
+  @IsEmail()
+  @MaxLength(150)
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['ACTIVE', 'INACTIVE', 'LOCKED', 'PENDING'])
+  status?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['ADMIN', 'STAFF', 'CUSTOMER', 'AFFILIATE'])
+  role?: string;
 }

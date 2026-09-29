@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsEnum, IsIn, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export enum CategoryStatus {
   ACTIVE = 'ACTIVE',
@@ -31,6 +31,10 @@ export class CategoryDto {
   @IsOptional()
   @IsEnum(CategoryStatus, { message: 'Trạng thái không hợp lệ' })
   status?: CategoryStatus;
+
+  @IsOptional()
+  @IsIn(['product', 'supermarket', 'gift'], { message: 'Khu vực danh mục không hợp lệ' })
+  section?: string;
 }
 
 export interface CategoryResponse {
@@ -40,6 +44,7 @@ export interface CategoryResponse {
   slug: string;
   description: string | null;
   imageUrl: string | null;
+  section: string;
   status: string;
   createdAt: Date;
   updatedAt: Date;

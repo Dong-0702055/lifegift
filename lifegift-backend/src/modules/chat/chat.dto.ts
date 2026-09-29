@@ -5,9 +5,13 @@ export interface ResolvedEntities {
   productIndices?: number[];
   categoryId?: bigint | number | null;
   categoryIds?: Array<bigint | number>;
+  categoryName?: string | null;
   brandId?: bigint | number | null;
   brandIds?: Array<bigint | number>;
+  brandName?: string | null;
+  productName?: string | null;
   origin?: string | null;
+  inStockOnly?: boolean;
   minPrice?: number | null;
   maxPrice?: number | null;
   extractedPrice?: number | null;

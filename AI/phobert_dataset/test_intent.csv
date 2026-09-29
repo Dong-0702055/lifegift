@@ -1,4 +1,4 @@
-﻿text,intent
+text,intent
 tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu,xem_san_pham_khac
 gợi ý các sản phẩm nổi bật mà tôi chưa xem,xem_san_pham_khac
 tìm trà từ 250k đến 350k,tim_san_pham_theo_gia
@@ -108,7 +108,7 @@ măng khô Tây Bắc bao nhiêu một túi,hoi_gia
 hạt điều rang muối có khối lượng bao nhiêu,hoi_khoi_luong
 măng khô Tây Bắc thuộc thương hiệu nào,hoi_thuong_hieu
 tiến hành thanh toán đơn hàng,thanh_toan_don_hang
-tôi không muốn đặt đơn hàng số 42 nữa, huy_don_hang
+tôi không muốn đặt đơn hàng số 42 nữa,huy_don_hang
 hạt điều rang muối có thông tin gì,chi_tiet_san_pham
 alo shop ơi,chao_hoi
 cập nhật lại giỏ hàng giúp mình,cap_nhat_gio_hang
@@ -342,7 +342,740 @@ bỏ hết sản phẩm đã thêm vào giỏ,xoa_tat_ca_gio_hang
 xóa sạch mọi món trong giỏ,xoa_tat_ca_gio_hang
 tôi muốn dọn hết giỏ trước khi mua lại,xoa_tat_ca_gio_hang
 hãy xóa tất cả mặt hàng trong giỏ,xoa_tat_ca_gio_hang
-không mua các sản phẩm trong giỏ nữa, xoa_tat_ca_gio_hang
+không mua các sản phẩm trong giỏ nữa,xoa_tat_ca_gio_hang
 cho mình xóa hết những món đang chọn,xoa_tat_ca_gio_hang
 làm sạch giỏ hàng hiện tại giúp mình,xoa_tat_ca_gio_hang
 xóa cả giỏ hàng nhé,xoa_tat_ca_gio_hang
+chỉ mình cách mua sản phẩm trên trang LifeGift,huong_dan_dat_hang
+hướng dẫn các bước đặt quà từ lúc chọn đến khi nhận hàng,huong_dan_dat_hang
+muốn mua hàng lần đầu thì cần thao tác ra sao,huong_dan_dat_hang
+sau khi chọn sản phẩm mình cần làm gì để đặt đơn,huong_dan_dat_hang
+cách nhập thông tin giao hàng và hoàn tất mua hàng thế nào,huong_dan_dat_hang
+xem giúp mình chi tiết sản phẩm trà Shan Tuyết,xem_chi_tiet_san_pham
+mở trang thông tin sản phẩm hộp quà doanh nghiệp,xem_chi_tiet_san_pham
+cho mình xem mô tả đầy đủ của hạt mắc ca,xem_chi_tiet_san_pham
+còn những sản phẩm nào khác ngoài các món vừa xem,xem_san_pham_khac
+đổi danh sách gợi ý sang các mặt hàng khác,xem_san_pham_khac
+cho mình xem tiếp những sản phẩm chưa hiện,xem_san_pham_khac
+tìm các lựa chọn mới không trùng kết quả trước,xem_san_pham_khac
+hiện thêm vài sản phẩm nổi bật khác nhé,xem_san_pham_khac
+mình chưa rõ ý shop vừa nói,khong_hieu
+xin chào shop mình muốn hỏi một việc,chao_hoi
+có thể giới thiệu món quà cho người thích cà phê không,goi_y_san_pham
+cho hỏi một hộp mật ong hoa rừng giá thế nào,hoi_gia
+hạt mắc ca này được thu hoạch ở vùng nào,hoi_nguon_goc
+trà Shan Tuyết đang đóng gói theo quy cách nào,hoi_don_vi
+cà phê Robusta còn đủ hàng để đặt không,kiem_tra_ton_kho
+mua quà Tết hiện có mã giảm giá nào không,khuyen_mai
+đơn hàng số 456 đã tới khâu giao chưa,tra_cuu_don_hang
+gửi đơn đến 15 Nguyễn Trãi quận Thanh Xuân Hà Nội,nhap_dia_chi_giao_hang
+thường giao hàng về Cần Thơ trong bao lâu,thoi_gian_giao_hang
+so sánh độ đậm của Arabica Cầu Đất với Robusta,so_sanh_san_pham
+thêm hai hộp trà Ô Long vào giỏ mua hàng,them_vao_gio_hang
+gỡ gói cà phê Arabica khỏi danh sách trong giỏ,xoa_khoi_gio_hang
+xác nhận giúp mình mua hộp quà đang chọn,xac_nhan_dat_hang
+thôi mình chào shop hôm khác quay lại,tam_biet
+đơn quà Tết của mình đang được vận chuyển chưa,tra_cuu_don_hang
+Nhờ shop tôi muốn mua 1 túi măng khô Tây Bắc nhé,bat_dau_dat_hang
+Nhờ shop tôi muốn mua 1 túi măng khô Tây Bắc với,bat_dau_dat_hang
+Nhờ shop tôi muốn mua 1 túi măng khô Tây Bắc nha,bat_dau_dat_hang
+Nhờ shop tôi muốn mua 1 túi măng khô Tây Bắc giúp mình nhé,bat_dau_dat_hang
+Nhờ shop tôi muốn mua 1 túi măng khô Tây Bắc cho mình với,bat_dau_dat_hang
+Nhờ shop tôi muốn mua 1 túi măng khô Tây Bắc ạ,bat_dau_dat_hang
+Nhờ shop tôi muốn mua 1 túi măng khô Tây Bắc giúp mình,bat_dau_dat_hang
+Giúp mình tôi muốn mua 1 túi măng khô Tây Bắc nhé,bat_dau_dat_hang
+Giúp mình tôi muốn mua 1 túi măng khô Tây Bắc với,bat_dau_dat_hang
+Giúp mình tôi muốn mua 1 túi măng khô Tây Bắc nha,bat_dau_dat_hang
+Giúp mình tôi muốn mua 1 túi măng khô Tây Bắc giúp mình nhé,bat_dau_dat_hang
+Giúp mình tôi muốn mua 1 túi măng khô Tây Bắc cho mình với,bat_dau_dat_hang
+Giúp mình tôi muốn mua 1 túi măng khô Tây Bắc ạ,bat_dau_dat_hang
+Giúp mình tôi muốn mua 1 túi măng khô Tây Bắc giúp mình,bat_dau_dat_hang
+Mình muốn tôi muốn mua 1 túi măng khô Tây Bắc nhé,bat_dau_dat_hang
+Mình muốn tôi muốn mua 1 túi măng khô Tây Bắc với,bat_dau_dat_hang
+Mình muốn tôi muốn mua 1 túi măng khô Tây Bắc nha,bat_dau_dat_hang
+Mình muốn tôi muốn mua 1 túi măng khô Tây Bắc giúp mình nhé,bat_dau_dat_hang
+Mình muốn tôi muốn mua 1 túi măng khô Tây Bắc cho mình với,bat_dau_dat_hang
+Mình cảm ơn shop đã giải đáp,cam_on
+Mình cảm ơn shop đã giải đáp nhé,cam_on
+Mình cảm ơn shop đã giải đáp nha,cam_on
+Mình cảm ơn shop đã giải đáp ạ,cam_on
+Mình cảm ơn shop đã giải đáp với,cam_on
+Mình cảm ơn shop đã giải đáp bạn ơi,cam_on
+Mình cảm ơn shop đã giải đáp nhiều nhé,cam_on
+Cảm ơn bạn đã hỗ trợ mình,cam_on
+Cảm ơn bạn đã hỗ trợ mình nhé,cam_on
+Cảm ơn bạn đã hỗ trợ mình nha,cam_on
+Cảm ơn bạn đã hỗ trợ mình ạ,cam_on
+Cảm ơn bạn đã hỗ trợ mình với,cam_on
+Cảm ơn bạn đã hỗ trợ mình bạn ơi,cam_on
+Cảm ơn bạn đã hỗ trợ mình nhiều nhé,cam_on
+Cảm ơn LifeGift tư vấn rất nhiệt tình,cam_on
+Cảm ơn LifeGift tư vấn rất nhiệt tình nhé,cam_on
+Cảm ơn LifeGift tư vấn rất nhiệt tình nha,cam_on
+Cảm ơn LifeGift tư vấn rất nhiệt tình ạ,cam_on
+Cảm ơn LifeGift tư vấn rất nhiệt tình với,cam_on
+Cảm ơn LifeGift tư vấn rất nhiệt tình bạn ơi,cam_on
+Nhờ shop cho mình sửa số lượng hạt điều nhé,cap_nhat_gio_hang
+Nhờ shop cho mình sửa số lượng hạt điều với,cap_nhat_gio_hang
+Nhờ shop cho mình sửa số lượng hạt điều nha,cap_nhat_gio_hang
+Nhờ shop cho mình sửa số lượng hạt điều giúp mình nhé,cap_nhat_gio_hang
+Nhờ shop cho mình sửa số lượng hạt điều cho mình với,cap_nhat_gio_hang
+Nhờ shop cho mình sửa số lượng hạt điều ạ,cap_nhat_gio_hang
+Nhờ shop cho mình sửa số lượng hạt điều giúp mình,cap_nhat_gio_hang
+Giúp mình cho mình sửa số lượng hạt điều nhé,cap_nhat_gio_hang
+Giúp mình cho mình sửa số lượng hạt điều với,cap_nhat_gio_hang
+Giúp mình cho mình sửa số lượng hạt điều nha,cap_nhat_gio_hang
+Giúp mình cho mình sửa số lượng hạt điều giúp mình nhé,cap_nhat_gio_hang
+Giúp mình cho mình sửa số lượng hạt điều cho mình với,cap_nhat_gio_hang
+Giúp mình cho mình sửa số lượng hạt điều ạ,cap_nhat_gio_hang
+Giúp mình cho mình sửa số lượng hạt điều giúp mình,cap_nhat_gio_hang
+Mình muốn cho mình sửa số lượng hạt điều nhé,cap_nhat_gio_hang
+Mình muốn cho mình sửa số lượng hạt điều với,cap_nhat_gio_hang
+Mình muốn cho mình sửa số lượng hạt điều nha,cap_nhat_gio_hang
+Mình muốn cho mình sửa số lượng hạt điều giúp mình nhé,cap_nhat_gio_hang
+Mình muốn cho mình sửa số lượng hạt điều cho mình với,cap_nhat_gio_hang
+Mình muốn cho mình sửa số lượng hạt điều ạ,cap_nhat_gio_hang
+Chào shop mình cần hỏi một chút,chao_hoi
+Chào shop mình cần hỏi một chút nhé,chao_hoi
+Chào shop mình cần hỏi một chút nha,chao_hoi
+Chào shop mình cần hỏi một chút ạ,chao_hoi
+Chào shop mình cần hỏi một chút với,chao_hoi
+Chào shop mình cần hỏi một chút bạn ơi,chao_hoi
+Chào shop mình cần hỏi một chút nhiều nhé,chao_hoi
+Xin chào LifeGift mình muốn tìm hiểu sản phẩm,chao_hoi
+Xin chào LifeGift mình muốn tìm hiểu sản phẩm nhé,chao_hoi
+Xin chào LifeGift mình muốn tìm hiểu sản phẩm nha,chao_hoi
+Xin chào LifeGift mình muốn tìm hiểu sản phẩm ạ,chao_hoi
+Xin chào LifeGift mình muốn tìm hiểu sản phẩm với,chao_hoi
+Xin chào LifeGift mình muốn tìm hiểu sản phẩm bạn ơi,chao_hoi
+Xin chào LifeGift mình muốn tìm hiểu sản phẩm nhiều nhé,chao_hoi
+Alo shop có nhân viên tư vấn không,chao_hoi
+Alo shop có nhân viên tư vấn không nhé,chao_hoi
+Alo shop có nhân viên tư vấn không nha,chao_hoi
+Alo shop có nhân viên tư vấn không ạ,chao_hoi
+Alo shop có nhân viên tư vấn không với,chao_hoi
+Cho mình hỏi thông tin sản phẩm hộp quà Tết cao cấp nhé,chi_tiet_san_pham
+Cho mình hỏi thông tin sản phẩm hộp quà Tết cao cấp với ạ,chi_tiet_san_pham
+Cho mình hỏi thông tin sản phẩm hộp quà Tết cao cấp vậy,chi_tiet_san_pham
+Cho mình hỏi thông tin sản phẩm hộp quà Tết cao cấp thế nào,chi_tiet_san_pham
+Cho mình hỏi thông tin sản phẩm hộp quà Tết cao cấp giúp mình nhé,chi_tiet_san_pham
+Cho mình hỏi thông tin sản phẩm hộp quà Tết cao cấp được không,chi_tiet_san_pham
+Cho mình hỏi thông tin sản phẩm hộp quà Tết cao cấp cho mình biết với,chi_tiet_san_pham
+Cho mình hỏi thông tin sản phẩm hộp quà Tết cao cấp nhỉ,chi_tiet_san_pham
+Shop cho mình biết thông tin sản phẩm hộp quà Tết cao cấp nhé,chi_tiet_san_pham
+Shop cho mình biết thông tin sản phẩm hộp quà Tết cao cấp với ạ,chi_tiet_san_pham
+Shop cho mình biết thông tin sản phẩm hộp quà Tết cao cấp vậy,chi_tiet_san_pham
+Shop cho mình biết thông tin sản phẩm hộp quà Tết cao cấp thế nào,chi_tiet_san_pham
+Shop cho mình biết thông tin sản phẩm hộp quà Tết cao cấp giúp mình nhé,chi_tiet_san_pham
+Shop cho mình biết thông tin sản phẩm hộp quà Tết cao cấp được không,chi_tiet_san_pham
+Shop cho mình biết thông tin sản phẩm hộp quà Tết cao cấp cho mình biết với,chi_tiet_san_pham
+Shop cho mình biết thông tin sản phẩm hộp quà Tết cao cấp nhỉ,chi_tiet_san_pham
+Mình muốn hỏi thông tin sản phẩm hộp quà Tết cao cấp nhé,chi_tiet_san_pham
+Mình muốn hỏi thông tin sản phẩm hộp quà Tết cao cấp với ạ,chi_tiet_san_pham
+Mình muốn hỏi thông tin sản phẩm hộp quà Tết cao cấp vậy,chi_tiet_san_pham
+Mình muốn hỏi thông tin sản phẩm hộp quà Tết cao cấp thế nào,chi_tiet_san_pham
+Cho mình hỏi shop cho mình hỏi quy định đổi trả hàng nhé nhé,chinh_sach_doi_tra
+Cho mình hỏi shop cho mình hỏi quy định đổi trả hàng nhé với ạ,chinh_sach_doi_tra
+Cho mình hỏi shop cho mình hỏi quy định đổi trả hàng nhé vậy,chinh_sach_doi_tra
+Cho mình hỏi shop cho mình hỏi quy định đổi trả hàng nhé thế nào,chinh_sach_doi_tra
+Cho mình hỏi shop cho mình hỏi quy định đổi trả hàng nhé giúp mình nhé,chinh_sach_doi_tra
+Cho mình hỏi shop cho mình hỏi quy định đổi trả hàng nhé được không,chinh_sach_doi_tra
+Cho mình hỏi shop cho mình hỏi quy định đổi trả hàng nhé cho mình biết với,chinh_sach_doi_tra
+Cho mình hỏi shop cho mình hỏi quy định đổi trả hàng nhé nhỉ,chinh_sach_doi_tra
+Shop cho mình biết shop cho mình hỏi quy định đổi trả hàng nhé nhé,chinh_sach_doi_tra
+Shop cho mình biết shop cho mình hỏi quy định đổi trả hàng nhé với ạ,chinh_sach_doi_tra
+Shop cho mình biết shop cho mình hỏi quy định đổi trả hàng nhé vậy,chinh_sach_doi_tra
+Shop cho mình biết shop cho mình hỏi quy định đổi trả hàng nhé thế nào,chinh_sach_doi_tra
+Shop cho mình biết shop cho mình hỏi quy định đổi trả hàng nhé giúp mình nhé,chinh_sach_doi_tra
+Shop cho mình biết shop cho mình hỏi quy định đổi trả hàng nhé được không,chinh_sach_doi_tra
+Shop cho mình biết shop cho mình hỏi quy định đổi trả hàng nhé cho mình biết với,chinh_sach_doi_tra
+Shop cho mình biết shop cho mình hỏi quy định đổi trả hàng nhé nhỉ,chinh_sach_doi_tra
+Mình muốn hỏi shop cho mình hỏi quy định đổi trả hàng nhé nhé,chinh_sach_doi_tra
+Mình muốn hỏi shop cho mình hỏi quy định đổi trả hàng nhé với ạ,chinh_sach_doi_tra
+Mình muốn hỏi shop cho mình hỏi quy định đổi trả hàng nhé vậy,chinh_sach_doi_tra
+Mình muốn hỏi shop cho mình hỏi quy định đổi trả hàng nhé thế nào,chinh_sach_doi_tra
+Nhờ shop mình chọn thanh toán khi nhận hàng nhé,chon_phuong_thuc_thanh_toan
+Nhờ shop mình chọn thanh toán khi nhận hàng với,chon_phuong_thuc_thanh_toan
+Nhờ shop mình chọn thanh toán khi nhận hàng nha,chon_phuong_thuc_thanh_toan
+Nhờ shop mình chọn thanh toán khi nhận hàng giúp mình nhé,chon_phuong_thuc_thanh_toan
+Nhờ shop mình chọn thanh toán khi nhận hàng cho mình với,chon_phuong_thuc_thanh_toan
+Nhờ shop mình chọn thanh toán khi nhận hàng ạ,chon_phuong_thuc_thanh_toan
+Nhờ shop mình chọn thanh toán khi nhận hàng giúp mình,chon_phuong_thuc_thanh_toan
+Giúp mình mình chọn thanh toán khi nhận hàng nhé,chon_phuong_thuc_thanh_toan
+Giúp mình mình chọn thanh toán khi nhận hàng với,chon_phuong_thuc_thanh_toan
+Giúp mình mình chọn thanh toán khi nhận hàng nha,chon_phuong_thuc_thanh_toan
+Giúp mình mình chọn thanh toán khi nhận hàng giúp mình nhé,chon_phuong_thuc_thanh_toan
+Giúp mình mình chọn thanh toán khi nhận hàng cho mình với,chon_phuong_thuc_thanh_toan
+Giúp mình mình chọn thanh toán khi nhận hàng ạ,chon_phuong_thuc_thanh_toan
+Giúp mình mình chọn thanh toán khi nhận hàng giúp mình,chon_phuong_thuc_thanh_toan
+Mình muốn mình chọn thanh toán khi nhận hàng nhé,chon_phuong_thuc_thanh_toan
+Mình muốn mình chọn thanh toán khi nhận hàng với,chon_phuong_thuc_thanh_toan
+Mình muốn mình chọn thanh toán khi nhận hàng nha,chon_phuong_thuc_thanh_toan
+Mình muốn mình chọn thanh toán khi nhận hàng giúp mình nhé,chon_phuong_thuc_thanh_toan
+Mình muốn mình chọn thanh toán khi nhận hàng cho mình với,chon_phuong_thuc_thanh_toan
+Mình muốn mình chọn thanh toán khi nhận hàng ạ,chon_phuong_thuc_thanh_toan
+Nhờ shop mình ko biết nên mua loại nào nhé,goi_y_san_pham
+Nhờ shop mình ko biết nên mua loại nào với,goi_y_san_pham
+Nhờ shop mình ko biết nên mua loại nào nha,goi_y_san_pham
+Nhờ shop mình ko biết nên mua loại nào giúp mình nhé,goi_y_san_pham
+Nhờ shop mình ko biết nên mua loại nào cho mình với,goi_y_san_pham
+Nhờ shop mình ko biết nên mua loại nào ạ,goi_y_san_pham
+Nhờ shop mình ko biết nên mua loại nào giúp mình,goi_y_san_pham
+Giúp mình mình ko biết nên mua loại nào nhé,goi_y_san_pham
+Giúp mình mình ko biết nên mua loại nào với,goi_y_san_pham
+Giúp mình mình ko biết nên mua loại nào nha,goi_y_san_pham
+Giúp mình mình ko biết nên mua loại nào giúp mình nhé,goi_y_san_pham
+Giúp mình mình ko biết nên mua loại nào cho mình với,goi_y_san_pham
+Giúp mình mình ko biết nên mua loại nào ạ,goi_y_san_pham
+Giúp mình mình ko biết nên mua loại nào giúp mình,goi_y_san_pham
+Mình muốn mình ko biết nên mua loại nào nhé,goi_y_san_pham
+Mình muốn mình ko biết nên mua loại nào với,goi_y_san_pham
+Mình muốn mình ko biết nên mua loại nào nha,goi_y_san_pham
+Mình muốn mình ko biết nên mua loại nào giúp mình nhé,goi_y_san_pham
+Mình muốn mình ko biết nên mua loại nào cho mình với,goi_y_san_pham
+Cho mình hỏi đơn vị bán của mật ong hoa rừng là gì nhé,hoi_don_vi
+Cho mình hỏi đơn vị bán của mật ong hoa rừng là gì với ạ,hoi_don_vi
+Cho mình hỏi đơn vị bán của mật ong hoa rừng là gì vậy,hoi_don_vi
+Cho mình hỏi đơn vị bán của mật ong hoa rừng là gì thế nào,hoi_don_vi
+Cho mình hỏi đơn vị bán của mật ong hoa rừng là gì giúp mình nhé,hoi_don_vi
+Cho mình hỏi đơn vị bán của mật ong hoa rừng là gì được không,hoi_don_vi
+Cho mình hỏi đơn vị bán của mật ong hoa rừng là gì cho mình biết với,hoi_don_vi
+Cho mình hỏi đơn vị bán của mật ong hoa rừng là gì nhỉ,hoi_don_vi
+Shop cho mình biết đơn vị bán của mật ong hoa rừng là gì nhé,hoi_don_vi
+Shop cho mình biết đơn vị bán của mật ong hoa rừng là gì với ạ,hoi_don_vi
+Shop cho mình biết đơn vị bán của mật ong hoa rừng là gì vậy,hoi_don_vi
+Shop cho mình biết đơn vị bán của mật ong hoa rừng là gì thế nào,hoi_don_vi
+Shop cho mình biết đơn vị bán của mật ong hoa rừng là gì giúp mình nhé,hoi_don_vi
+Shop cho mình biết đơn vị bán của mật ong hoa rừng là gì được không,hoi_don_vi
+Shop cho mình biết đơn vị bán của mật ong hoa rừng là gì cho mình biết với,hoi_don_vi
+Shop cho mình biết đơn vị bán của mật ong hoa rừng là gì nhỉ,hoi_don_vi
+Mình muốn hỏi đơn vị bán của mật ong hoa rừng là gì nhé,hoi_don_vi
+Mình muốn hỏi đơn vị bán của mật ong hoa rừng là gì với ạ,hoi_don_vi
+Mình muốn hỏi đơn vị bán của mật ong hoa rừng là gì vậy,hoi_don_vi
+Cho mình hỏi Arabica Cầu Đất hiện giá thế nào nhé,hoi_gia
+Cho mình hỏi Arabica Cầu Đất hiện giá thế nào với ạ,hoi_gia
+Cho mình hỏi Arabica Cầu Đất hiện giá thế nào vậy,hoi_gia
+Cho mình hỏi Arabica Cầu Đất hiện giá thế nào thế nào,hoi_gia
+Cho mình hỏi Arabica Cầu Đất hiện giá thế nào giúp mình nhé,hoi_gia
+Cho mình hỏi Arabica Cầu Đất hiện giá thế nào được không,hoi_gia
+Cho mình hỏi Arabica Cầu Đất hiện giá thế nào cho mình biết với,hoi_gia
+Cho mình hỏi Arabica Cầu Đất hiện giá thế nào nhỉ,hoi_gia
+Shop cho mình biết Arabica Cầu Đất hiện giá thế nào nhé,hoi_gia
+Shop cho mình biết Arabica Cầu Đất hiện giá thế nào với ạ,hoi_gia
+Shop cho mình biết Arabica Cầu Đất hiện giá thế nào vậy,hoi_gia
+Shop cho mình biết Arabica Cầu Đất hiện giá thế nào thế nào,hoi_gia
+Shop cho mình biết Arabica Cầu Đất hiện giá thế nào giúp mình nhé,hoi_gia
+Shop cho mình biết Arabica Cầu Đất hiện giá thế nào được không,hoi_gia
+Shop cho mình biết Arabica Cầu Đất hiện giá thế nào cho mình biết với,hoi_gia
+Shop cho mình biết Arabica Cầu Đất hiện giá thế nào nhỉ,hoi_gia
+Mình muốn hỏi Arabica Cầu Đất hiện giá thế nào nhé,hoi_gia
+Mình muốn hỏi Arabica Cầu Đất hiện giá thế nào với ạ,hoi_gia
+Mình muốn hỏi Arabica Cầu Đất hiện giá thế nào vậy,hoi_gia
+Cho mình hỏi trà Shan Tuyết nặng bao nhiêu nhé,hoi_khoi_luong
+Cho mình hỏi trà Shan Tuyết nặng bao nhiêu với ạ,hoi_khoi_luong
+Cho mình hỏi trà Shan Tuyết nặng bao nhiêu vậy,hoi_khoi_luong
+Cho mình hỏi trà Shan Tuyết nặng bao nhiêu thế nào,hoi_khoi_luong
+Cho mình hỏi trà Shan Tuyết nặng bao nhiêu giúp mình nhé,hoi_khoi_luong
+Cho mình hỏi trà Shan Tuyết nặng bao nhiêu được không,hoi_khoi_luong
+Cho mình hỏi trà Shan Tuyết nặng bao nhiêu cho mình biết với,hoi_khoi_luong
+Cho mình hỏi trà Shan Tuyết nặng bao nhiêu nhỉ,hoi_khoi_luong
+Shop cho mình biết trà Shan Tuyết nặng bao nhiêu nhé,hoi_khoi_luong
+Shop cho mình biết trà Shan Tuyết nặng bao nhiêu với ạ,hoi_khoi_luong
+Shop cho mình biết trà Shan Tuyết nặng bao nhiêu vậy,hoi_khoi_luong
+Shop cho mình biết trà Shan Tuyết nặng bao nhiêu thế nào,hoi_khoi_luong
+Shop cho mình biết trà Shan Tuyết nặng bao nhiêu giúp mình nhé,hoi_khoi_luong
+Shop cho mình biết trà Shan Tuyết nặng bao nhiêu được không,hoi_khoi_luong
+Shop cho mình biết trà Shan Tuyết nặng bao nhiêu cho mình biết với,hoi_khoi_luong
+Shop cho mình biết trà Shan Tuyết nặng bao nhiêu nhỉ,hoi_khoi_luong
+Mình muốn hỏi trà Shan Tuyết nặng bao nhiêu nhé,hoi_khoi_luong
+Mình muốn hỏi trà Shan Tuyết nặng bao nhiêu với ạ,hoi_khoi_luong
+Mình muốn hỏi trà Shan Tuyết nặng bao nhiêu vậy,hoi_khoi_luong
+Mình muốn hỏi trà Shan Tuyết nặng bao nhiêu thế nào,hoi_khoi_luong
+Cho mình hỏi mật ong hoa rừng có nguồn gốc ở đâu nhé,hoi_nguon_goc
+Cho mình hỏi mật ong hoa rừng có nguồn gốc ở đâu với ạ,hoi_nguon_goc
+Cho mình hỏi mật ong hoa rừng có nguồn gốc ở đâu vậy,hoi_nguon_goc
+Cho mình hỏi mật ong hoa rừng có nguồn gốc ở đâu thế nào,hoi_nguon_goc
+Cho mình hỏi mật ong hoa rừng có nguồn gốc ở đâu giúp mình nhé,hoi_nguon_goc
+Cho mình hỏi mật ong hoa rừng có nguồn gốc ở đâu được không,hoi_nguon_goc
+Cho mình hỏi mật ong hoa rừng có nguồn gốc ở đâu cho mình biết với,hoi_nguon_goc
+Cho mình hỏi mật ong hoa rừng có nguồn gốc ở đâu nhỉ,hoi_nguon_goc
+Shop cho mình biết mật ong hoa rừng có nguồn gốc ở đâu nhé,hoi_nguon_goc
+Shop cho mình biết mật ong hoa rừng có nguồn gốc ở đâu với ạ,hoi_nguon_goc
+Shop cho mình biết mật ong hoa rừng có nguồn gốc ở đâu vậy,hoi_nguon_goc
+Shop cho mình biết mật ong hoa rừng có nguồn gốc ở đâu thế nào,hoi_nguon_goc
+Shop cho mình biết mật ong hoa rừng có nguồn gốc ở đâu giúp mình nhé,hoi_nguon_goc
+Shop cho mình biết mật ong hoa rừng có nguồn gốc ở đâu được không,hoi_nguon_goc
+Shop cho mình biết mật ong hoa rừng có nguồn gốc ở đâu cho mình biết với,hoi_nguon_goc
+Shop cho mình biết mật ong hoa rừng có nguồn gốc ở đâu nhỉ,hoi_nguon_goc
+Mình muốn hỏi mật ong hoa rừng có nguồn gốc ở đâu nhé,hoi_nguon_goc
+Mình muốn hỏi mật ong hoa rừng có nguồn gốc ở đâu với ạ,hoi_nguon_goc
+Mình muốn hỏi mật ong hoa rừng có nguồn gốc ở đâu vậy,hoi_nguon_goc
+Cho mình hỏi phí ship bao nhiêu shop nhé,hoi_phi_ship
+Cho mình hỏi phí ship bao nhiêu shop với ạ,hoi_phi_ship
+Cho mình hỏi phí ship bao nhiêu shop vậy,hoi_phi_ship
+Cho mình hỏi phí ship bao nhiêu shop thế nào,hoi_phi_ship
+Cho mình hỏi phí ship bao nhiêu shop giúp mình nhé,hoi_phi_ship
+Cho mình hỏi phí ship bao nhiêu shop được không,hoi_phi_ship
+Cho mình hỏi phí ship bao nhiêu shop cho mình biết với,hoi_phi_ship
+Cho mình hỏi phí ship bao nhiêu shop nhỉ,hoi_phi_ship
+Shop cho mình biết phí ship bao nhiêu shop nhé,hoi_phi_ship
+Shop cho mình biết phí ship bao nhiêu shop với ạ,hoi_phi_ship
+Shop cho mình biết phí ship bao nhiêu shop vậy,hoi_phi_ship
+Shop cho mình biết phí ship bao nhiêu shop thế nào,hoi_phi_ship
+Shop cho mình biết phí ship bao nhiêu shop giúp mình nhé,hoi_phi_ship
+Shop cho mình biết phí ship bao nhiêu shop được không,hoi_phi_ship
+Shop cho mình biết phí ship bao nhiêu shop cho mình biết với,hoi_phi_ship
+Shop cho mình biết phí ship bao nhiêu shop nhỉ,hoi_phi_ship
+Mình muốn hỏi phí ship bao nhiêu shop nhé,hoi_phi_ship
+Mình muốn hỏi phí ship bao nhiêu shop với ạ,hoi_phi_ship
+Mình muốn hỏi phí ship bao nhiêu shop vậy,hoi_phi_ship
+Mình muốn hỏi phí ship bao nhiêu shop thế nào,hoi_phi_ship
+Cho mình hỏi sản phẩm này thuộc thương hiệu nào nhé,hoi_thuong_hieu
+Cho mình hỏi sản phẩm này thuộc thương hiệu nào với ạ,hoi_thuong_hieu
+Cho mình hỏi sản phẩm này thuộc thương hiệu nào vậy,hoi_thuong_hieu
+Cho mình hỏi sản phẩm này thuộc thương hiệu nào thế nào,hoi_thuong_hieu
+Cho mình hỏi sản phẩm này thuộc thương hiệu nào giúp mình nhé,hoi_thuong_hieu
+Cho mình hỏi sản phẩm này thuộc thương hiệu nào được không,hoi_thuong_hieu
+Cho mình hỏi sản phẩm này thuộc thương hiệu nào cho mình biết với,hoi_thuong_hieu
+Cho mình hỏi sản phẩm này thuộc thương hiệu nào nhỉ,hoi_thuong_hieu
+Shop cho mình biết sản phẩm này thuộc thương hiệu nào nhé,hoi_thuong_hieu
+Shop cho mình biết sản phẩm này thuộc thương hiệu nào với ạ,hoi_thuong_hieu
+Shop cho mình biết sản phẩm này thuộc thương hiệu nào vậy,hoi_thuong_hieu
+Shop cho mình biết sản phẩm này thuộc thương hiệu nào thế nào,hoi_thuong_hieu
+Shop cho mình biết sản phẩm này thuộc thương hiệu nào giúp mình nhé,hoi_thuong_hieu
+Shop cho mình biết sản phẩm này thuộc thương hiệu nào được không,hoi_thuong_hieu
+Shop cho mình biết sản phẩm này thuộc thương hiệu nào cho mình biết với,hoi_thuong_hieu
+Shop cho mình biết sản phẩm này thuộc thương hiệu nào nhỉ,hoi_thuong_hieu
+Mình muốn hỏi sản phẩm này thuộc thương hiệu nào nhé,hoi_thuong_hieu
+Mình muốn hỏi sản phẩm này thuộc thương hiệu nào với ạ,hoi_thuong_hieu
+Mình muốn hỏi sản phẩm này thuộc thương hiệu nào vậy,hoi_thuong_hieu
+Mình muốn hỏi sản phẩm này thuộc thương hiệu nào thế nào,hoi_thuong_hieu
+Nhờ shop chưa biết đặt hàng ở shop như thế nào nhé,huong_dan_dat_hang
+Nhờ shop chưa biết đặt hàng ở shop như thế nào với,huong_dan_dat_hang
+Nhờ shop chưa biết đặt hàng ở shop như thế nào nha,huong_dan_dat_hang
+Nhờ shop chưa biết đặt hàng ở shop như thế nào giúp mình nhé,huong_dan_dat_hang
+Nhờ shop chưa biết đặt hàng ở shop như thế nào cho mình với,huong_dan_dat_hang
+Nhờ shop chưa biết đặt hàng ở shop như thế nào ạ,huong_dan_dat_hang
+Nhờ shop chưa biết đặt hàng ở shop như thế nào giúp mình,huong_dan_dat_hang
+Giúp mình chưa biết đặt hàng ở shop như thế nào nhé,huong_dan_dat_hang
+Giúp mình chưa biết đặt hàng ở shop như thế nào với,huong_dan_dat_hang
+Giúp mình chưa biết đặt hàng ở shop như thế nào nha,huong_dan_dat_hang
+Giúp mình chưa biết đặt hàng ở shop như thế nào giúp mình nhé,huong_dan_dat_hang
+Giúp mình chưa biết đặt hàng ở shop như thế nào cho mình với,huong_dan_dat_hang
+Giúp mình chưa biết đặt hàng ở shop như thế nào ạ,huong_dan_dat_hang
+Giúp mình chưa biết đặt hàng ở shop như thế nào giúp mình,huong_dan_dat_hang
+Mình muốn chưa biết đặt hàng ở shop như thế nào nhé,huong_dan_dat_hang
+Mình muốn chưa biết đặt hàng ở shop như thế nào với,huong_dan_dat_hang
+Mình muốn chưa biết đặt hàng ở shop như thế nào nha,huong_dan_dat_hang
+Mình muốn chưa biết đặt hàng ở shop như thế nào giúp mình nhé,huong_dan_dat_hang
+Mình muốn chưa biết đặt hàng ở shop như thế nào cho mình với,huong_dan_dat_hang
+Mình muốn chưa biết đặt hàng ở shop như thế nào ạ,huong_dan_dat_hang
+Mình muốn chưa biết đặt hàng ở shop như thế nào giúp mình,huong_dan_dat_hang
+Cho mình chưa biết đặt hàng ở shop như thế nào nhé,huong_dan_dat_hang
+Cho mình chưa biết đặt hàng ở shop như thế nào với,huong_dan_dat_hang
+Nhờ shop mình muốn dừng quy trình đặt hàng hiện tại ạ nhé,huy_checkout
+Nhờ shop mình muốn dừng quy trình đặt hàng hiện tại ạ với,huy_checkout
+Nhờ shop mình muốn dừng quy trình đặt hàng hiện tại ạ nha,huy_checkout
+Nhờ shop mình muốn dừng quy trình đặt hàng hiện tại ạ giúp mình nhé,huy_checkout
+Nhờ shop mình muốn dừng quy trình đặt hàng hiện tại ạ cho mình với,huy_checkout
+Nhờ shop mình muốn dừng quy trình đặt hàng hiện tại ạ ạ,huy_checkout
+Nhờ shop mình muốn dừng quy trình đặt hàng hiện tại ạ giúp mình,huy_checkout
+Giúp mình mình muốn dừng quy trình đặt hàng hiện tại ạ nhé,huy_checkout
+Giúp mình mình muốn dừng quy trình đặt hàng hiện tại ạ với,huy_checkout
+Giúp mình mình muốn dừng quy trình đặt hàng hiện tại ạ nha,huy_checkout
+Giúp mình mình muốn dừng quy trình đặt hàng hiện tại ạ giúp mình nhé,huy_checkout
+Giúp mình mình muốn dừng quy trình đặt hàng hiện tại ạ cho mình với,huy_checkout
+Giúp mình mình muốn dừng quy trình đặt hàng hiện tại ạ ạ,huy_checkout
+Giúp mình mình muốn dừng quy trình đặt hàng hiện tại ạ giúp mình,huy_checkout
+Mình muốn mình muốn dừng quy trình đặt hàng hiện tại ạ nhé,huy_checkout
+Mình muốn mình muốn dừng quy trình đặt hàng hiện tại ạ với,huy_checkout
+Mình muốn mình muốn dừng quy trình đặt hàng hiện tại ạ nha,huy_checkout
+Mình muốn mình muốn dừng quy trình đặt hàng hiện tại ạ giúp mình nhé,huy_checkout
+Mình muốn mình muốn dừng quy trình đặt hàng hiện tại ạ cho mình với,huy_checkout
+Mình muốn mình muốn dừng quy trình đặt hàng hiện tại ạ ạ,huy_checkout
+Nhờ shop shop cho mình hủy đơn được không giúp mình nhé,huy_don_hang
+Nhờ shop shop cho mình hủy đơn được không giúp mình với,huy_don_hang
+Nhờ shop shop cho mình hủy đơn được không giúp mình nha,huy_don_hang
+Nhờ shop shop cho mình hủy đơn được không giúp mình giúp mình nhé,huy_don_hang
+Nhờ shop shop cho mình hủy đơn được không giúp mình cho mình với,huy_don_hang
+Nhờ shop shop cho mình hủy đơn được không giúp mình ạ,huy_don_hang
+Nhờ shop shop cho mình hủy đơn được không giúp mình giúp mình,huy_don_hang
+Giúp mình shop cho mình hủy đơn được không giúp mình nhé,huy_don_hang
+Giúp mình shop cho mình hủy đơn được không giúp mình với,huy_don_hang
+Giúp mình shop cho mình hủy đơn được không giúp mình nha,huy_don_hang
+Giúp mình shop cho mình hủy đơn được không giúp mình giúp mình nhé,huy_don_hang
+Giúp mình shop cho mình hủy đơn được không giúp mình cho mình với,huy_don_hang
+Giúp mình shop cho mình hủy đơn được không giúp mình ạ,huy_don_hang
+Giúp mình shop cho mình hủy đơn được không giúp mình giúp mình,huy_don_hang
+Mình muốn shop cho mình hủy đơn được không giúp mình nhé,huy_don_hang
+Mình muốn shop cho mình hủy đơn được không giúp mình với,huy_don_hang
+Mình muốn shop cho mình hủy đơn được không giúp mình nha,huy_don_hang
+Mình muốn shop cho mình hủy đơn được không giúp mình giúp mình nhé,huy_don_hang
+Mình chưa hiểu thông tin vừa rồi,khong_hieu
+Mình chưa hiểu thông tin vừa rồi nhé,khong_hieu
+Mình chưa hiểu thông tin vừa rồi nha,khong_hieu
+Mình chưa hiểu thông tin vừa rồi ạ,khong_hieu
+Mình chưa hiểu thông tin vừa rồi với,khong_hieu
+Mình chưa hiểu thông tin vừa rồi bạn ơi,khong_hieu
+Mình chưa hiểu thông tin vừa rồi nhiều nhé,khong_hieu
+Bạn có thể giải thích lại giúp mình không,khong_hieu
+Bạn có thể giải thích lại giúp mình không nhé,khong_hieu
+Bạn có thể giải thích lại giúp mình không nha,khong_hieu
+Bạn có thể giải thích lại giúp mình không ạ,khong_hieu
+Bạn có thể giải thích lại giúp mình không với,khong_hieu
+Bạn có thể giải thích lại giúp mình không bạn ơi,khong_hieu
+Bạn có thể giải thích lại giúp mình không nhiều nhé,khong_hieu
+Ý của câu trả lời đó là gì vậy,khong_hieu
+Ý của câu trả lời đó là gì vậy nhé,khong_hieu
+Ý của câu trả lời đó là gì vậy nha,khong_hieu
+Ý của câu trả lời đó là gì vậy ạ,khong_hieu
+Ý của câu trả lời đó là gì vậy với,khong_hieu
+Cho mình hỏi mua nhiều sản phẩm có ưu đãi không nhé,khuyen_mai
+Cho mình hỏi mua nhiều sản phẩm có ưu đãi không với ạ,khuyen_mai
+Cho mình hỏi mua nhiều sản phẩm có ưu đãi không vậy,khuyen_mai
+Cho mình hỏi mua nhiều sản phẩm có ưu đãi không thế nào,khuyen_mai
+Cho mình hỏi mua nhiều sản phẩm có ưu đãi không giúp mình nhé,khuyen_mai
+Cho mình hỏi mua nhiều sản phẩm có ưu đãi không được không,khuyen_mai
+Cho mình hỏi mua nhiều sản phẩm có ưu đãi không cho mình biết với,khuyen_mai
+Cho mình hỏi mua nhiều sản phẩm có ưu đãi không nhỉ,khuyen_mai
+Shop cho mình biết mua nhiều sản phẩm có ưu đãi không nhé,khuyen_mai
+Shop cho mình biết mua nhiều sản phẩm có ưu đãi không với ạ,khuyen_mai
+Shop cho mình biết mua nhiều sản phẩm có ưu đãi không vậy,khuyen_mai
+Shop cho mình biết mua nhiều sản phẩm có ưu đãi không thế nào,khuyen_mai
+Shop cho mình biết mua nhiều sản phẩm có ưu đãi không giúp mình nhé,khuyen_mai
+Shop cho mình biết mua nhiều sản phẩm có ưu đãi không được không,khuyen_mai
+Shop cho mình biết mua nhiều sản phẩm có ưu đãi không cho mình biết với,khuyen_mai
+Shop cho mình biết mua nhiều sản phẩm có ưu đãi không nhỉ,khuyen_mai
+Mình muốn hỏi mua nhiều sản phẩm có ưu đãi không nhé,khuyen_mai
+Mình muốn hỏi mua nhiều sản phẩm có ưu đãi không với ạ,khuyen_mai
+Mình muốn hỏi mua nhiều sản phẩm có ưu đãi không vậy,khuyen_mai
+Cho mình hỏi còn măng khô Tây Bắc không nhé,kiem_tra_ton_kho
+Cho mình hỏi còn măng khô Tây Bắc không với ạ,kiem_tra_ton_kho
+Cho mình hỏi còn măng khô Tây Bắc không vậy,kiem_tra_ton_kho
+Cho mình hỏi còn măng khô Tây Bắc không thế nào,kiem_tra_ton_kho
+Cho mình hỏi còn măng khô Tây Bắc không giúp mình nhé,kiem_tra_ton_kho
+Cho mình hỏi còn măng khô Tây Bắc không được không,kiem_tra_ton_kho
+Cho mình hỏi còn măng khô Tây Bắc không cho mình biết với,kiem_tra_ton_kho
+Cho mình hỏi còn măng khô Tây Bắc không nhỉ,kiem_tra_ton_kho
+Shop cho mình biết còn măng khô Tây Bắc không nhé,kiem_tra_ton_kho
+Shop cho mình biết còn măng khô Tây Bắc không với ạ,kiem_tra_ton_kho
+Shop cho mình biết còn măng khô Tây Bắc không vậy,kiem_tra_ton_kho
+Shop cho mình biết còn măng khô Tây Bắc không thế nào,kiem_tra_ton_kho
+Shop cho mình biết còn măng khô Tây Bắc không giúp mình nhé,kiem_tra_ton_kho
+Shop cho mình biết còn măng khô Tây Bắc không được không,kiem_tra_ton_kho
+Shop cho mình biết còn măng khô Tây Bắc không cho mình biết với,kiem_tra_ton_kho
+Shop cho mình biết còn măng khô Tây Bắc không nhỉ,kiem_tra_ton_kho
+Mình muốn hỏi còn măng khô Tây Bắc không nhé,kiem_tra_ton_kho
+Mình muốn hỏi còn măng khô Tây Bắc không với ạ,kiem_tra_ton_kho
+Mình muốn hỏi còn măng khô Tây Bắc không vậy,kiem_tra_ton_kho
+Nhờ shop mình muốn thay đổi địa chỉ nhận hàng nhé,nhap_dia_chi_giao_hang
+Nhờ shop mình muốn thay đổi địa chỉ nhận hàng với,nhap_dia_chi_giao_hang
+Nhờ shop mình muốn thay đổi địa chỉ nhận hàng nha,nhap_dia_chi_giao_hang
+Nhờ shop mình muốn thay đổi địa chỉ nhận hàng giúp mình nhé,nhap_dia_chi_giao_hang
+Nhờ shop mình muốn thay đổi địa chỉ nhận hàng cho mình với,nhap_dia_chi_giao_hang
+Nhờ shop mình muốn thay đổi địa chỉ nhận hàng ạ,nhap_dia_chi_giao_hang
+Nhờ shop mình muốn thay đổi địa chỉ nhận hàng giúp mình,nhap_dia_chi_giao_hang
+Giúp mình mình muốn thay đổi địa chỉ nhận hàng nhé,nhap_dia_chi_giao_hang
+Giúp mình mình muốn thay đổi địa chỉ nhận hàng với,nhap_dia_chi_giao_hang
+Giúp mình mình muốn thay đổi địa chỉ nhận hàng nha,nhap_dia_chi_giao_hang
+Giúp mình mình muốn thay đổi địa chỉ nhận hàng giúp mình nhé,nhap_dia_chi_giao_hang
+Giúp mình mình muốn thay đổi địa chỉ nhận hàng cho mình với,nhap_dia_chi_giao_hang
+Giúp mình mình muốn thay đổi địa chỉ nhận hàng ạ,nhap_dia_chi_giao_hang
+Giúp mình mình muốn thay đổi địa chỉ nhận hàng giúp mình,nhap_dia_chi_giao_hang
+Mình muốn mình muốn thay đổi địa chỉ nhận hàng nhé,nhap_dia_chi_giao_hang
+Mình muốn mình muốn thay đổi địa chỉ nhận hàng với,nhap_dia_chi_giao_hang
+Mình muốn mình muốn thay đổi địa chỉ nhận hàng nha,nhap_dia_chi_giao_hang
+Mình muốn mình muốn thay đổi địa chỉ nhận hàng giúp mình nhé,nhap_dia_chi_giao_hang
+Mình muốn mình muốn thay đổi địa chỉ nhận hàng cho mình với,nhap_dia_chi_giao_hang
+Cho mình hỏi có thể trả bằng MoMo không nhé,phuong_thuc_thanh_toan
+Cho mình hỏi có thể trả bằng MoMo không với ạ,phuong_thuc_thanh_toan
+Cho mình hỏi có thể trả bằng MoMo không vậy,phuong_thuc_thanh_toan
+Cho mình hỏi có thể trả bằng MoMo không thế nào,phuong_thuc_thanh_toan
+Cho mình hỏi có thể trả bằng MoMo không giúp mình nhé,phuong_thuc_thanh_toan
+Cho mình hỏi có thể trả bằng MoMo không được không,phuong_thuc_thanh_toan
+Cho mình hỏi có thể trả bằng MoMo không cho mình biết với,phuong_thuc_thanh_toan
+Cho mình hỏi có thể trả bằng MoMo không nhỉ,phuong_thuc_thanh_toan
+Shop cho mình biết có thể trả bằng MoMo không nhé,phuong_thuc_thanh_toan
+Shop cho mình biết có thể trả bằng MoMo không với ạ,phuong_thuc_thanh_toan
+Shop cho mình biết có thể trả bằng MoMo không vậy,phuong_thuc_thanh_toan
+Shop cho mình biết có thể trả bằng MoMo không thế nào,phuong_thuc_thanh_toan
+Shop cho mình biết có thể trả bằng MoMo không giúp mình nhé,phuong_thuc_thanh_toan
+Shop cho mình biết có thể trả bằng MoMo không được không,phuong_thuc_thanh_toan
+Shop cho mình biết có thể trả bằng MoMo không cho mình biết với,phuong_thuc_thanh_toan
+Shop cho mình biết có thể trả bằng MoMo không nhỉ,phuong_thuc_thanh_toan
+Mình muốn hỏi có thể trả bằng MoMo không nhé,phuong_thuc_thanh_toan
+Mình muốn hỏi có thể trả bằng MoMo không với ạ,phuong_thuc_thanh_toan
+Mình muốn hỏi có thể trả bằng MoMo không vậy,phuong_thuc_thanh_toan
+Mình muốn hỏi có thể trả bằng MoMo không thế nào,phuong_thuc_thanh_toan
+Cho mình hỏi loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca nhé,so_sanh_san_pham
+Cho mình hỏi loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca với ạ,so_sanh_san_pham
+Cho mình hỏi loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca vậy,so_sanh_san_pham
+Cho mình hỏi loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca thế nào,so_sanh_san_pham
+Cho mình hỏi loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca giúp mình nhé,so_sanh_san_pham
+Cho mình hỏi loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca được không,so_sanh_san_pham
+Cho mình hỏi loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca cho mình biết với,so_sanh_san_pham
+Cho mình hỏi loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca nhỉ,so_sanh_san_pham
+Shop cho mình biết loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca nhé,so_sanh_san_pham
+Shop cho mình biết loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca với ạ,so_sanh_san_pham
+Shop cho mình biết loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca vậy,so_sanh_san_pham
+Shop cho mình biết loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca thế nào,so_sanh_san_pham
+Shop cho mình biết loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca giúp mình nhé,so_sanh_san_pham
+Shop cho mình biết loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca được không,so_sanh_san_pham
+Shop cho mình biết loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca cho mình biết với,so_sanh_san_pham
+Shop cho mình biết loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca nhỉ,so_sanh_san_pham
+Mình muốn hỏi loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca nhé,so_sanh_san_pham
+Mình muốn hỏi loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca với ạ,so_sanh_san_pham
+Mình muốn hỏi loại nào phù hợp hơn giữa măng khô Tây Bắc và hạt mắc ca vậy,so_sanh_san_pham
+Mình xin phép kết thúc ở đây nhé,tam_biet
+Mình xin phép kết thúc ở đây nhé nhé,tam_biet
+Mình xin phép kết thúc ở đây nhé nha,tam_biet
+Mình xin phép kết thúc ở đây nhé ạ,tam_biet
+Mình xin phép kết thúc ở đây nhé với,tam_biet
+Mình xin phép kết thúc ở đây nhé bạn ơi,tam_biet
+Mình xin phép kết thúc ở đây nhé nhiều nhé,tam_biet
+Chào shop mình quay lại sau,tam_biet
+Chào shop mình quay lại sau nhé,tam_biet
+Chào shop mình quay lại sau nha,tam_biet
+Chào shop mình quay lại sau ạ,tam_biet
+Chào shop mình quay lại sau với,tam_biet
+Chào shop mình quay lại sau bạn ơi,tam_biet
+Chào shop mình quay lại sau nhiều nhé,tam_biet
+Hẹn gặp lại LifeGift vào lần tới,tam_biet
+Hẹn gặp lại LifeGift vào lần tới nhé,tam_biet
+Hẹn gặp lại LifeGift vào lần tới nha,tam_biet
+Hẹn gặp lại LifeGift vào lần tới ạ,tam_biet
+Hẹn gặp lại LifeGift vào lần tới với,tam_biet
+Nhờ shop tôi muốn thực hiện thanh toán nhé,thanh_toan_don_hang
+Nhờ shop tôi muốn thực hiện thanh toán với,thanh_toan_don_hang
+Nhờ shop tôi muốn thực hiện thanh toán nha,thanh_toan_don_hang
+Nhờ shop tôi muốn thực hiện thanh toán giúp mình nhé,thanh_toan_don_hang
+Nhờ shop tôi muốn thực hiện thanh toán cho mình với,thanh_toan_don_hang
+Nhờ shop tôi muốn thực hiện thanh toán ạ,thanh_toan_don_hang
+Nhờ shop tôi muốn thực hiện thanh toán giúp mình,thanh_toan_don_hang
+Giúp mình tôi muốn thực hiện thanh toán nhé,thanh_toan_don_hang
+Giúp mình tôi muốn thực hiện thanh toán với,thanh_toan_don_hang
+Giúp mình tôi muốn thực hiện thanh toán nha,thanh_toan_don_hang
+Giúp mình tôi muốn thực hiện thanh toán giúp mình nhé,thanh_toan_don_hang
+Giúp mình tôi muốn thực hiện thanh toán cho mình với,thanh_toan_don_hang
+Giúp mình tôi muốn thực hiện thanh toán ạ,thanh_toan_don_hang
+Giúp mình tôi muốn thực hiện thanh toán giúp mình,thanh_toan_don_hang
+Mình muốn tôi muốn thực hiện thanh toán nhé,thanh_toan_don_hang
+Mình muốn tôi muốn thực hiện thanh toán với,thanh_toan_don_hang
+Mình muốn tôi muốn thực hiện thanh toán nha,thanh_toan_don_hang
+Mình muốn tôi muốn thực hiện thanh toán giúp mình nhé,thanh_toan_don_hang
+Mình muốn tôi muốn thực hiện thanh toán cho mình với,thanh_toan_don_hang
+Mình muốn tôi muốn thực hiện thanh toán ạ,thanh_toan_don_hang
+Nhờ shop giúp mình thêm sản phẩm này vào giỏ nhé,them_vao_gio_hang
+Nhờ shop giúp mình thêm sản phẩm này vào giỏ với,them_vao_gio_hang
+Nhờ shop giúp mình thêm sản phẩm này vào giỏ nha,them_vao_gio_hang
+Nhờ shop giúp mình thêm sản phẩm này vào giỏ giúp mình nhé,them_vao_gio_hang
+Nhờ shop giúp mình thêm sản phẩm này vào giỏ cho mình với,them_vao_gio_hang
+Nhờ shop giúp mình thêm sản phẩm này vào giỏ ạ,them_vao_gio_hang
+Nhờ shop giúp mình thêm sản phẩm này vào giỏ giúp mình,them_vao_gio_hang
+Giúp mình giúp mình thêm sản phẩm này vào giỏ nhé,them_vao_gio_hang
+Giúp mình giúp mình thêm sản phẩm này vào giỏ với,them_vao_gio_hang
+Giúp mình giúp mình thêm sản phẩm này vào giỏ nha,them_vao_gio_hang
+Giúp mình giúp mình thêm sản phẩm này vào giỏ giúp mình nhé,them_vao_gio_hang
+Giúp mình giúp mình thêm sản phẩm này vào giỏ cho mình với,them_vao_gio_hang
+Giúp mình giúp mình thêm sản phẩm này vào giỏ ạ,them_vao_gio_hang
+Giúp mình giúp mình thêm sản phẩm này vào giỏ giúp mình,them_vao_gio_hang
+Mình muốn giúp mình thêm sản phẩm này vào giỏ nhé,them_vao_gio_hang
+Mình muốn giúp mình thêm sản phẩm này vào giỏ với,them_vao_gio_hang
+Mình muốn giúp mình thêm sản phẩm này vào giỏ nha,them_vao_gio_hang
+Mình muốn giúp mình thêm sản phẩm này vào giỏ giúp mình nhé,them_vao_gio_hang
+Mình muốn giúp mình thêm sản phẩm này vào giỏ cho mình với,them_vao_gio_hang
+Cho mình hỏi khi nào đơn của mình tới nhé,thoi_gian_giao_hang
+Cho mình hỏi khi nào đơn của mình tới với ạ,thoi_gian_giao_hang
+Cho mình hỏi khi nào đơn của mình tới vậy,thoi_gian_giao_hang
+Cho mình hỏi khi nào đơn của mình tới thế nào,thoi_gian_giao_hang
+Cho mình hỏi khi nào đơn của mình tới giúp mình nhé,thoi_gian_giao_hang
+Cho mình hỏi khi nào đơn của mình tới được không,thoi_gian_giao_hang
+Cho mình hỏi khi nào đơn của mình tới cho mình biết với,thoi_gian_giao_hang
+Cho mình hỏi khi nào đơn của mình tới nhỉ,thoi_gian_giao_hang
+Shop cho mình biết khi nào đơn của mình tới nhé,thoi_gian_giao_hang
+Shop cho mình biết khi nào đơn của mình tới với ạ,thoi_gian_giao_hang
+Shop cho mình biết khi nào đơn của mình tới vậy,thoi_gian_giao_hang
+Shop cho mình biết khi nào đơn của mình tới thế nào,thoi_gian_giao_hang
+Shop cho mình biết khi nào đơn của mình tới giúp mình nhé,thoi_gian_giao_hang
+Shop cho mình biết khi nào đơn của mình tới được không,thoi_gian_giao_hang
+Shop cho mình biết khi nào đơn của mình tới cho mình biết với,thoi_gian_giao_hang
+Shop cho mình biết khi nào đơn của mình tới nhỉ,thoi_gian_giao_hang
+Mình muốn hỏi khi nào đơn của mình tới nhé,thoi_gian_giao_hang
+Mình muốn hỏi khi nào đơn của mình tới với ạ,thoi_gian_giao_hang
+Mình muốn hỏi khi nào đơn của mình tới vậy,thoi_gian_giao_hang
+Cho mình hỏi mình muốn xem sản phẩm hạt nhé,tim_kiem_san_pham
+Cho mình hỏi mình muốn xem sản phẩm hạt với ạ,tim_kiem_san_pham
+Cho mình hỏi mình muốn xem sản phẩm hạt vậy,tim_kiem_san_pham
+Cho mình hỏi mình muốn xem sản phẩm hạt thế nào,tim_kiem_san_pham
+Cho mình hỏi mình muốn xem sản phẩm hạt giúp mình nhé,tim_kiem_san_pham
+Cho mình hỏi mình muốn xem sản phẩm hạt được không,tim_kiem_san_pham
+Cho mình hỏi mình muốn xem sản phẩm hạt cho mình biết với,tim_kiem_san_pham
+Cho mình hỏi mình muốn xem sản phẩm hạt nhỉ,tim_kiem_san_pham
+Shop cho mình biết mình muốn xem sản phẩm hạt nhé,tim_kiem_san_pham
+Shop cho mình biết mình muốn xem sản phẩm hạt với ạ,tim_kiem_san_pham
+Shop cho mình biết mình muốn xem sản phẩm hạt vậy,tim_kiem_san_pham
+Shop cho mình biết mình muốn xem sản phẩm hạt thế nào,tim_kiem_san_pham
+Shop cho mình biết mình muốn xem sản phẩm hạt giúp mình nhé,tim_kiem_san_pham
+Shop cho mình biết mình muốn xem sản phẩm hạt được không,tim_kiem_san_pham
+Shop cho mình biết mình muốn xem sản phẩm hạt cho mình biết với,tim_kiem_san_pham
+Shop cho mình biết mình muốn xem sản phẩm hạt nhỉ,tim_kiem_san_pham
+Mình muốn hỏi mình muốn xem sản phẩm hạt nhé,tim_kiem_san_pham
+Mình muốn hỏi mình muốn xem sản phẩm hạt với ạ,tim_kiem_san_pham
+Mình muốn hỏi mình muốn xem sản phẩm hạt vậy,tim_kiem_san_pham
+Mình muốn hỏi mình muốn xem sản phẩm hạt thế nào,tim_kiem_san_pham
+Cho mình hỏi tìm trà từ 250k đến 350k nhé,tim_san_pham_theo_gia
+Cho mình hỏi tìm trà từ 250k đến 350k với ạ,tim_san_pham_theo_gia
+Cho mình hỏi tìm trà từ 250k đến 350k vậy,tim_san_pham_theo_gia
+Cho mình hỏi tìm trà từ 250k đến 350k thế nào,tim_san_pham_theo_gia
+Cho mình hỏi tìm trà từ 250k đến 350k giúp mình nhé,tim_san_pham_theo_gia
+Cho mình hỏi tìm trà từ 250k đến 350k được không,tim_san_pham_theo_gia
+Cho mình hỏi tìm trà từ 250k đến 350k cho mình biết với,tim_san_pham_theo_gia
+Cho mình hỏi tìm trà từ 250k đến 350k nhỉ,tim_san_pham_theo_gia
+Shop cho mình biết tìm trà từ 250k đến 350k nhé,tim_san_pham_theo_gia
+Shop cho mình biết tìm trà từ 250k đến 350k với ạ,tim_san_pham_theo_gia
+Shop cho mình biết tìm trà từ 250k đến 350k vậy,tim_san_pham_theo_gia
+Shop cho mình biết tìm trà từ 250k đến 350k thế nào,tim_san_pham_theo_gia
+Shop cho mình biết tìm trà từ 250k đến 350k giúp mình nhé,tim_san_pham_theo_gia
+Shop cho mình biết tìm trà từ 250k đến 350k được không,tim_san_pham_theo_gia
+Shop cho mình biết tìm trà từ 250k đến 350k cho mình biết với,tim_san_pham_theo_gia
+Shop cho mình biết tìm trà từ 250k đến 350k nhỉ,tim_san_pham_theo_gia
+Mình muốn hỏi tìm trà từ 250k đến 350k nhé,tim_san_pham_theo_gia
+Mình muốn hỏi tìm trà từ 250k đến 350k với ạ,tim_san_pham_theo_gia
+Mình muốn hỏi tìm trà từ 250k đến 350k vậy,tim_san_pham_theo_gia
+Mình muốn hỏi tìm trà từ 250k đến 350k thế nào,tim_san_pham_theo_gia
+Cho mình hỏi kiểm tra đơn hàng giúp mình ạ nhé,tra_cuu_don_hang
+Cho mình hỏi kiểm tra đơn hàng giúp mình ạ với ạ,tra_cuu_don_hang
+Cho mình hỏi kiểm tra đơn hàng giúp mình ạ vậy,tra_cuu_don_hang
+Cho mình hỏi kiểm tra đơn hàng giúp mình ạ thế nào,tra_cuu_don_hang
+Cho mình hỏi kiểm tra đơn hàng giúp mình ạ giúp mình nhé,tra_cuu_don_hang
+Cho mình hỏi kiểm tra đơn hàng giúp mình ạ được không,tra_cuu_don_hang
+Cho mình hỏi kiểm tra đơn hàng giúp mình ạ cho mình biết với,tra_cuu_don_hang
+Cho mình hỏi kiểm tra đơn hàng giúp mình ạ nhỉ,tra_cuu_don_hang
+Shop cho mình biết kiểm tra đơn hàng giúp mình ạ nhé,tra_cuu_don_hang
+Shop cho mình biết kiểm tra đơn hàng giúp mình ạ với ạ,tra_cuu_don_hang
+Shop cho mình biết kiểm tra đơn hàng giúp mình ạ vậy,tra_cuu_don_hang
+Shop cho mình biết kiểm tra đơn hàng giúp mình ạ thế nào,tra_cuu_don_hang
+Shop cho mình biết kiểm tra đơn hàng giúp mình ạ giúp mình nhé,tra_cuu_don_hang
+Shop cho mình biết kiểm tra đơn hàng giúp mình ạ được không,tra_cuu_don_hang
+Shop cho mình biết kiểm tra đơn hàng giúp mình ạ cho mình biết với,tra_cuu_don_hang
+Shop cho mình biết kiểm tra đơn hàng giúp mình ạ nhỉ,tra_cuu_don_hang
+Mình muốn hỏi kiểm tra đơn hàng giúp mình ạ nhé,tra_cuu_don_hang
+Mình muốn hỏi kiểm tra đơn hàng giúp mình ạ với ạ,tra_cuu_don_hang
+Nhờ shop mình đồng ý đặt hàng nhé,xac_nhan_dat_hang
+Nhờ shop mình đồng ý đặt hàng với,xac_nhan_dat_hang
+Nhờ shop mình đồng ý đặt hàng nha,xac_nhan_dat_hang
+Nhờ shop mình đồng ý đặt hàng giúp mình nhé,xac_nhan_dat_hang
+Nhờ shop mình đồng ý đặt hàng cho mình với,xac_nhan_dat_hang
+Nhờ shop mình đồng ý đặt hàng ạ,xac_nhan_dat_hang
+Nhờ shop mình đồng ý đặt hàng giúp mình,xac_nhan_dat_hang
+Giúp mình mình đồng ý đặt hàng nhé,xac_nhan_dat_hang
+Giúp mình mình đồng ý đặt hàng với,xac_nhan_dat_hang
+Giúp mình mình đồng ý đặt hàng nha,xac_nhan_dat_hang
+Giúp mình mình đồng ý đặt hàng giúp mình nhé,xac_nhan_dat_hang
+Giúp mình mình đồng ý đặt hàng cho mình với,xac_nhan_dat_hang
+Giúp mình mình đồng ý đặt hàng ạ,xac_nhan_dat_hang
+Giúp mình mình đồng ý đặt hàng giúp mình,xac_nhan_dat_hang
+Mình muốn mình đồng ý đặt hàng nhé,xac_nhan_dat_hang
+Mình muốn mình đồng ý đặt hàng với,xac_nhan_dat_hang
+Mình muốn mình đồng ý đặt hàng nha,xac_nhan_dat_hang
+Mình muốn mình đồng ý đặt hàng giúp mình nhé,xac_nhan_dat_hang
+Mình muốn mình đồng ý đặt hàng cho mình với,xac_nhan_dat_hang
+Nhờ shop xem giúp mình chi tiết sản phẩm trà Shan Tuyết nhé,xem_chi_tiet_san_pham
+Nhờ shop xem giúp mình chi tiết sản phẩm trà Shan Tuyết với,xem_chi_tiet_san_pham
+Nhờ shop xem giúp mình chi tiết sản phẩm trà Shan Tuyết nha,xem_chi_tiet_san_pham
+Nhờ shop xem giúp mình chi tiết sản phẩm trà Shan Tuyết giúp mình nhé,xem_chi_tiet_san_pham
+Nhờ shop xem giúp mình chi tiết sản phẩm trà Shan Tuyết cho mình với,xem_chi_tiet_san_pham
+Nhờ shop xem giúp mình chi tiết sản phẩm trà Shan Tuyết ạ,xem_chi_tiet_san_pham
+Nhờ shop xem giúp mình chi tiết sản phẩm trà Shan Tuyết giúp mình,xem_chi_tiet_san_pham
+Giúp mình xem giúp mình chi tiết sản phẩm trà Shan Tuyết nhé,xem_chi_tiet_san_pham
+Giúp mình xem giúp mình chi tiết sản phẩm trà Shan Tuyết với,xem_chi_tiet_san_pham
+Giúp mình xem giúp mình chi tiết sản phẩm trà Shan Tuyết nha,xem_chi_tiet_san_pham
+Giúp mình xem giúp mình chi tiết sản phẩm trà Shan Tuyết giúp mình nhé,xem_chi_tiet_san_pham
+Giúp mình xem giúp mình chi tiết sản phẩm trà Shan Tuyết cho mình với,xem_chi_tiet_san_pham
+Giúp mình xem giúp mình chi tiết sản phẩm trà Shan Tuyết ạ,xem_chi_tiet_san_pham
+Giúp mình xem giúp mình chi tiết sản phẩm trà Shan Tuyết giúp mình,xem_chi_tiet_san_pham
+Mình muốn xem giúp mình chi tiết sản phẩm trà Shan Tuyết nhé,xem_chi_tiet_san_pham
+Mình muốn xem giúp mình chi tiết sản phẩm trà Shan Tuyết với,xem_chi_tiet_san_pham
+Mình muốn xem giúp mình chi tiết sản phẩm trà Shan Tuyết nha,xem_chi_tiet_san_pham
+Mình muốn xem giúp mình chi tiết sản phẩm trà Shan Tuyết giúp mình nhé,xem_chi_tiet_san_pham
+Mình muốn xem giúp mình chi tiết sản phẩm trà Shan Tuyết cho mình với,xem_chi_tiet_san_pham
+Mình muốn xem giúp mình chi tiết sản phẩm trà Shan Tuyết ạ,xem_chi_tiet_san_pham
+Mình muốn xem giúp mình chi tiết sản phẩm trà Shan Tuyết giúp mình,xem_chi_tiet_san_pham
+Cho mình xem giúp mình chi tiết sản phẩm trà Shan Tuyết nhé,xem_chi_tiet_san_pham
+Cho mình xem giúp mình chi tiết sản phẩm trà Shan Tuyết với,xem_chi_tiet_san_pham
+Cho mình xem giúp mình chi tiết sản phẩm trà Shan Tuyết nha,xem_chi_tiet_san_pham
+Cho mình xem giúp mình chi tiết sản phẩm trà Shan Tuyết giúp mình nhé,xem_chi_tiet_san_pham
+Cho mình xem giúp mình chi tiết sản phẩm trà Shan Tuyết cho mình với,xem_chi_tiet_san_pham
+Cho mình xem giúp mình chi tiết sản phẩm trà Shan Tuyết ạ,xem_chi_tiet_san_pham
+Nhờ shop cho mình xem lại giỏ hàng nhé,xem_gio_hang
+Nhờ shop cho mình xem lại giỏ hàng với,xem_gio_hang
+Nhờ shop cho mình xem lại giỏ hàng nha,xem_gio_hang
+Nhờ shop cho mình xem lại giỏ hàng giúp mình nhé,xem_gio_hang
+Nhờ shop cho mình xem lại giỏ hàng cho mình với,xem_gio_hang
+Nhờ shop cho mình xem lại giỏ hàng ạ,xem_gio_hang
+Nhờ shop cho mình xem lại giỏ hàng giúp mình,xem_gio_hang
+Giúp mình cho mình xem lại giỏ hàng nhé,xem_gio_hang
+Giúp mình cho mình xem lại giỏ hàng với,xem_gio_hang
+Giúp mình cho mình xem lại giỏ hàng nha,xem_gio_hang
+Giúp mình cho mình xem lại giỏ hàng giúp mình nhé,xem_gio_hang
+Giúp mình cho mình xem lại giỏ hàng cho mình với,xem_gio_hang
+Giúp mình cho mình xem lại giỏ hàng ạ,xem_gio_hang
+Giúp mình cho mình xem lại giỏ hàng giúp mình,xem_gio_hang
+Mình muốn cho mình xem lại giỏ hàng nhé,xem_gio_hang
+Mình muốn cho mình xem lại giỏ hàng với,xem_gio_hang
+Mình muốn cho mình xem lại giỏ hàng nha,xem_gio_hang
+Mình muốn cho mình xem lại giỏ hàng giúp mình nhé,xem_gio_hang
+Mình muốn cho mình xem lại giỏ hàng cho mình với,xem_gio_hang
+Mình muốn cho mình xem lại giỏ hàng ạ,xem_gio_hang
+Nhờ shop tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu nhé,xem_san_pham_khac
+Nhờ shop tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu với,xem_san_pham_khac
+Nhờ shop tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu nha,xem_san_pham_khac
+Nhờ shop tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu giúp mình nhé,xem_san_pham_khac
+Nhờ shop tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu cho mình với,xem_san_pham_khac
+Nhờ shop tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu ạ,xem_san_pham_khac
+Nhờ shop tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu giúp mình,xem_san_pham_khac
+Giúp mình tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu nhé,xem_san_pham_khac
+Giúp mình tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu với,xem_san_pham_khac
+Giúp mình tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu nha,xem_san_pham_khac
+Giúp mình tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu giúp mình nhé,xem_san_pham_khac
+Giúp mình tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu cho mình với,xem_san_pham_khac
+Giúp mình tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu ạ,xem_san_pham_khac
+Giúp mình tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu giúp mình,xem_san_pham_khac
+Mình muốn tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu nhé,xem_san_pham_khac
+Mình muốn tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu với,xem_san_pham_khac
+Mình muốn tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu nha,xem_san_pham_khac
+Mình muốn tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu giúp mình nhé,xem_san_pham_khac
+Mình muốn tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu cho mình với,xem_san_pham_khac
+Mình muốn tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu ạ,xem_san_pham_khac
+Mình muốn tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu giúp mình,xem_san_pham_khac
+Cho mình tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu nhé,xem_san_pham_khac
+Cho mình tôi muốn xem thêm 5 sản phẩm khác danh sách ban đầu với,xem_san_pham_khac
+Nhờ shop mình muốn bỏ một sản phẩm khỏi giỏ nhé,xoa_khoi_gio_hang
+Nhờ shop mình muốn bỏ một sản phẩm khỏi giỏ với,xoa_khoi_gio_hang
+Nhờ shop mình muốn bỏ một sản phẩm khỏi giỏ nha,xoa_khoi_gio_hang
+Nhờ shop mình muốn bỏ một sản phẩm khỏi giỏ giúp mình nhé,xoa_khoi_gio_hang
+Nhờ shop mình muốn bỏ một sản phẩm khỏi giỏ cho mình với,xoa_khoi_gio_hang
+Nhờ shop mình muốn bỏ một sản phẩm khỏi giỏ ạ,xoa_khoi_gio_hang
+Nhờ shop mình muốn bỏ một sản phẩm khỏi giỏ giúp mình,xoa_khoi_gio_hang
+Giúp mình mình muốn bỏ một sản phẩm khỏi giỏ nhé,xoa_khoi_gio_hang
+Giúp mình mình muốn bỏ một sản phẩm khỏi giỏ với,xoa_khoi_gio_hang
+Giúp mình mình muốn bỏ một sản phẩm khỏi giỏ nha,xoa_khoi_gio_hang
+Giúp mình mình muốn bỏ một sản phẩm khỏi giỏ giúp mình nhé,xoa_khoi_gio_hang
+Giúp mình mình muốn bỏ một sản phẩm khỏi giỏ cho mình với,xoa_khoi_gio_hang
+Giúp mình mình muốn bỏ một sản phẩm khỏi giỏ ạ,xoa_khoi_gio_hang
+Giúp mình mình muốn bỏ một sản phẩm khỏi giỏ giúp mình,xoa_khoi_gio_hang
+Mình muốn mình muốn bỏ một sản phẩm khỏi giỏ nhé,xoa_khoi_gio_hang
+Mình muốn mình muốn bỏ một sản phẩm khỏi giỏ với,xoa_khoi_gio_hang
+Mình muốn mình muốn bỏ một sản phẩm khỏi giỏ nha,xoa_khoi_gio_hang
+Mình muốn mình muốn bỏ một sản phẩm khỏi giỏ giúp mình nhé,xoa_khoi_gio_hang
+Mình muốn mình muốn bỏ một sản phẩm khỏi giỏ cho mình với,xoa_khoi_gio_hang
+Nhờ shop tôi muốn loại hết hàng đang có trong giỏ nhé,xoa_tat_ca_gio_hang
+Nhờ shop tôi muốn loại hết hàng đang có trong giỏ với,xoa_tat_ca_gio_hang
+Nhờ shop tôi muốn loại hết hàng đang có trong giỏ nha,xoa_tat_ca_gio_hang
+Nhờ shop tôi muốn loại hết hàng đang có trong giỏ giúp mình nhé,xoa_tat_ca_gio_hang
+Nhờ shop tôi muốn loại hết hàng đang có trong giỏ cho mình với,xoa_tat_ca_gio_hang
+Nhờ shop tôi muốn loại hết hàng đang có trong giỏ ạ,xoa_tat_ca_gio_hang
+Nhờ shop tôi muốn loại hết hàng đang có trong giỏ giúp mình,xoa_tat_ca_gio_hang
+Giúp mình tôi muốn loại hết hàng đang có trong giỏ nhé,xoa_tat_ca_gio_hang
+Giúp mình tôi muốn loại hết hàng đang có trong giỏ với,xoa_tat_ca_gio_hang
+Giúp mình tôi muốn loại hết hàng đang có trong giỏ nha,xoa_tat_ca_gio_hang

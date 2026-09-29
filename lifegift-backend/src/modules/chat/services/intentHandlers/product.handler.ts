@@ -24,11 +24,17 @@ export class ProductHandler {
   }
 
   private static buildProductWhere(entities: ResolvedEntities): Record<string, any> {
+    const productIds = this.toBigIntIds(entities.productId, entities.productIds);
     const categoryIds = this.toBigIntIds(entities.categoryId, entities.categoryIds);
     const brandIds = this.toBigIntIds(entities.brandId, entities.brandIds);
     const where: Record<string, any> = {
+      ...(productIds.length > 0 && { id: { in: productIds } }),
+      ...(entities.productName && productIds.length === 0 && { name: { contains: entities.productName } }),
       ...(categoryIds.length > 0 && { category_id: { in: categoryIds } }),
+      ...(entities.categoryName && categoryIds.length === 0 && { categories: { name: { contains: entities.categoryName } } }),
       ...(brandIds.length > 0 && { brand_id: { in: brandIds } }),
+      ...(entities.brandName && brandIds.length === 0 && { brands: { name: { contains: entities.brandName } } }),
+      ...(entities.inStockOnly && { inventories: { some: { available_quantity: { gt: 0 } } } }),
     };
 
     if (entities.origin) {
@@ -65,6 +71,14 @@ export class ProductHandler {
     );
     const conditions: string[] = [];
     if (categories.length > 0) conditions.push(categories.join(' và '));
+    else if (entities.categoryName) conditions.push(`thuộc danh mục ${entities.categoryName}`);
+    if (entities.productName && this.toBigIntIds(entities.productId, entities.productIds).length === 0) {
+      conditions.push(`có tên ${entities.productName}`);
+    }
+    if (entities.brandName && this.toBigIntIds(entities.brandId, entities.brandIds).length === 0) {
+      conditions.push(`thuộc thương hiệu ${entities.brandName}`);
+    }
+    if (entities.inStockOnly) conditions.push('còn hàng');
     if (entities.origin) conditions.push(`có xuất xứ từ ${entities.origin}`);
     if (entities.minPrice !== null && entities.minPrice !== undefined) {
       conditions.push(`từ ${Number(entities.minPrice).toLocaleString('vi-VN')}đ trở lên`);
@@ -155,7 +169,7 @@ export class ProductHandler {
       case 'goi_y_san_pham':
         return this.searchByPriceOrSuggest(entities);
       case 'xem_san_pham_khac':
-        return this.getOtherFeaturedProducts(viewedProductIds);
+        return this.getOtherFeaturedProducts(viewedProductIds, entities);
       case 'hoi_gia':
         return this.getProductPrice(entities);
       case 'hoi_nguon_goc':
@@ -172,23 +186,46 @@ export class ProductHandler {
     }
   }
 
-  private static async getOtherFeaturedProducts(viewedProductIds: number[]): Promise<ChatResponsePayload> {
+  private static async getOtherFeaturedProducts(
+    viewedProductIds: number[],
+    entities: ResolvedEntities
+  ): Promise<ChatResponsePayload> {
     const excludedIds = viewedProductIds
       .filter((id) => Number.isInteger(Number(id)) && Number(id) > 0)
       .map((id) => BigInt(id));
+    const productIds = this.toBigIntIds(entities.productId, entities.productIds);
+    const hasSpecificFilters = productIds.length > 0 || Boolean(
+      entities.productName || entities.categoryId || entities.categoryIds?.length || entities.categoryName ||
+      entities.brandId || entities.brandIds?.length || entities.brandName || entities.origin ||
+      entities.inStockOnly || entities.minPrice !== null && entities.minPrice !== undefined ||
+      entities.maxPrice !== null && entities.maxPrice !== undefined || entities.extractedPrice
+    );
+    const criteria = this.buildProductWhere(entities);
+    const where = hasSpecificFilters
+      ? {
+          AND: [
+            criteria,
+            ...(excludedIds.length > 0 ? [{ id: { notIn: excludedIds } }] : []),
+          ],
+        }
+      : {
+          is_featured: true,
+          ...(excludedIds.length > 0 && { id: { notIn: excludedIds } }),
+        };
     const products = await prisma.products.findMany({
-      where: {
-        is_featured: true,
-        ...(excludedIds.length > 0 && { id: { notIn: excludedIds } }),
-      },
+      where,
       include: this.defaultIncludes,
       take: 5,
     });
 
     return {
       replyMessage: products.length > 0
-        ? 'Dưới đây là 5 sản phẩm nổi bật khác với những sản phẩm bạn đã xem trước đó ạ:'
-        : 'Bạn đã xem hết các sản phẩm nổi bật hiện có. Bạn muốn shop tìm theo danh mục hoặc mức giá nào không ạ?',
+        ? hasSpecificFilters
+          ? `Dưới đây là các sản phẩm khác ${this.describeFilters(entities) || 'phù hợp với yêu cầu'} mà bạn chưa xem:`
+          : 'Dưới đây là 5 sản phẩm nổi bật khác với những sản phẩm bạn đã xem trước đó ạ:'
+        : hasSpecificFilters
+          ? `Shop không còn sản phẩm nào khác ${this.describeFilters(entities) || 'phù hợp với yêu cầu'} để giới thiệu ạ.`
+          : 'Bạn đã xem hết các sản phẩm nổi bật hiện có. Bạn muốn shop tìm theo danh mục hoặc mức giá nào không ạ?',
       data: products.map((product) => this.formatProductResponse(product)),
     };
   }
@@ -201,7 +238,12 @@ export class ProductHandler {
       });
 
       if (product) {
-        const stock = product.inventories?.reduce((sum, i) => sum + i.quantity, 0) || 0;
+        const stock = product.inventories?.reduce(
+          (sum, inventory) => sum + Number(
+            inventory.available_quantity ?? Math.max(inventory.quantity - inventory.reserved_quantity, 0)
+          ),
+          0
+        ) || 0;
         return {
           replyMessage: stock > 0
             ? `Sản phẩm ${product.name} hiện còn ${stock} đơn vị trong kho ạ.`
@@ -230,13 +272,21 @@ export class ProductHandler {
   }
 
   private static async searchByPriceOrSuggest(entities: ResolvedEntities): Promise<ChatResponsePayload> {
+    const productIds = this.toBigIntIds(entities.productId, entities.productIds);
+    const hasSpecificFilters = productIds.length > 0 || Boolean(
+      entities.productName || entities.categoryId || entities.categoryIds?.length || entities.categoryName ||
+      entities.brandId || entities.brandIds?.length || entities.brandName || entities.origin ||
+      entities.inStockOnly ||
+      entities.minPrice !== null && entities.minPrice !== undefined ||
+      entities.maxPrice !== null && entities.maxPrice !== undefined || entities.extractedPrice
+    );
     let products = await prisma.products.findMany({
       where: this.buildProductWhere(entities),
       include: this.defaultIncludes,
       take: 5,
     });
 
-    if (products.length === 0 && !entities.origin && !entities.categoryId && !entities.categoryIds?.length && !entities.brandId && !entities.brandIds?.length) {
+    if (products.length === 0 && !hasSpecificFilters) {
       products = await prisma.products.findMany({
         include: this.defaultIncludes,
         take: 5,
@@ -252,13 +302,18 @@ export class ProductHandler {
         : entities.maxPrice !== null && entities.maxPrice !== undefined
           ? `không quá ${Number(entities.maxPrice).toLocaleString('vi-VN')}đ`
           : 'phù hợp với khoảng giá của bạn';
+    const filterDescription = this.describeFilters(entities);
 
     return {
       replyMessage: products.length > 0
         ? (hasPriceFilter 
-            ? `Shop gợi ý các sản phẩm ${this.describeFilters(entities) || priceDescription}:`
-            : 'Shop gợi ý các sản phẩm nổi bật, bán chạy bên shop mời bạn xem và tham khảo ạ:')
-        : 'Rất tiếc, hiện tại không tìm thấy sản phẩm phù hợp.',
+            ? `Shop gợi ý các sản phẩm ${filterDescription || priceDescription}:`
+            : hasSpecificFilters
+              ? `Shop gợi ý các sản phẩm${filterDescription ? ` ${filterDescription}` : ' phù hợp với yêu cầu'}:`
+              : 'Shop gợi ý các sản phẩm nổi bật, bán chạy bên shop mời bạn xem và tham khảo ạ:\nHoặc bạn có thể cung cấp dòng sản phẩm bạn mong muốn để chúng tôi sẽ đưa ra những sản phẩm phù hợp với yêu cầu của bạn')
+        : hasSpecificFilters
+          ? `Rất tiếc, shop hiện chưa tìm thấy sản phẩm ${filterDescription || 'phù hợp với yêu cầu'}.`
+          : 'Rất tiếc, hiện tại không tìm thấy sản phẩm phù hợp.',
       data: products.map((p) => this.formatProductResponse(p)),
     };
   }
@@ -271,7 +326,8 @@ export class ProductHandler {
       });
 
       if (product) {
-        const formattedPrice = Number(product.price).toLocaleString('vi-VN');
+        const currentPrice = product.sale_price ?? product.price;
+        const formattedPrice = Number(currentPrice).toLocaleString('vi-VN');
         return {
           replyMessage: `Giá của ${product.name} hiện tại là ${formattedPrice}đ ạ.`,
           data: [this.formatProductResponse(product)],

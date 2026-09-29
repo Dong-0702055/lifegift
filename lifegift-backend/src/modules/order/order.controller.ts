@@ -35,7 +35,8 @@ export class OrderController {
   public static async getById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const data = await OrderService.getById(id);
+      const user = (req as any).user;
+      const data = await OrderService.getById(id, user.id, user.roles.includes('ADMIN'));
       return res.status(200).json({ success: true, message: 'Lấy chi tiết đơn hàng thành công', data });
     } catch (error: any) {
       return res.status(400).json({ success: false, message: error.message, data: null });
@@ -45,9 +46,10 @@ export class OrderController {
 public static async updateStatus(req: Request, res: Response) {
   try {
     const userId = (req as any).user.id;
+    const isAdmin = (req as any).user.roles.includes('ADMIN');
     const id = Number(req.params.id);
     const { status, note } = req.body;
-    const data = await OrderService.updateStatus(userId,id,status,note);
+    const data = await OrderService.updateStatus(userId, id, status, note, isAdmin);
     return res.status(200).json({
       success: true,
       message: 'Cập nhật trạng thái đơn hàng thành công',

@@ -8,6 +8,7 @@ const router = Router();
 
 // 1. PUBLIC ROUTES
 router.get('/', ProductController.getProducts);
+router.get('/admin', authenticateJwt, requireAuth, authorizeRoles('ADMIN'), ProductController.getAllProducts);
 router.get('/:id', validateParamsDto(ProductIdParamDto), ProductController.getProduct);
 
 // 2. ADMIN ONLY ROUTES

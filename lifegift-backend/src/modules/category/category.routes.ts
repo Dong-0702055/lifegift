@@ -8,6 +8,7 @@ const router = Router();
 
 // Public Endpoints
 router.get('/', CategoryController.getCategories);
+router.get('/admin', authenticateJwt, requireAuth, authorizeRoles('ADMIN'), CategoryController.getAllCategories);
 router.get('/:id', CategoryController.getCategory);
 
 // Protected Endpoints (Cần xác thực ADMIN)

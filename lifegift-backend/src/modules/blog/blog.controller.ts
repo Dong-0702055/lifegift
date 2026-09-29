@@ -2,6 +2,15 @@ import { Request, Response } from 'express';
 import { BlogService } from './blog.service';
 
 export class BlogController {
+  public static async getAllPostsForAdmin(req: Request, res: Response) {
+    try {
+      const data = await BlogService.getAllPostsForAdmin();
+      return res.status(200).json({ success: true, message: 'Lấy tất cả bài viết thành công', data });
+    } catch (error: any) {
+      return res.status(400).json({ success: false, message: error.message, data: null });
+    }
+  }
+
   // Public: Lấy danh mục bài viết ACTIVE
   public static async getCategories(req: Request, res: Response) {
     try {

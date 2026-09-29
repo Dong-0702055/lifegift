@@ -341,12 +341,13 @@ export class OrderService {
     return Promise.all(orders.map((order) => this.toOrderResponse(order)));
   }
 
-  public static async getById(orderId: number): Promise<OrderResponse> {
+  public static async getById(orderId: number, userId: number, isAdmin = false): Promise<OrderResponse> {
     const order = await prisma.orders.findUnique({
       where: { id: BigInt(orderId) },
       include: { order_items: true },
     });
     if (!order) throw new Error('Order không tồn tại');
+    if (!isAdmin && order.user_id !== BigInt(userId)) throw new Error('Bạn không có quyền xem đơn hàng này');
     return this.toOrderResponse(order);
   }
 
@@ -354,7 +355,8 @@ export class OrderService {
     userId: number,
     orderId: number,
     newStatus: OrderStatus,
-    note?: string
+    note?: string,
+    isAdmin = false,
   ): Promise<OrderResponse> {
     const updatedOrder = await prisma.$transaction(async (tx) => {
       const order = await tx.orders.findUnique({
@@ -363,7 +365,7 @@ export class OrderService {
       });
 
       if (!order) throw new Error('Order không tồn tại');
-      if (order.user_id !== BigInt(userId)) {
+      if (!isAdmin && order.user_id !== BigInt(userId)) {
         throw new Error('Bạn không có quyền cập nhật đơn hàng này');
       }
 

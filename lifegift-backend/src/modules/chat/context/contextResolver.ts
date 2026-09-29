@@ -114,16 +114,28 @@ export class ContextResolver {
     // 1. Kế thừa Product ID nếu câu hiện tại hỏi tiếp về sản phẩm cũ
     // Ví dụ: "Còn hàng không?", "Giá bao nhiêu?", "Thêm vào giỏ hàng"
     if (!resolvedEntities.productId && previousState.productId) {
-      const isContextualQuestion = 
-        ['kiem_tra_ton_kho', 'hoi_gia', 'them_gio_hang', 'chi_tiet_san_pham', 'dat_hang', 'xac_nhan_dat_hang'].includes(intent) ||
-        lowerMsg.includes('nó') || 
-        lowerMsg.includes('cái này') || 
-        lowerMsg.includes('loại này') ||
+      const refersToPreviousProduct = /(?:^|[^\p{L}\p{N}_])(?:nó|cái này|cái đó|loại này|loại đó|sản phẩm này|sản phẩm đó|món này|món đó|món vừa chọn|sản phẩm vừa chọn|sản phẩm vừa xem)(?=$|[^\p{L}\p{N}_])/iu.test(lowerMsg);
+      const isContextualQuestion =
+        ['kiem_tra_ton_kho', 'hoi_gia', 'them_gio_hang', 'dat_hang', 'xac_nhan_dat_hang'].includes(intent) ||
+        refersToPreviousProduct ||
         lowerMsg.includes('còn không');
 
       if (isContextualQuestion) {
         resolvedEntities.productId = previousState.productId;
         resolvedEntities.productName = previousState.productName;
+      }
+    }
+
+    if (intent === 'xem_san_pham_khac') {
+      for (const field of ['categoryId', 'categoryIds', 'categoryName', 'brandId', 'brandIds', 'brandName', 'origin']) {
+        if ((resolvedEntities[field] === undefined || resolvedEntities[field] === null || resolvedEntities[field] === '') && previousState[field as keyof ConversationState] !== undefined) {
+          resolvedEntities[field] = previousState[field as keyof ConversationState];
+        }
+      }
+      if (resolvedEntities.categoryId || resolvedEntities.categoryIds?.length || resolvedEntities.categoryName) {
+        resolvedEntities.productId = null;
+        resolvedEntities.productIds = [];
+        resolvedEntities.productName = null;
       }
     }
 

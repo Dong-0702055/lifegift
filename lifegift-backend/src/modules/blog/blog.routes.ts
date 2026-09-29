@@ -17,6 +17,7 @@ const router = Router();
 // ==========================================
 router.get('/categories', BlogController.getCategories);
 router.get('/posts', BlogController.getPosts);
+router.get('/admin/posts', authenticateJwt, requireAuth, authorizeRoles('ADMIN'), BlogController.getAllPostsForAdmin);
 router.get('/posts/category/:categoryId', validateParamsDto(BlogCategoryIdParamDto), BlogController.getPostsByCategory);
 router.get('/posts/slug/:slug', validateParamsDto(BlogSlugParamDto), BlogController.getPostBySlug);
 

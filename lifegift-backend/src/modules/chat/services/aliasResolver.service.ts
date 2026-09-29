@@ -18,16 +18,20 @@ export class AliasResolverService {
     ]);
 
     let matchedProductId: bigint | null = null;
+    let matchedProductName: string | null = null;
     const matchedProductIds: bigint[] = [];
     let matchedCategoryId: bigint | null = null;
+    let matchedCategoryName: string | null = null;
     const matchedCategoryIds: bigint[] = [];
     let matchedBrandId: bigint | null = null;
+    let matchedBrandName: string | null = null;
     const matchedBrandIds: bigint[] = [];
 
     // 2. Khớp Product Alias (Ưu tiên alias dài nhất)
     const sortedProducts = productAliases.sort((a: any, b: any) => b.alias.length - a.alias.length);
     for (const item of sortedProducts) {
       if (normalizedText.includes(item.alias.toLowerCase())) {
+        matchedProductName ||= item.alias;
         const productId = item.product_id ?? item.productId ?? null;
         if (productId !== null && !matchedProductIds.some((id) => id === productId)) {
           matchedProductIds.push(productId);
@@ -40,6 +44,7 @@ export class AliasResolverService {
     const sortedCategories = categoryAliases.sort((a: any, b: any) => b.alias.length - a.alias.length);
     for (const item of sortedCategories) {
       if (normalizedText.includes(item.alias.toLowerCase())) {
+        matchedCategoryName ||= item.alias;
         const categoryId = item.category_id ?? item.categoryId ?? null;
         if (categoryId !== null && !matchedCategoryIds.some((id) => id === categoryId)) {
           matchedCategoryIds.push(categoryId);
@@ -52,6 +57,7 @@ export class AliasResolverService {
     const sortedBrands = brandAliases.sort((a: any, b: any) => b.alias.length - a.alias.length);
     for (const item of sortedBrands) {
       if (normalizedText.includes(item.alias.toLowerCase())) {
+        matchedBrandName ||= item.alias;
         const brandId = item.brand_id ?? item.brandId ?? null;
         if (brandId !== null && !matchedBrandIds.some((id) => id === brandId)) {
           matchedBrandIds.push(brandId);
@@ -59,6 +65,26 @@ export class AliasResolverService {
       }
     }
     matchedBrandId = matchedBrandIds[0] ?? null;
+
+    const categoryPhrase = normalizedText.match(
+      /(?:các\s+)?(?:loại|dòng|nhóm|danh\s+mục)\s+(?:sản phẩm\s+)?(.+?)(?=\s+(?:nào|đang|hiện|của|giúp|cho|ạ)\b|[,!?]|$)/iu
+    )?.[1]?.trim();
+    const relatedPhrase = normalizedText.match(
+      /liên quan đến\s+(?:các\s+)?(?:loại\s+)?(.+?)(?=\s+(?:nào|đang|hiện|của|giúp|cho|ạ)\b|[,!?]|$)/iu
+    )?.[1]?.trim();
+    const namedProduct = normalizedText.match(
+      /(?:sản phẩm|mặt hàng)\s+(?:có tên|tên là|loại)\s+([^,.!?]+)/iu
+    )?.[1]?.trim();
+    const namedBrand = normalizedText.match(
+      /(?:thương hiệu|nhãn hiệu|hãng)\s+([^,.!?]+)/iu
+    )?.[1]?.trim();
+    const nerProductName = detectedEntities.find((entity) => entity.type === 'PRODUCT' && entity.text?.trim())?.text?.trim();
+    const nerCategoryName = detectedEntities.find((entity) => entity.type === 'CATEGORY' && entity.text?.trim())?.text?.trim();
+    const nerBrandName = detectedEntities.find((entity) => entity.type === 'BRAND' && entity.text?.trim())?.text?.trim();
+    const productName = matchedProductName || nerProductName || namedProduct || null;
+    const categoryName = matchedCategoryName || nerCategoryName || categoryPhrase || relatedPhrase || null;
+    const brandName = matchedBrandName || nerBrandName || namedBrand || null;
+    const inStockOnly = /(?:còn\s+hàng|có\s+hàng|có\s+sẵn|sẵn\s+hàng|đang\s+bán|hàng\s+còn|còn\s+sản phẩm|còn\s+(?:không|ko|chứ)|available)/iu.test(normalizedText);
 
     // 5. Bóc tách địa điểm xuất xứ, ưu tiên vùng lớn trước địa danh cụ thể
     const originAliases = [
@@ -146,8 +172,12 @@ export class AliasResolverService {
       productIds: matchedProductIds,
       categoryId: matchedCategoryId,
       categoryIds: matchedCategoryIds,
+      categoryName,
       brandId: matchedBrandId,
       brandIds: matchedBrandIds,
+      brandName,
+      productName,
+      inStockOnly,
       origin,
       minPrice,
       maxPrice,

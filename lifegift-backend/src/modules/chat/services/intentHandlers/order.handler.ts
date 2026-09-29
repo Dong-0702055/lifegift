@@ -55,6 +55,18 @@ export class OrderHandler {
     return [...new Set(values.map((id) => BigInt(id)))];
   }
 
+  private static selectCartItems(cartItems: any[], requestedProductIds: bigint[]) {
+    if (requestedProductIds.length === 0) {
+      return { items: cartItems, missingProductIds: [] as bigint[] };
+    }
+
+    const requestedIds = new Set(requestedProductIds.map(String));
+    const items = cartItems.filter((item: any) => requestedIds.has(String(item.productId)));
+    const cartProductIds = new Set(items.map((item: any) => String(item.productId)));
+    const missingProductIds = requestedProductIds.filter((id) => !cartProductIds.has(String(id)));
+    return { items, missingProductIds };
+  }
+
   private static getOriginKeywords(origin: string): string[] {
     const normalizedOrigin = origin.toLowerCase();
     if (normalizedOrigin === 'tây nguyên') return ['tây nguyên', 'đắk lắk', 'buôn ma thuột', 'đắk nông', 'gia lai', 'kon tum', 'lâm đồng', 'đà lạt', 'cầu đất'];
@@ -188,8 +200,6 @@ export class OrderHandler {
         case 'thanh_toan_don_hang':
         case 'dat_hang': {
           const cart = await CartService.getMyCart(userId);
-          const quantity = entities.quantity && entities.quantity > 0 ? entities.quantity : 1;
-          let directProduct: any = null;
           const cartPositions = OrderHandler.resolveCartPositions(message);
           if (cartPositions.length === 0 && entities.productIndex && message && /(?:trong|ở|o)\s+(?:giỏ hàng|gio hang)|(?:giỏ hàng|gio hang)\s+(?:của tôi|cua toi)/i.test(message)) {
             cartPositions.push(Number(entities.productIndex));
@@ -207,13 +217,12 @@ export class OrderHandler {
             entities.cartItemIds = selectedByCartPosition.map((item: any) => Number(item.id));
           }
 
-          const requestedProductIds = OrderHandler.toBigIntIds(entities.productId, entities.productIds);
-          const hasMultipleRequestedProducts = requestedProductIds.length > 1;
-
           if (!entities.productId && message) {
             const selectedProductId = OrderHandler.resolveProductIdFromHistory(message, history);
             if (selectedProductId) entities.productId = selectedProductId;
           }
+
+          const requestedProductIds = OrderHandler.toBigIntIds(entities.productId, entities.productIds);
 
           if (!entities.productId && OrderHandler.hasProductFilters(entities)) {
             const candidates = await prisma.products.findMany({
@@ -231,54 +240,22 @@ export class OrderHandler {
             };
           }
 
-          // TRƯỜNG HỢP 1: Khách hàng chỉ định sản phẩm cụ thể (VD: "tôi muốn đặt 1 cafe cầu đất")
-          if (entities.productId && !hasMultipleRequestedProducts && !isCartPositionRequest) {
-            const productId = Number(entities.productId);
-            const prismaAny = prisma as any;
-
-            // Kiểm tra sản phẩm có tồn tại không
-            const product = await (prismaAny.products?.findFirst({
-              where: { id: BigInt(productId), ...OrderHandler.buildProductFilter(entities) },
-              include: {
-                inventories: true,
-                product_images: { orderBy: { sort_order: 'asc' } },
-                brands: true,
-                categories: true,
-              },
-            }) ||
-              prismaAny.product?.findUnique({ where: { id: BigInt(productId) } }));
-
-            if (!product || product.status !== 'ACTIVE') {
-              return { replyMessage: 'Sản phẩm này hiện không tồn tại hoặc đã ngừng kinh doanh.' };
-            }
-
-            // Đặt trực tiếp, không bắt buộc sản phẩm phải nằm trong giỏ hàng.
-            directProduct = { product, quantity };
+          const { items: matchedCartItems, missingProductIds } = OrderHandler.selectCartItems(cart.items, requestedProductIds);
+          if (missingProductIds.length > 0) {
+            return {
+              replyMessage: 'Một hoặc nhiều sản phẩm bạn yêu cầu chưa có trong giỏ hàng. Vui lòng thêm sản phẩm vào giỏ trước khi đặt hàng.',
+            };
           }
 
-          const selectedCartItems = isCartPositionRequest
-            ? selectedByCartPosition
-            : hasMultipleRequestedProducts
-            ? cart.items.filter((item: any) => requestedProductIds.some((id) => id === BigInt(item.productId)))
-            : cart.items;
-
-          if (!directProduct && (!selectedCartItems || selectedCartItems.length === 0)) {
+          const selectedCartItems = isCartPositionRequest ? selectedByCartPosition : matchedCartItems;
+          if (!selectedCartItems || selectedCartItems.length === 0) {
             return { replyMessage: 'Giỏ hàng của bạn đang trống, vui lòng chọn sản phẩm trước khi đặt hàng.' };
           }
 
-          const itemsSummary = directProduct
-            ? `  1. ${directProduct.product.name} (SL: ${directProduct.quantity})`
-            : selectedCartItems
-                .map((item: any, idx: number) => `  ${idx + 1}. ${item.productName} (SL: ${item.quantity})`)
-                .join('\n');
-          const subtotal = directProduct
-            ? (directProduct.product.sale_price || directProduct.product.price || 0) * directProduct.quantity
-            : selectedCartItems.reduce((sum: number, item: any) => sum + Number(item.subtotal || 0), 0);
+          const subtotal = selectedCartItems.reduce((sum: number, item: any) => sum + Number(item.subtotal || 0), 0);
 
-          const missing = getMissingCheckoutInfo(Boolean(directProduct || selectedCartItems?.length));
-          const checkoutProducts = directProduct
-            ? [OrderHandler.formatCheckoutProduct(directProduct.product, directProduct.quantity)]
-            : await (async () => {
+          const missing = getMissingCheckoutInfo(selectedCartItems.length > 0);
+          const checkoutProducts = await (async () => {
                 const productRecords = await prisma.products.findMany({
                   where: { id: { in: selectedCartItems.map((item: any) => BigInt(item.productId)) } },
                   include: {
@@ -312,7 +289,7 @@ export class OrderHandler {
           if (rawOrderId) {
             const orderIdNumber = Number(rawOrderId);
             if (!isNaN(orderIdNumber)) {
-              const order = await OrderService.getById(orderIdNumber);
+              const order = await OrderService.getById(orderIdNumber, userId);
 
               if (order) {
                 if (Number(order.userId) !== userId) {
@@ -367,7 +344,7 @@ export class OrderHandler {
             return { replyMessage: 'Mã đơn hàng không hợp lệ.' };
           }
 
-          const order = await OrderService.getById(orderIdNumber);
+          const order = await OrderService.getById(orderIdNumber, userId);
           if (!order) {
             return { replyMessage: `Không tìm thấy đơn hàng #${orderIdNumber}.` };
           }
@@ -411,32 +388,38 @@ export class OrderHandler {
         case 'xac_nhan_dat_hang': {
           const requestedProductIds = OrderHandler.toBigIntIds(entities.productId, entities.productIds);
           const hasSelectedCartItems = Array.isArray(entities.cartItemIds) && entities.cartItemIds.length > 0;
-          const directItems = !hasSelectedCartItems && requestedProductIds.length <= 1 && entities.productId
-            ? [{
-                productId: Number(entities.productId),
-                quantity: entities.quantity && entities.quantity > 0 ? Number(entities.quantity) : 1,
-              }]
-            : undefined;
-          const cart = directItems ? null : await CartService.getMyCart(userId);
+          const checkoutProductIds = requestedProductIds.length > 0
+            ? requestedProductIds
+            : OrderHandler.toBigIntIds(null, (entities.checkoutItems || []).map((item: any) => item.productId));
+          if (!hasSelectedCartItems && checkoutProductIds.length === 0) {
+            return { replyMessage: 'Không tìm thấy sản phẩm checkout đã chọn. Vui lòng bắt đầu đặt hàng lại từ giỏ hàng.' };
+          }
+          const cart = await CartService.getMyCart(userId);
           const selectedCartItems = hasSelectedCartItems
-            ? cart?.items.filter((item: any) => entities.cartItemIds.some((id: any) => Number(id) === Number(item.id)))
-            : requestedProductIds.length > 1
-            ? cart?.items.filter((item: any) => requestedProductIds.some((id) => id === BigInt(item.productId)))
-            : cart?.items;
-          const missing = getMissingCheckoutInfo(Boolean(directItems || selectedCartItems?.length));
+            ? cart.items.filter((item: any) => entities.cartItemIds!.some((id: any) => Number(id) === Number(item.id)))
+            : OrderHandler.selectCartItems(cart.items, checkoutProductIds).items;
+          const missing = getMissingCheckoutInfo(Boolean(selectedCartItems?.length));
           if (missing.length > 0) {
             return {
               replyMessage: `Chưa thể đặt hàng vì còn thiếu ${missing.join(', ')}. Bạn vui lòng cung cấp đủ thông tin rồi xác nhận lại nhé.`
             };
           }
 
-          if (!directItems && (!selectedCartItems || selectedCartItems.length === 0)) {
-            return { replyMessage: 'Bạn chưa chọn sản phẩm để tạo đơn hàng.' };
+          if (!selectedCartItems || selectedCartItems.length === 0) {
+            return { replyMessage: 'Không thể xác nhận đơn: sản phẩm đã chọn không còn trong giỏ hàng. Vui lòng thêm lại sản phẩm rồi bắt đầu đặt hàng.' };
+          }
+
+          if (hasSelectedCartItems && selectedCartItems.length !== entities.cartItemIds!.length) {
+            return { replyMessage: 'Một hoặc nhiều sản phẩm đã chọn không còn trong giỏ hàng. Vui lòng kiểm tra giỏ rồi bắt đầu đặt hàng lại.' };
+          }
+
+          const { missingProductIds } = OrderHandler.selectCartItems(cart.items, checkoutProductIds);
+          if (missingProductIds.length > 0) {
+            return { replyMessage: 'Một hoặc nhiều sản phẩm đã chọn không còn trong giỏ hàng. Vui lòng thêm lại sản phẩm rồi bắt đầu đặt hàng.' };
           }
 
           const createdOrder = await OrderService.create(userId, {
             warehouseId: 1,
-            items: directItems,
             cartItemIds: selectedCartItems?.map((item: any) => Number(item.id)),
             receiverName: receiverName!,
             receiverPhone: receiverPhone!,

@@ -16,6 +16,7 @@ export class CategoryService {
       slug: category.slug,
       description: category.description,
       imageUrl: category.image_url,
+      section: category.section,
       status: category.status,
       createdAt: category.created_at,
       updatedAt: category.updated_at,
@@ -29,6 +30,11 @@ export class CategoryService {
       orderBy: { name: 'asc' },
     });
     return categories.map((cat) => this.mapToResponse(cat));
+  }
+
+  public static async getAllCategories(): Promise<CategoryResponse[]> {
+    const categories = await prisma.categories.findMany({ orderBy: { name: 'asc' } });
+    return categories.map((category) => this.mapToResponse(category));
   }
 
   // 2. Lấy chi tiết Category theo ID
@@ -80,6 +86,7 @@ export class CategoryService {
         slug: trimmedSlug,
         description: data.description || null,
         image_url: data.imageUrl || null,
+        section: data.section || 'product',
         status: data.status || CategoryStatus.ACTIVE,
         parent_id: data.parentId ? BigInt(data.parentId) : null,
         created_at: now,
@@ -140,6 +147,7 @@ export class CategoryService {
         slug: trimmedSlug,
         description: data.description !== undefined ? data.description : category.description,
         image_url: data.imageUrl !== undefined ? data.imageUrl : category.image_url,
+        section: data.section || category.section,
         status: data.status || category.status,
         parent_id: parentIdValue,
         updated_at: getVietNamDateTime(),

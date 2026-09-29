@@ -1,4 +1,4 @@
-﻿text,intent
+text,intent
 cho mình xem 5 sản phẩm nổi bật khác với trước đó,xem_san_pham_khac
 hiển thị các sản phẩm tiếp theo chưa xuất hiện,xem_san_pham_khac
 đổi số lượng cà phê trong giỏ thành 3 gói,cap_nhat_gio_hang
@@ -165,7 +165,7 @@ hủy đơn hàng giúp mình shop,huy_don_hang
 giao hàng có mất phí không shop,hoi_phi_ship
 Robusta và Arabica loại nào phù hợp hơn,so_sanh_san_pham
 quà doanh nghiệp hãng nào,hoi_thuong_hieu
-cà phê Arabica Cầu Đất thuộc thương hiệu nào,hoi_thuong_hieu
+cà phê Arabica Cầu Đất do nhãn hàng nào cung cấp,hoi_thuong_hieu
 cho mình hỏi giá mật ong hoa rừng,hoi_gia
 tìm sản phẩm từ 200k đến 250k,tim_san_pham_theo_gia
 tìm hạt trong tầm giá 1 triệu,tim_san_pham_theo_gia
@@ -334,8 +334,116 @@ làm trống toàn bộ giỏ hàng,xoa_tat_ca_gio_hang
 tôi muốn bỏ hết đồ trong giỏ,xoa_tat_ca_gio_hang
 xóa toàn bộ món trong giỏ hàng nhé,xoa_tat_ca_gio_hang
 giúp mình dọn sạch giỏ hàng,xoa_tat_ca_gio_hang
-không giữ lại gì trong giỏ, xoa_tat_ca_gio_hang
+không giữ lại gì trong giỏ,xoa_tat_ca_gio_hang
 hãy xóa hết sản phẩm đang có,xoa_tat_ca_gio_hang
 cho mình xóa cả giỏ hàng,xoa_tat_ca_gio_hang
 bỏ tất cả hàng trong giỏ đi,xoa_tat_ca_gio_hang
 xóa hết các món khỏi giỏ,xoa_tat_ca_gio_hang
+cho mình xin quy trình mua hàng trên website,huong_dan_dat_hang
+mình chưa từng đặt hàng ở đây cần bắt đầu từ đâu,huong_dan_dat_hang
+làm sao chọn phương thức nhận hàng khi đặt mua,huong_dan_dat_hang
+hướng dẫn mình hoàn tất đơn sau khi đăng nhập,huong_dan_dat_hang
+giải thích cách thêm hàng vào giỏ rồi xác nhận đơn,huong_dan_dat_hang
+mở phần chi tiết của sản phẩm trà Ô Long,xem_chi_tiet_san_pham
+xem thông tin đầy đủ của hộp quà cao cấp,xem_chi_tiet_san_pham
+cho xem trang mô tả mật ong hoa rừng,xem_chi_tiet_san_pham
+hiện cho mình những mặt hàng khác chưa xem,xem_san_pham_khac
+đề xuất thêm sản phẩm khác ngoài danh sách này,xem_san_pham_khac
+mình muốn xem các lựa chọn tiếp theo,xem_san_pham_khac
+đưa ra vài món nổi bật không có ở kết quả vừa rồi,xem_san_pham_khac
+có sản phẩm nào khác để tham khảo nữa không,xem_san_pham_khac
+xin chào bạn bên mình có tư vấn không,chao_hoi
+mình chưa hiểu thông tin bạn cung cấp,khong_hieu
+tư vấn giỏ quà phù hợp để biếu khách hàng,goi_y_san_pham
+một túi măng khô Tây Bắc hiện bán giá bao nhiêu,hoi_gia
+hạt điều rang muối có xuất xứ từ địa phương nào,hoi_nguon_goc
+mật ong hoa rừng được tính theo chai hay hộp,hoi_don_vi
+hộp quà doanh nghiệp Premium còn hàng không,kiem_tra_ton_kho
+đợt này shop có chương trình ưu đãi cho khách mua mới không,khuyen_mai
+tra cứu giúp mình đơn đặt ngày hôm qua,tra_cuu_don_hang
+đổi địa chỉ nhận hàng sang 25 Lê Lợi thành phố Đà Nẵng,nhap_dia_chi_giao_hang
+nếu đặt hôm nay thì mấy hôm nữa giao tới,thoi_gian_giao_hang
+trà Shan Tuyết và Ô Long khác nhau thế nào về hương vị,so_sanh_san_pham
+cho thêm một túi hạt điều rang muối vào giỏ,them_vao_gio_hang
+bỏ hộp trà Shan Tuyết ra khỏi giỏ hàng,xoa_khoi_gio_hang
+mình đồng ý với thông tin và xác nhận đơn này,xac_nhan_dat_hang
+cảm ơn shop đã hướng dẫn tận tình,cam_on
+shop có thể cho biết đơn hàng hiện đang ở trạng thái nào,tra_cuu_don_hang
+Nhờ shop bắt đầu thanh toán đơn này nhé,bat_dau_dat_hang
+Nhờ shop bắt đầu thanh toán đơn này với,bat_dau_dat_hang
+Nhờ shop bắt đầu thanh toán đơn này nha,bat_dau_dat_hang
+Nhờ shop bắt đầu thanh toán đơn này giúp mình nhé,bat_dau_dat_hang
+Nhờ shop bắt đầu thanh toán đơn này cho mình với,bat_dau_dat_hang
+Nhờ shop bắt đầu thanh toán đơn này ạ,bat_dau_dat_hang
+Nhờ shop bắt đầu thanh toán đơn này giúp mình,bat_dau_dat_hang
+Giúp mình bắt đầu thanh toán đơn này nhé,bat_dau_dat_hang
+Giúp mình bắt đầu thanh toán đơn này với,bat_dau_dat_hang
+Giúp mình bắt đầu thanh toán đơn này nha,bat_dau_dat_hang
+Giúp mình bắt đầu thanh toán đơn này giúp mình nhé,bat_dau_dat_hang
+Giúp mình bắt đầu thanh toán đơn này cho mình với,bat_dau_dat_hang
+Giúp mình bắt đầu thanh toán đơn này ạ,bat_dau_dat_hang
+Giúp mình bắt đầu thanh toán đơn này giúp mình,bat_dau_dat_hang
+Mình muốn bắt đầu thanh toán đơn này nhé,bat_dau_dat_hang
+Mình muốn bắt đầu thanh toán đơn này với,bat_dau_dat_hang
+Mình muốn bắt đầu thanh toán đơn này nha,bat_dau_dat_hang
+Mình muốn bắt đầu thanh toán đơn này giúp mình nhé,bat_dau_dat_hang
+Mình muốn bắt đầu thanh toán đơn này cho mình với,bat_dau_dat_hang
+Mình muốn bắt đầu thanh toán đơn này ạ,bat_dau_dat_hang
+Cảm ơn LifeGift tư vấn rất nhiệt tình nhiều nhé,cam_on
+Mình xin cảm ơn shop nhiều,cam_on
+Mình xin cảm ơn shop nhiều nhé,cam_on
+Mình xin cảm ơn shop nhiều nha,cam_on
+Mình xin cảm ơn shop nhiều ạ,cam_on
+Mình xin cảm ơn shop nhiều với,cam_on
+Mình xin cảm ơn shop nhiều bạn ơi,cam_on
+Mình xin cảm ơn shop nhiều nhiều nhé,cam_on
+Cảm ơn bạn đã kiểm tra giúp mình,cam_on
+Cảm ơn bạn đã kiểm tra giúp mình nhé,cam_on
+Cảm ơn bạn đã kiểm tra giúp mình nha,cam_on
+Cảm ơn bạn đã kiểm tra giúp mình ạ,cam_on
+Cảm ơn bạn đã kiểm tra giúp mình với,cam_on
+Cảm ơn bạn đã kiểm tra giúp mình bạn ơi,cam_on
+Cảm ơn bạn đã kiểm tra giúp mình nhiều nhé,cam_on
+Thông tin hữu ích quá cảm ơn shop,cam_on
+Thông tin hữu ích quá cảm ơn shop nhé,cam_on
+Thông tin hữu ích quá cảm ơn shop nha,cam_on
+Thông tin hữu ích quá cảm ơn shop ạ,cam_on
+Nhờ shop đổi số lượng cà phê trong giỏ thành 3 gói nhé,cap_nhat_gio_hang
+Nhờ shop đổi số lượng cà phê trong giỏ thành 3 gói với,cap_nhat_gio_hang
+Nhờ shop đổi số lượng cà phê trong giỏ thành 3 gói nha,cap_nhat_gio_hang
+Nhờ shop đổi số lượng cà phê trong giỏ thành 3 gói giúp mình nhé,cap_nhat_gio_hang
+Nhờ shop đổi số lượng cà phê trong giỏ thành 3 gói cho mình với,cap_nhat_gio_hang
+Nhờ shop đổi số lượng cà phê trong giỏ thành 3 gói ạ,cap_nhat_gio_hang
+Nhờ shop đổi số lượng cà phê trong giỏ thành 3 gói giúp mình,cap_nhat_gio_hang
+Giúp mình đổi số lượng cà phê trong giỏ thành 3 gói nhé,cap_nhat_gio_hang
+Giúp mình đổi số lượng cà phê trong giỏ thành 3 gói với,cap_nhat_gio_hang
+Giúp mình đổi số lượng cà phê trong giỏ thành 3 gói nha,cap_nhat_gio_hang
+Giúp mình đổi số lượng cà phê trong giỏ thành 3 gói giúp mình nhé,cap_nhat_gio_hang
+Giúp mình đổi số lượng cà phê trong giỏ thành 3 gói cho mình với,cap_nhat_gio_hang
+Giúp mình đổi số lượng cà phê trong giỏ thành 3 gói ạ,cap_nhat_gio_hang
+Giúp mình đổi số lượng cà phê trong giỏ thành 3 gói giúp mình,cap_nhat_gio_hang
+Mình muốn đổi số lượng cà phê trong giỏ thành 3 gói nhé,cap_nhat_gio_hang
+Mình muốn đổi số lượng cà phê trong giỏ thành 3 gói với,cap_nhat_gio_hang
+Mình muốn đổi số lượng cà phê trong giỏ thành 3 gói nha,cap_nhat_gio_hang
+Mình muốn đổi số lượng cà phê trong giỏ thành 3 gói giúp mình nhé,cap_nhat_gio_hang
+Mình muốn đổi số lượng cà phê trong giỏ thành 3 gói cho mình với,cap_nhat_gio_hang
+Mình muốn đổi số lượng cà phê trong giỏ thành 3 gói ạ,cap_nhat_gio_hang
+Alo shop có nhân viên tư vấn không bạn ơi,chao_hoi
+Alo shop có nhân viên tư vấn không nhiều nhé,chao_hoi
+Chào bạn bên mình đang hỗ trợ khách chứ,chao_hoi
+Chào bạn bên mình đang hỗ trợ khách chứ nhé,chao_hoi
+Chào bạn bên mình đang hỗ trợ khách chứ nha,chao_hoi
+Chào bạn bên mình đang hỗ trợ khách chứ ạ,chao_hoi
+Chào bạn bên mình đang hỗ trợ khách chứ với,chao_hoi
+Chào bạn bên mình đang hỗ trợ khách chứ bạn ơi,chao_hoi
+Chào bạn bên mình đang hỗ trợ khách chứ nhiều nhé,chao_hoi
+Xin chào mình cần shop giúp đỡ,chao_hoi
+Xin chào mình cần shop giúp đỡ nhé,chao_hoi
+Xin chào mình cần shop giúp đỡ nha,chao_hoi
+Xin chào mình cần shop giúp đỡ ạ,chao_hoi
+Xin chào mình cần shop giúp đỡ với,chao_hoi
+Xin chào mình cần shop giúp đỡ bạn ơi,chao_hoi
+Xin chào mình cần shop giúp đỡ nhiều nhé,chao_hoi
+Shop ơi cho mình hỏi chút nhé,chao_hoi
+Shop ơi cho mình hỏi chút nhé nhé,chao_hoi
+Shop ơi cho mình hỏi chút nhé nha,chao_hoi

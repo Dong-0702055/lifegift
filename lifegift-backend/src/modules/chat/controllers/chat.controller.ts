@@ -32,7 +32,12 @@ export class ChatController {
         userIdNum = rawId ? Number(rawId) : undefined;
       }
 
-      const targetSessionId = userIdNum ? String(userIdNum) : (req.body.sessionId || 'guest_session');
+      const suppliedSessionId = String(req.body.sessionId || '').slice(0, 120);
+      const targetSessionId = userIdNum
+        ? suppliedSessionId
+          ? `${userIdNum}:${suppliedSessionId}`
+          : String(userIdNum)
+        : suppliedSessionId || 'guest_session';
       const history = await RedisChatService.getHistory(targetSessionId);
 
       const result = await ChatService.processMessage(message, userIdNum, history, targetSessionId);

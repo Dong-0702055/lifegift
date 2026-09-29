@@ -233,6 +233,7 @@ CREATE TABLE `brands` (
   `status` enum('ACTIVE','INACTIVE') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ACTIVE',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `section` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'product',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `slug` (`slug`)
@@ -339,7 +340,8 @@ CREATE TABLE `categories` (
 
 LOCK TABLES `categories` WRITE;
 /*!40000 ALTER TABLE `categories` DISABLE KEYS */;
-INSERT INTO `categories` VALUES (1,NULL,'Nông sản','nong-san','Các sản phẩm nông sản Việt Nam',NULL,'ACTIVE','2026-08-12 13:06:11','2026-08-12 13:06:11'),(2,NULL,'Đặc sản vùng miền','dac-san-vung-mien','Đặc sản nổi tiếng từ nhiều vùng miền',NULL,'ACTIVE','2026-08-12 13:06:11','2026-08-12 13:06:11'),(3,NULL,'Quà tặng','qua-tang','Các bộ quà tặng phù hợp cá nhân và doanh nghiệp',NULL,'ACTIVE','2026-08-12 13:06:11','2026-08-12 13:06:11'),(4,1,'Cà phê','ca-phe','Cà phê Việt Nam',NULL,'ACTIVE','2026-08-12 13:06:11','2026-08-12 20:53:53'),(5,1,'Trà','tra','Các loại trà Việt Nam',NULL,'ACTIVE','2026-08-12 13:06:11','2026-08-12 13:06:11'),(6,1,'Hạt dinh dưỡng','hat-dinh-duong','Các loại hạt và sản phẩm dinh dưỡng',NULL,'ACTIVE','2026-08-12 13:06:11','2026-08-12 13:06:11'),(7,2,'Đặc sản Tây Bắc','dac-san-tay-bac','Đặc sản khu vực Tây Bắc',NULL,'ACTIVE','2026-08-12 13:06:11','2026-08-12 13:06:11'),(8,3,'Quà doanh nghiệp','qua-doanh-nghiep','Quà tặng dành cho doanh nghiệp',NULL,'ACTIVE','2026-08-12 13:06:11','2026-08-12 13:06:11'),(9,NULL,'Trái cây','trai-cay','Các loại trái cây tươi','/images/trai-cay.jpg','INACTIVE','2026-08-12 15:44:38','2026-08-25 14:52:35'),(10,NULL,'Bánh Trung Thu Cao Cấp 2026','banh-trung-thu-cao-cap-2026','Cập nhật danh mục bánh trung thu cho mùa lễ hội','https://example.com/images/banh-trung-thu-2026.jpg','INACTIVE','2026-08-25 12:47:44','2026-08-25 14:51:06');
+INSERT INTO `categories` (`id`,`parent_id`,`name`,`slug`,`description`,`image_url`,`status`,`created_at`,`updated_at`) VALUES (1,NULL,'Nông sản','nong-san','Các sản phẩm nông sản Việt Nam',NULL,'ACTIVE','2026-08-12 13:06:11','2026-08-12 13:06:11'),(2,NULL,'Đặc sản vùng miền','dac-san-vung-mien','Đặc sản nổi tiếng từ nhiều vùng miền',NULL,'ACTIVE','2026-08-12 13:06:11','2026-08-12 13:06:11'),(3,NULL,'Quà tặng','qua-tang','Các bộ quà tặng phù hợp cá nhân và doanh nghiệp',NULL,'ACTIVE','2026-08-12 13:06:11','2026-08-12 13:06:11'),(4,1,'Cà phê','ca-phe','Cà phê Việt Nam',NULL,'ACTIVE','2026-08-12 13:06:11','2026-08-12 20:53:53'),(5,1,'Trà','tra','Các loại trà Việt Nam',NULL,'ACTIVE','2026-08-12 13:06:11','2026-08-12 13:06:11'),(6,1,'Hạt dinh dưỡng','hat-dinh-duong','Các loại hạt và sản phẩm dinh dưỡng',NULL,'ACTIVE','2026-08-12 13:06:11','2026-08-12 13:06:11'),(7,2,'Đặc sản Tây Bắc','dac-san-tay-bac','Đặc sản khu vực Tây Bắc',NULL,'ACTIVE','2026-08-12 13:06:11','2026-08-12 13:06:11'),(8,3,'Quà doanh nghiệp','qua-doanh-nghiep','Quà tặng dành cho doanh nghiệp',NULL,'ACTIVE','2026-08-12 13:06:11','2026-08-12 13:06:11'),(9,NULL,'Trái cây','trai-cay','Các loại trái cây tươi','/images/trai-cay.jpg','INACTIVE','2026-08-12 15:44:38','2026-08-25 14:52:35'),(10,NULL,'Bánh Trung Thu Cao Cấp 2026','banh-trung-thu-cao-cap-2026','Cập nhật danh mục bánh trung thu cho mùa lễ hội','https://example.com/images/banh-trung-thu-2026.jpg','INACTIVE','2026-08-25 12:47:44','2026-08-25 14:51:06');
+UPDATE `categories` SET `section` = 'gift' WHERE `id` IN (3, 8);
 /*!40000 ALTER TABLE `categories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1130,6 +1132,40 @@ LOCK TABLES `warehouses` WRITE;
 INSERT INTO `warehouses` VALUES (1,'WH-HN','Kho Hà Nội','Khu công nghiệp Thanh Trì, Hà Nội','ACTIVE','2026-08-12 13:06:11','2026-08-12 13:06:11'),(2,'WH-HCM','Kho Hồ Chí Minh','Quận 12, TP. Hồ Chí Minh','ACTIVE','2026-08-12 13:06:11','2026-08-12 13:06:11'),(3,'WH-HN1','Kho Hà Nội','Khu công nghiệp Thanh Trì','ACTIVE','2026-08-16 16:26:50','2026-08-16 16:31:15'),(4,'KHO-HN-01','Kho Hàng Hà Nội - Cầu Giấy','Số 123 Đường Cầu Giấy, Phường Dịch Vọng, Quận Cầu Giấy, Hà Nội','ACTIVE','2026-08-26 09:28:59','2026-08-26 09:28:59'),(5,'KHO-HN-0','Kho Hàng Hà Nội - Cầu Giấy','Số 123 Đường Cầu Giấy, Phường Dịch Vọng, Quận Cầu Giấy, Hà Nội','ACTIVE','2026-08-26 09:29:49','2026-08-26 09:31:19');
 /*!40000 ALTER TABLE `warehouses` ENABLE KEYS */;
 UNLOCK TABLES;
+
+CREATE TABLE `agency_leads` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `full_name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `phone` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `area` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `message` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'PENDING',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_agency_leads_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `site_settings` (
+  `id` int NOT NULL DEFAULT 1,
+  `phone_primary` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `phone_secondary` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `map_query` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `hanoi_fee` int NOT NULL DEFAULT 25000,
+  `major_city_fee` int NOT NULL DEFAULT 35000,
+  `other_province_fee` int NOT NULL DEFAULT 45000,
+  `free_shipping_threshold` int NOT NULL DEFAULT 600000,
+  `bank_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `bank_account` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `bank_owner` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `site_settings` (`id`,`phone_primary`,`phone_secondary`,`email`,`address`,`map_query`,`hanoi_fee`,`major_city_fee`,`other_province_fee`,`free_shipping_threshold`,`bank_name`,`bank_account`,`bank_owner`)
+VALUES (1,'0907754688','0911730069','quatangcuocsong5524@gmail.com','Lô 5 tầng 1, CT1B Mễ Trì Plaza VOV, P. Đại Mỗ, TP. Hà Nội','Lô 5 tầng 1, CT1B Mễ Trì Plaza VOV, P. Đại Mỗ, Hà Nội',25000,35000,45000,600000,'Ngân hàng demo','Đang cập nhật','LIFEGIFT');
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

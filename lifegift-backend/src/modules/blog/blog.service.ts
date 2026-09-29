@@ -77,6 +77,14 @@ export class BlogService {
     return posts.map((p) => this.mapPostToResponse(p));
   }
 
+  public static async getAllPostsForAdmin(): Promise<BlogPostResponse[]> {
+    const posts = await prisma.blog_posts.findMany({
+      include: { blog_categories: true, users: true },
+      orderBy: { updated_at: 'desc' },
+    });
+    return posts.map((post) => this.mapPostToResponse(post));
+  }
+
   // 2. Lấy chi tiết bài viết qua Slug (Public)
   public static async getPostBySlug(slug: string): Promise<BlogPostResponse> {
     const post = await prisma.blog_posts.findFirst({

@@ -2,6 +2,15 @@ import { Request, Response } from 'express';
 import { ProductService } from './product.service';
 
 export class ProductController {
+  public static async getAllProducts(req: Request, res: Response) {
+    try {
+      const data = await ProductService.getAllProducts();
+      return res.status(200).json({ success: true, message: 'Lấy tất cả sản phẩm thành công', data });
+    } catch (error: any) {
+      return res.status(400).json({ success: false, message: error.message, data: null });
+    }
+  }
+
   public static async getProducts(req: Request, res: Response) {
     try {
       const data = await ProductService.getActiveProducts();
